@@ -1,0 +1,789 @@
+@font-face {
+    font-family: "PingAR+LT";
+    src: url("/fonts/PingAR+LT-Light.otf") format("opentype");
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "PingAR+LT";
+    src: url("/fonts/PingAR+LT-Regular.otf") format("opentype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "PingAR+LT";
+    src: url("/fonts/PingAR+LT-Medium.otf") format("opentype");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "PingAR+LT";
+    src: url("/fonts/PingAR+LT-Bold.otf") format("opentype");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@import "tailwindcss";
+@import "tw-animate-css";
+@custom-variant dark (&:is(.dark *));
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --font-sans: var(--font-cairo);
+    --font-cairo: var(--font-cairo);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+      /* Clean white background */
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.18 0 0);
+    
+    /* Cards with pure white */
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.18 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.18 0 0);
+    
+    /* Main maroon/burgundy from your logo */
+    --primary: oklch(0.30 0.15 10);
+    --primary-foreground: oklch(0.99 0 0);
+    
+    /* Light gray secondary */
+    --secondary: oklch(0.96 0 0);
+    --secondary-foreground: oklch(0.18 0 0);
+    
+    /* Subtle muted colors */
+    --muted: oklch(0.96 0 0);
+    --muted-foreground: oklch(0.50 0 0);
+    
+    /* Accent with maroon tint */
+    --accent: oklch(0.96 0.005 10);
+    --accent-foreground: oklch(0.30 0.15 10);
+    
+    /* Clean red for warnings */
+    --destructive: oklch(0.55 0.22 25);
+    
+    /* Simple borders */
+    --border: oklch(0.90 0 0);
+    --input: oklch(0.90 0 0);
+    --ring: oklch(0.30 0.15 10);
+    
+    /* Chart colors with maroon emphasis */
+    --chart-1: oklch(0.30 0.15 10);
+    --chart-2: oklch(0.72 0.16 45);
+    --chart-3: oklch(0.55 0.015 240);
+    --chart-4: oklch(0.45 0.12 350);
+    --chart-5: oklch(0.65 0.10 30);
+    
+    /* Clean sidebar */
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.18 0 0);
+    --sidebar-primary: oklch(0.30 0.15 10);
+    --sidebar-primary-foreground: oklch(0.99 0 0);
+    --sidebar-accent: oklch(0.96 0 0);
+    --sidebar-accent-foreground: oklch(0.18 0 0);
+    --sidebar-border: oklch(0.90 0 0);
+    --sidebar-ring: oklch(0.30 0.15 10);
+}
+
+.dark {
+    /* Deep dark background with subtle maroon undertone */
+    --background: oklch(0.13 0.008 10);
+    --foreground: oklch(0.96 0 0);
+    
+    /* Dark cards matching maroon brand */
+    --card: oklch(0.18 0.01 10);
+    --card-foreground: oklch(0.96 0 0);
+    --popover: oklch(0.18 0.01 10);
+    --popover-foreground: oklch(0.96 0 0);
+    
+    /* Primary maroon/burgundy - lighter for dark mode visibility */
+    --primary: oklch(0.50 0.15 10);
+    --primary-foreground: oklch(0.99 0 0);
+    
+    /* Dark gray secondary with maroon hint */
+    --secondary: oklch(0.24 0.008 10);
+    --secondary-foreground: oklch(0.96 0 0);
+    
+    /* Dark muted with maroon warmth */
+    --muted: oklch(0.24 0.008 10);
+    --muted-foreground: oklch(0.65 0.005 10);
+    
+    /* Dark accent with maroon tint */
+    --accent: oklch(0.24 0.015 10);
+    --accent-foreground: oklch(0.96 0 0);
+    
+    /* Destructive red for warnings */
+    --destructive: oklch(0.60 0.22 25);
+    
+    /* Dark borders with subtle maroon warmth */
+    --border: oklch(0.28 0.01 10);
+    --input: oklch(0.22 0.01 10);
+    --ring: oklch(0.50 0.15 10);
+    
+    /* Chart colors coordinated with maroon brand */
+    --chart-1: oklch(0.50 0.15 10);
+    --chart-2: oklch(0.68 0.14 45);
+    --chart-3: oklch(0.50 0.012 240);
+    --chart-4: oklch(0.55 0.12 350);
+    --chart-5: oklch(0.60 0.10 30);
+    
+    /* Dark sidebar with maroon undertone */
+    --sidebar: oklch(0.16 0.01 10);
+    --sidebar-foreground: oklch(0.96 0 0);
+    --sidebar-primary: oklch(0.50 0.15 10);
+    --sidebar-primary-foreground: oklch(0.99 0 0);
+    --sidebar-accent: oklch(0.24 0.015 10);
+    --sidebar-accent-foreground: oklch(0.96 0 0);
+    --sidebar-border: oklch(0.28 0.01 10);
+    --sidebar-ring: oklch(0.50 0.15 10);
+}
+
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+html[lang="ar"] body {
+    font-family: "PingAR+LT", sans-serif !important;
+}
+
+/* News content HTML rendering */
+.news-content-wrapper {
+  width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.news-content-wrapper * {
+  max-width: 100%;
+}
+
+.news-content-wrapper h1,
+.news-content-wrapper h2,
+.news-content-wrapper h3 {
+  font-weight: 700;
+  margin-top: 1rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.news-content-wrapper h1 {
+  font-size: 1.5rem;
+}
+
+.news-content-wrapper h2 {
+  font-size: 1.25rem;
+}
+
+.news-content-wrapper h3 {
+  font-size: 1.125rem;
+}
+
+.news-content-wrapper p {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.news-content-wrapper section {
+  margin: 1rem 0;
+}
+
+.news-content-wrapper .news-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.news-content-wrapper .news-item:last-child {
+  border-bottom: none;
+}
+
+.news-content-wrapper .family-news {
+  padding: 1rem 0;
+}
+
+/* From Uiverse.io by Pankaj-Meharchandani */
+.radio-input {
+  clip: rect(0 0 0 0);
+  -webkit-clip-path: inset(100%);
+  clip-path: inset(100%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.radio-tile {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 56px;
+  border-radius: 28px;
+  border: 3px solid hsl(var(--border));
+  background-color: hsl(var(--card));
+ 
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  padding-left: 56px;
+  padding-right: 20px;
+  font-weight: 500;
+}
+
+.radio-tile:before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid hsl(var(--border));
+  background-color: hsl(var(--background));
+  border-radius: 50%;
+  left: 16px;
+  transition: all 0.25s ease;
+  transform: scale(0.85);
+  opacity: 0.6;
+}
+
+.radio-tile:hover {
+  border-color: hsl(var(--primary));
+  border-width: 3px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  background-color: hsl(var(--accent));
+}
+
+.radio-tile:hover:before {
+  transform: scale(0.95);
+  opacity: 0.8;
+  border-color: hsl(var(--primary));
+}
+
+.radio-input:checked + .radio-tile,
+.radio-tile-checked {
+  border-width: 3px;
+  border-style: solid;
+ 
+  font-weight: 600;
+  transform: scale(1.02);
+}
+
+.radio-input:checked + .radio-tile:before,
+.radio-tile-checked:before {
+  transform: scale(1.1);
+  opacity: 1;
+  border-width: 3px;
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.25),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.radio-input:checked + .radio-tile .radio-icon svg,
+.radio-input:checked + .radio-tile .radio-icon,
+.radio-tile-checked .radio-icon svg,
+.radio-tile-checked .radio-icon {
+  transform: scale(1.1);
+}
+
+.radio-input:checked + .radio-tile .radio-label,
+.radio-tile-checked .radio-label {
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+}
+
+.radio-input:focus + .radio-tile {
+  border-color: hsl(var(--primary));
+  border-width: 3px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.12),
+    0 0 0 4px hsl(var(--primary) / 0.25);
+  outline: none;
+}
+
+.radio-input:focus + .radio-tile:before {
+  transform: scale(0.95);
+  opacity: 0.9;
+  border-color: hsl(var(--primary));
+}
+
+/* Improve contrast for unchecked tiles */
+.radio-tile:not(.radio-tile-checked) {
+  background-color: hsl(var(--card));
+  border-color: hsl(var(--border));
+}
+
+.radio-tile:not(.radio-tile-checked) .radio-label {
+  color: hsl(var(--foreground));
+  opacity: 0.7;
+}
+
+.radio-tile:not(.radio-tile-checked) .radio-icon svg {
+  opacity: 0.6;
+}
+
+.radio-icon {
+  margin-left: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.radio-icon svg {
+  width: 1.75rem;
+  height: 1.75rem;
+  color: hsl(var(--muted-foreground));
+  transition: all 0.3s ease;
+}
+
+.radio-label {
+  color: hsl(var(--foreground));
+  transition: all 0.3s ease;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 12px;
+  line-height: 1.4;
+}
+
+/* ========================================
+   PRINT INVOICE STYLES
+   Professional invoice layout for printing
+   ======================================== */
+
+/* Hide everything except the print invoice section when printing */
+@media print {
+  /* Reset and base styles for print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  html, body {
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+    background: white !important;
+    color: black !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hide all non-print elements */
+  .no-print,
+  .sidebar,
+  nav,
+  header:not(.print-header),
+  footer:not(.print-footer),
+  button,
+  .btn,
+  [role="navigation"],
+  [data-sidebar],
+  .fixed,
+  .sticky {
+    display: none !important;
+  }
+
+  /* Show only the printable invoice */
+  .print-invoice-container {
+    display: block !important;
+    width: 100% !important;
+    max-width: 210mm !important;
+    margin: 0 auto !important;
+    padding: 15mm !important;
+    background: white !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Invoice Header */
+  .print-invoice-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    margin-bottom: 20pt !important;
+    padding-bottom: 15pt !important;
+    border-bottom: 2pt solid #5C1A1B !important;
+  }
+
+  .print-invoice-logo {
+    max-height: 50pt !important;
+    width: auto !important;
+  }
+
+  .print-invoice-title {
+    text-align: right !important;
+    direction: rtl !important;
+  }
+
+  .print-invoice-title h1 {
+    font-size: 18pt !important;
+    font-weight: 700 !important;
+    color: #5C1A1B !important;
+    margin: 0 0 5pt 0 !important;
+  }
+
+  .print-invoice-title p {
+    font-size: 10pt !important;
+    color: #666 !important;
+    margin: 0 !important;
+  }
+
+  /* Invoice Info Section */
+  .print-invoice-info {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20pt !important;
+    margin-bottom: 20pt !important;
+    padding: 12pt !important;
+    background: #f9f9f9 !important;
+    border-radius: 4pt !important;
+  }
+
+  .print-invoice-info-block {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+
+  .print-invoice-info-block h3 {
+    font-size: 10pt !important;
+    font-weight: 600 !important;
+    color: #5C1A1B !important;
+    margin: 0 0 8pt 0 !important;
+    padding-bottom: 4pt !important;
+    border-bottom: 1pt solid #ddd !important;
+  }
+
+  .print-invoice-info-block p {
+    font-size: 9pt !important;
+    margin: 4pt 0 !important;
+    color: #333 !important;
+  }
+
+  .print-invoice-info-block strong {
+    color: #000 !important;
+  }
+
+  /* Order Status Badge for Print */
+  .print-status-badge {
+    display: inline-block !important;
+    padding: 4pt 10pt !important;
+    border-radius: 3pt !important;
+    font-size: 9pt !important;
+    font-weight: 600 !important;
+    border: 1pt solid !important;
+  }
+
+  .print-status-approved {
+    background: #d4edda !important;
+    color: #155724 !important;
+    border-color: #c3e6cb !important;
+  }
+
+  .print-status-pending {
+    background: #fff3cd !important;
+    color: #856404 !important;
+    border-color: #ffeeba !important;
+  }
+
+  .print-status-rejected {
+    background: #f8d7da !important;
+    color: #721c24 !important;
+    border-color: #f5c6cb !important;
+  }
+
+  .print-status-in-progress {
+    background: #d1ecf1 !important;
+    color: #0c5460 !important;
+    border-color: #bee5eb !important;
+  }
+
+  /* Items Table */
+  .print-invoice-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin-bottom: 20pt !important;
+    direction: rtl !important;
+  }
+
+  .print-invoice-table th {
+    background: #5C1A1B !important;
+    color: white !important;
+    padding: 10pt 8pt !important;
+    text-align: right !important;
+    font-size: 9pt !important;
+    font-weight: 600 !important;
+    border: 1pt solid #5C1A1B !important;
+  }
+
+  .print-invoice-table td {
+    padding: 10pt 8pt !important;
+    text-align: right !important;
+    font-size: 9pt !important;
+    border: 1pt solid #ddd !important;
+    vertical-align: top !important;
+  }
+
+  .print-invoice-table tbody tr:nth-child(even) {
+    background: #f9f9f9 !important;
+  }
+
+  .print-invoice-table tbody tr:hover {
+    background: #f5f5f5 !important;
+  }
+
+  .print-item-number {
+    width: 30pt !important;
+    text-align: center !important;
+    font-weight: 600 !important;
+    background: #f0f0f0 !important;
+  }
+
+  .print-item-title {
+    font-weight: 600 !important;
+    color: #333 !important;
+  }
+
+  .print-item-description {
+    font-size: 8pt !important;
+    color: #666 !important;
+    margin-top: 4pt !important;
+  }
+
+  .print-item-status {
+    text-align: center !important;
+  }
+
+  /* Notes Section */
+  .print-invoice-notes {
+    margin-top: 15pt !important;
+    padding: 12pt !important;
+    background: #fffbf0 !important;
+    border: 1pt solid #f0e6d2 !important;
+    border-radius: 4pt !important;
+    direction: rtl !important;
+    text-align: right !important;
+  }
+
+  .print-invoice-notes h3 {
+    font-size: 10pt !important;
+    font-weight: 600 !important;
+    color: #5C1A1B !important;
+    margin: 0 0 8pt 0 !important;
+  }
+
+  .print-invoice-notes p {
+    font-size: 9pt !important;
+    color: #333 !important;
+    margin: 0 !important;
+    white-space: pre-wrap !important;
+  }
+
+  /* Rejection Reason */
+  .print-rejection-reason {
+    margin-top: 15pt !important;
+    padding: 12pt !important;
+    background: #fff5f5 !important;
+    border: 1pt solid #fed7d7 !important;
+    border-right: 4pt solid #c53030 !important;
+    border-radius: 4pt !important;
+    direction: rtl !important;
+    text-align: right !important;
+  }
+
+  .print-rejection-reason h3 {
+    font-size: 10pt !important;
+    font-weight: 600 !important;
+    color: #c53030 !important;
+    margin: 0 0 8pt 0 !important;
+  }
+
+  .print-rejection-reason p {
+    font-size: 9pt !important;
+    color: #742a2a !important;
+    margin: 0 !important;
+  }
+
+  /* Footer */
+  .print-invoice-footer {
+    margin-top: 30pt !important;
+    padding-top: 15pt !important;
+    border-top: 1pt solid #ddd !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    direction: rtl !important;
+  }
+
+  .print-invoice-footer p {
+    font-size: 8pt !important;
+    color: #999 !important;
+    margin: 0 !important;
+  }
+
+  /* Signature Section */
+  .print-signature-section {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr !important;
+    gap: 30pt !important;
+    margin-top: 40pt !important;
+    padding-top: 20pt !important;
+    direction: rtl !important;
+  }
+
+  .print-signature-box {
+    text-align: center !important;
+  }
+
+  .print-signature-line {
+    width: 100% !important;
+    height: 1pt !important;
+    background: #333 !important;
+    margin-bottom: 8pt !important;
+  }
+
+  .print-signature-label {
+    font-size: 9pt !important;
+    color: #666 !important;
+  }
+
+  /* Page break handling */
+  .print-page-break {
+    page-break-before: always !important;
+  }
+
+  .print-no-break {
+    page-break-inside: avoid !important;
+  }
+
+  /* Hide screen-only content */
+  .screen-only {
+    display: none !important;
+  }
+}
+
+/* Screen styles for print invoice (hidden on screen, shown on print) */
+.print-invoice-container {
+  display: none;
+}
+
+@media screen {
+  .print-only {
+    display: none !important;
+  }
+}
+
+/* ========================================
+   Mobile-First Optimizations
+   ======================================== */
+
+/* Safe area utilities for devices with notches/home indicators */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.mb-safe {
+  margin-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Native-like touch scrolling */
+.scroll-smooth {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent overscroll bounce in specific containers */
+.overscroll-contain {
+  overscroll-behavior: contain;
+}
+
+/* Touch-friendly tap targets */
+.touch-manipulation {
+  touch-action: manipulation;
+}
+
+/* Mobile optimized transitions */
+@media (prefers-reduced-motion: no-preference) {
+  .mobile-transition {
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+  }
+}
+
+/* Bottom navigation safe area adjustment */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .bottom-nav-safe {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* Hide scrollbar but keep functionality on mobile */
+@media (max-width: 1023px) {
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Improved focus states for mobile */
+@media (hover: none) and (pointer: coarse) {
+  .focus-visible:focus {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
