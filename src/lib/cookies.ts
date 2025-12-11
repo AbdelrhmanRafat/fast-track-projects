@@ -270,6 +270,7 @@ export function getAllCookies(): Record<string, string> {
 export const COOKIE_TOKEN = 'AuthToken';
 export const COOKIE_USER_DATA = 'UserData';
 export const COOKIE_USER_ROLE = 'UserRole'; // Plain text role for middleware access
+export const COOKIE_LANG = 'Lang'; // Language preference cookie
 
 /**
  * Set authentication token cookie
@@ -375,4 +376,50 @@ export function parseCookies(cookieHeader?: string): Record<string, string> {
 export function getServerToken(cookieHeader?: string): string | null {
   const cookies = parseCookies(cookieHeader);
   return cookies[COOKIE_TOKEN] || null;
+}
+
+/* ========================= */
+/* Language Cookies */
+/* ========================= */
+
+/**
+ * Set language preference cookie
+ */
+export function setLang(language: string): void {
+  setCookie(COOKIE_LANG, language, {
+    maxAge: 60 * 60 * 24 * 365, // 1 year
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/'
+  });
+}
+
+/**
+ * Get language preference from cookie
+ */
+export function getLang(): string | null {
+  return getCookie(COOKIE_LANG);
+}
+
+/**
+ * Get language preference with fallback to browser language
+ */
+export function getLangWithFallback(): string {
+  const cookieLang = getCookie(COOKIE_LANG);
+  if (cookieLang) return cookieLang;
+
+  if (typeof navigator !== 'undefined') {
+    const browserLang = navigator.language || navigator.languages?.[0];
+    if (browserLang?.startsWith('ar')) return 'ar';
+  }
+
+  return 'en'; // default
+}
+
+/**
+ * Get language from server-side cookies
+ */
+export function getServerLang(cookieHeader?: string): string | null {
+  const cookies = parseCookies(cookieHeader);
+  return cookies[COOKIE_LANG] || null;
 }

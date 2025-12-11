@@ -1,7 +1,7 @@
 "use client";
 
-import { useLanguageProvider } from "@/components/providers/LanguageProvider";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "@/components/providers/LanguageProvider";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -25,7 +25,7 @@ import {
 import Link from "next/link";
 
 export default function HomePage() {
-  const { t, isRTL, dir } = useLanguageProvider();
+  const { t, isRTL } = useTranslation();
 
   // Get time-based greeting
   const getGreeting = () => {
@@ -147,7 +147,7 @@ export default function HomePage() {
   ];
 
   return (
-    <div dir={dir} className="min-h-screen pb-8">
+    <div className="min-h-screen pb-8">
       {/* Hero Section */}
       <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-primary/90 via-primary to-primary/80 p-6 md:p-10 mb-8">
         <div className="absolute inset-0 bg-grid-white/10 mask-[linear-gradient(0deg,transparent,rgba(255,255,255,0.5))]" />

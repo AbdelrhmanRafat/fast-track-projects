@@ -3,10 +3,10 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
-import { useLanguageProvider } from "@/components/providers/LanguageProvider"
+import { useTranslation } from "@/components/providers/LanguageProvider"
 
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
-  const { dir } = useLanguageProvider();
+  const { dir } = useTranslation();
   return (
     <textarea
       dir={dir}

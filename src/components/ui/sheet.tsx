@@ -5,7 +5,7 @@ import * as SheetPrimitive from "@radix-ui/react-dialog"
 import { XIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { useLanguageProvider } from "@/components/providers/LanguageProvider"
+import { useTranslation } from "@/components/providers/LanguageProvider"
 
 function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />
@@ -53,7 +53,7 @@ function SheetContent({
 }: React.ComponentProps<typeof SheetPrimitive.Content> & {
   side?: "top" | "right" | "bottom" | "left"
 }) {
-  const { dir, isRTL } = useLanguageProvider();
+  const { dir, isRTL } = useTranslation();
   return (
     <SheetPortal>
       <SheetOverlay />

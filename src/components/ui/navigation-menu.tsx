@@ -6,7 +6,7 @@ import { cva } from "class-variance-authority"
 import { ChevronDownIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { useLanguageProvider } from "@/components/providers/LanguageProvider"
+import { useTranslation } from "@/components/providers/LanguageProvider"
 
 function NavigationMenu({
   className,
@@ -16,7 +16,7 @@ function NavigationMenu({
 }: React.ComponentProps<typeof NavigationMenuPrimitive.Root> & {
   viewport?: boolean
 }) {
-  const { dir } = useLanguageProvider();
+  const { dir } = useTranslation();
   return (
     <NavigationMenuPrimitive.Root
       dir={dir}

@@ -5,12 +5,12 @@ import * as SelectPrimitive from "@radix-ui/react-select"
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { useLanguageProvider } from "@/components/providers/LanguageProvider"
+import { useTranslation } from "@/components/providers/LanguageProvider"
 
 function Select({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Root>) {
-  const { dir } = useLanguageProvider();
+  const { dir } = useTranslation();
   return <SelectPrimitive.Root dir={dir} data-slot="select" {...props} />
 }
 
@@ -58,7 +58,7 @@ function SelectContent({
   position = "popper",
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Content>) {
-  const { dir } = useLanguageProvider();
+  const { dir } = useTranslation();
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
@@ -107,7 +107,7 @@ function SelectItem({
   children,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Item>) {
-  const { dir, isRTL } = useLanguageProvider();
+  const { dir, isRTL } = useTranslation();
   return (
     <SelectPrimitive.Item
       data-slot="select-item"

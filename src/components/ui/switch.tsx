@@ -4,13 +4,13 @@ import * as React from "react"
 import * as SwitchPrimitive from "@radix-ui/react-switch"
 
 import { cn } from "@/lib/utils"
-import { useLanguageProvider } from "@/components/providers/LanguageProvider"
+import { useTranslation } from "@/components/providers/LanguageProvider"
 
 function Switch({
   className,
   ...props
 }: React.ComponentProps<typeof SwitchPrimitive.Root>) {
-  const { dir, isRTL } = useLanguageProvider();
+  const { dir, isRTL } = useTranslation();
   return (
     <SwitchPrimitive.Root
       dir={dir}

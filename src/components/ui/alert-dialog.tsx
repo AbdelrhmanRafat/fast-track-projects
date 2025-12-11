@@ -6,7 +6,7 @@ import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { useDialogManager } from "./dialog-manager"
-import { useLanguageProvider } from "@/components/providers/LanguageProvider"
+import { useTranslation } from "@/components/providers/LanguageProvider"
 
 function AlertDialog({
   open,
@@ -76,7 +76,7 @@ function AlertDialogContent({
 }: React.ComponentProps<typeof AlertDialogPrimitive.Content> & {
   onOverlayClick?: () => void;
 }) {
-  const { dir } = useLanguageProvider();
+  const { dir } = useTranslation();
   return (
     <AlertDialogPortal>
       <AlertDialogOverlay onClick={onOverlayClick} className="cursor-pointer" />

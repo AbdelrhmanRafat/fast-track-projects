@@ -1,58 +1,70 @@
-// Language utilities - Arabic and English support
+import { cookies, headers } from 'next/headers';
+import { COOKIE_LANG } from '@/lib/cookies';
 
-export type Language = 'ar' | 'en';
-
-const LANGUAGE_COOKIE_NAME = 'preferred-language';
-const DEFAULT_LANGUAGE: Language = 'ar';
+export type Language = 'en' | 'ar';
 
 /**
  * Server-side language detection utility
- * Returns the stored language or default (Arabic)
+ * Detects language from cookies, headers, and provides fallback
  */
 export async function detectServerLanguage(): Promise<Language> {
-  return DEFAULT_LANGUAGE;
+  try {
+    // First, check cookies
+    const cookieStore = await cookies();
+    const savedLanguage = cookieStore.get(COOKIE_LANG)?.value as Language;
+    
+    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ar')) {
+      return savedLanguage;
+    }
+
+    // Second, check Accept-Language header
+    const headersList = await headers();
+    const acceptLanguage = headersList.get('accept-language');
+    
+    if (acceptLanguage) {
+      // Parse Accept-Language header
+      const languages = acceptLanguage
+        .split(',')
+        .map(lang => lang.split(';')[0].trim().toLowerCase());
+      
+      // Check if Arabic is preferred
+      for (const lang of languages) {
+        if (lang.startsWith('ar')) {
+          return 'ar';
+        }
+      }
+    }
+
+    // Default fallback
+    return 'en';
+  } catch (error) {
+    // Fallback in case of any server-side errors
+    console.warn('Error detecting server language:', error);
+    return 'en';
+  }
 }
 
 /**
  * Client-side language detection utility
- * Returns the stored language from cookie/localStorage or default
+ * Used as fallback when server detection is not available
  */
 export function detectClientLanguage(): Language {
-  if (typeof window === 'undefined') return DEFAULT_LANGUAGE;
+  if (typeof window === 'undefined') return 'en';
   
-  // Try localStorage first
-  const storedLang = localStorage.getItem(LANGUAGE_COOKIE_NAME);
-  if (storedLang === 'ar' || storedLang === 'en') {
-    return storedLang;
-  }
-  
-  // Try cookie
-  const cookieLang = getCookie(LANGUAGE_COOKIE_NAME);
-  if (cookieLang === 'ar' || cookieLang === 'en') {
-    return cookieLang as Language;
-  }
-  
-  return DEFAULT_LANGUAGE;
-}
+  try {
+    // Check localStorage first (for persistence)
+    const stored = localStorage.getItem('togoru-clinic-lang') as Language;
+    if (stored && (stored === 'en' || stored === 'ar')) {
+      return stored;
+    }
 
-/**
- * Get current language
- */
-export function getLanguage(): Language {
-  return detectClientLanguage();
-}
-
-/**
- * Set language preference
- */
-export function setLanguage(lang: Language): void {
-  if (typeof window === 'undefined') return;
-  
-  localStorage.setItem(LANGUAGE_COOKIE_NAME, lang);
-  setCookie(LANGUAGE_COOKIE_NAME, lang, 365);
-  
-  // Apply to document immediately
-  applyLanguageToDocument(lang);
+    // Check browser language
+    const browserLang = navigator.language || navigator.languages?.[0] || 'en';
+    return browserLang.toLowerCase().startsWith('ar') ? 'ar' : 'en';
+  } catch (error) {
+    console.warn('Error detecting client language:', error);
+    return 'en';
+  }
 }
 
 /**
@@ -83,42 +95,42 @@ export function setCookie(name: string, value: string, days: number = 365): void
   expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
   
   document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)};expires=${expires.toUTCString()};path=/;samesite=lax`;
+  
+  // Also store in localStorage for faster access
+  try {
+    localStorage.setItem('togoru-clinic-lang', value);
+  } catch (error) {
+    console.warn('Could not save language to localStorage:', error);
+  }
 }
 
 /**
- * Apply language and direction settings to document
+ * Apply language and RTL settings to document
  */
-export function applyLanguageToDocument(lang?: Language): void {
+export function applyLanguageToDocument(language: Language): void {
   if (typeof document === 'undefined') return;
   
-  const currentLang = lang || getLanguage();
-  const isRTL = currentLang === 'ar';
+  const isRTL = language === 'ar';
   
   // Set HTML attributes
-  document.documentElement.setAttribute('lang', currentLang);
+  document.documentElement.setAttribute('lang', language);
   document.documentElement.setAttribute('dir', isRTL ? 'rtl' : 'ltr');
   
-  // Set CSS classes
+  // Add/remove RTL class for Tailwind CSS
   if (isRTL) {
     document.documentElement.classList.add('rtl');
-    document.documentElement.classList.remove('ltr');
   } else {
-    document.documentElement.classList.add('ltr');
     document.documentElement.classList.remove('rtl');
   }
 }
 
 /**
  * Generate initial HTML attributes for server-side rendering
- * Returns default Arabic RTL attributes for initial render
  */
-export function getLanguageAttributes(lang?: Language) {
-  const currentLang = lang || DEFAULT_LANGUAGE;
-  const isRTL = currentLang === 'ar';
-  
+export function getLanguageAttributes(language: Language) {
   return {
-    lang: currentLang,
-    dir: isRTL ? 'rtl' : 'ltr',
-    className: isRTL ? 'rtl' : 'ltr',
+    lang: language,
+    dir: language === 'ar' ? 'rtl' : 'ltr',
+    className: language === 'ar' ? 'rtl' : '',
   };
 }
