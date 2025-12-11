@@ -45,6 +45,7 @@ export async function GET(
     const page = parseInt(searchParams.get('page') || '1', 10);
     const limit = parseInt(searchParams.get('limit') || '20', 10);
     const unreadOnly = searchParams.get('unreadOnly') === 'true';
+    const projectSource = searchParams.get('project_source'); // 'orders' | 'projects'
 
     // Create NetworkLayer instance with cookies
     const cookieHeader = request.headers.get('cookie') || '';
@@ -54,6 +55,9 @@ export async function GET(
     let query = `page=${page}&limit=${limit}`;
     if (unreadOnly) {
       query += '&is_read=false';
+    }
+    if (projectSource) {
+      query += `&project_source=${projectSource}`;
     }
 
     // Fetch notifications from backend

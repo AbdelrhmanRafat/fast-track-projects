@@ -4,6 +4,7 @@ import * as React from "react"
 import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 
 import { cn } from "@/lib/utils"
+import { useLanguageProvider } from "@/components/providers/LanguageProvider"
 
 function TooltipProvider({
   delayDuration = 0,
@@ -40,10 +41,11 @@ function TooltipContent({
   children,
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Content>) {
+  const { dir } = useLanguageProvider();
   return (
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Content
-        dir="rtl"
+        dir={dir}
         data-slot="tooltip-content"
         sideOffset={sideOffset}
         className={cn(

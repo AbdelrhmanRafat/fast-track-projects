@@ -12,14 +12,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { useLanguageProvider } from "@/components/providers/LanguageProvider"
 
 function Command({
   className,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive>) {
+  const { dir } = useLanguageProvider();
   return (
     <CommandPrimitive
-      dir="rtl"
+      dir={dir}
       data-slot="command"
       className={cn(
         "bg-popover text-popover-foreground flex h-full w-full flex-col overflow-hidden rounded-md",

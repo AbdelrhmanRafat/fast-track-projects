@@ -4,14 +4,16 @@ import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
 
 import { cn } from "@/lib/utils"
+import { useLanguageProvider } from "@/components/providers/LanguageProvider"
 
 function Tabs({
   className,
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.Root>) {
+  const { dir } = useLanguageProvider();
   return (
     <TabsPrimitive.Root
-      dir="rtl"
+      dir={dir}
       data-slot="tabs"
       className={cn("flex flex-col gap-2", className)}
       {...props}

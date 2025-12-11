@@ -1,9 +1,12 @@
+"use client"
+
 import * as React from "react"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
 import { cva } from "class-variance-authority"
 import { ChevronDownIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { useLanguageProvider } from "@/components/providers/LanguageProvider"
 
 function NavigationMenu({
   className,
@@ -13,9 +16,10 @@ function NavigationMenu({
 }: React.ComponentProps<typeof NavigationMenuPrimitive.Root> & {
   viewport?: boolean
 }) {
+  const { dir } = useLanguageProvider();
   return (
     <NavigationMenuPrimitive.Root
-      dir="rtl"
+      dir={dir}
       data-slot="navigation-menu"
       data-viewport={viewport}
       className={cn(

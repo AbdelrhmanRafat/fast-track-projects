@@ -5,11 +5,13 @@ import * as AccordionPrimitive from "@radix-ui/react-accordion"
 import { ChevronDownIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { useLanguageProvider } from "@/components/providers/LanguageProvider"
 
 function Accordion({
   ...props
 }: React.ComponentProps<typeof AccordionPrimitive.Root>) {
-  return <AccordionPrimitive.Root dir="rtl" data-slot="accordion" {...props} />
+  const { dir } = useLanguageProvider();
+  return <AccordionPrimitive.Root dir={dir} data-slot="accordion" {...props} />
 }
 
 function AccordionItem({

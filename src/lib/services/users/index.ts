@@ -30,7 +30,7 @@ export async function getUsers(): Promise<ApiResponse<UsersResponse> | null> {
     const api = await NetworkLayer.createWithAutoConfig();
     
     // Make GET request to users endpoint
-    const response = await api.get<UsersResponse>('/get-users');
+    const response = await api.get<UsersResponse>('/get-project-engineers');
     
     return response;
   } catch (error) {

@@ -35,6 +35,34 @@ export const routeConfig: RouteConfig = {
     showInBreadcrumb: true,
   },
 
+  // Projects
+  '/projects/all': {
+    titleKey: 'sidebar.allProjects',
+    breadcrumbKey: 'sidebar.projects',
+    parent: '/home',
+    showInBreadcrumb: true,
+  },
+  '/projects/current': {
+    titleKey: 'sidebar.currentProjects',
+    parent: '/projects/all',
+    showInBreadcrumb: true,
+  },
+  '/projects/create': {
+    titleKey: 'sidebar.createProject',
+    parent: '/projects/all',
+    showInBreadcrumb: true,
+  },
+  '/projects/[id]': {
+    titleKey: 'projects.projectDetails',
+    parent: '/projects/all',
+    showInBreadcrumb: true,
+  },
+  '/projects/[id]/edit': {
+    titleKey: 'projects.form.editTitle',
+    parent: '/projects/[id]',
+    showInBreadcrumb: true,
+  },
+
   // Create Order
   '/create-order': {
     titleKey: 'sidebar.createOrder',
@@ -89,6 +117,18 @@ export function getRouteConfig(pathname: string): RouteConfigItem | null {
     return routeConfig[pathname];
   }
 
+  // Check for edit project pattern: /projects/[id]/edit
+  const editProjectMatch = pathname.match(/^\/projects\/([^/]+)\/edit$/);
+  if (editProjectMatch && !['all', 'current', 'create'].includes(editProjectMatch[1])) {
+    return routeConfig['/projects/[id]/edit'] || null;
+  }
+
+  // Check for view project pattern: /projects/[id]
+  const viewProjectMatch = pathname.match(/^\/projects\/([^/]+)$/);
+  if (viewProjectMatch && !['all', 'current', 'create'].includes(viewProjectMatch[1])) {
+    return routeConfig['/projects/[id]'] || null;
+  }
+
   // Check for edit order pattern: /orders/[id]/edit
   const editOrderMatch = pathname.match(/^\/orders\/([^/]+)\/edit$/);
   if (editOrderMatch && !['all', 'current'].includes(editOrderMatch[1])) {
@@ -122,6 +162,10 @@ export function buildBreadcrumbTrail(pathname: string): BreadcrumbItem[] {
   const orderIdMatch = pathname.match(/^\/orders\/([^/]+)/);
   const orderId = orderIdMatch && !['all', 'current'].includes(orderIdMatch[1]) ? orderIdMatch[1] : null;
 
+  // Extract project ID from path if present (for dynamic routes)
+  const projectIdMatch = pathname.match(/^\/projects\/([^/]+)/);
+  const projectId = projectIdMatch && !['all', 'current', 'create'].includes(projectIdMatch[1]) ? projectIdMatch[1] : null;
+
   // Build trail from current page back to root
   while (currentPath) {
     const config = getRouteConfig(currentPath);
@@ -129,8 +173,11 @@ export function buildBreadcrumbTrail(pathname: string): BreadcrumbItem[] {
     if (config && config.showInBreadcrumb !== false) {
       // Replace [id] placeholder with actual ID in the path
       let actualPath = currentPath;
-      if (orderId && currentPath.includes('[id]')) {
+      if (orderId && currentPath.includes('[id]') && currentPath.startsWith('/orders')) {
         actualPath = currentPath.replace('[id]', orderId);
+      }
+      if (projectId && currentPath.includes('[id]') && currentPath.startsWith('/projects')) {
+        actualPath = currentPath.replace('[id]', projectId);
       }
 
       trail.unshift({
@@ -141,8 +188,10 @@ export function buildBreadcrumbTrail(pathname: string): BreadcrumbItem[] {
       
       // Get parent path, replacing [id] with actual ID if needed
       let parentPath = config.parent;
-      if (parentPath && orderId && parentPath.includes('[id]')) {
+      if (parentPath && orderId && parentPath.includes('[id]') && parentPath.startsWith('/orders')) {
         currentPath = parentPath.replace('[id]', orderId);
+      } else if (parentPath && projectId && parentPath.includes('[id]') && parentPath.startsWith('/projects')) {
+        currentPath = parentPath.replace('[id]', projectId);
       } else {
         currentPath = parentPath;
       }

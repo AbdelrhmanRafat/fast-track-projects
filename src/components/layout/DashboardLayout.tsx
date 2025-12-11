@@ -75,7 +75,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             {/* Desktop: Compact layout style with breadcrumbs */}
             <div className="hidden lg:flex flex-1 overflow-y-auto bg-background">
               <div className="w-full min-h-full flex flex-col bg-background">
-                <SharedBreadCrumb />
                 <div className="flex-1 bg-background">
                   <div className="w-full lg:max-w-7xl mx-auto bg-background py-6 px-4">
                     {children}

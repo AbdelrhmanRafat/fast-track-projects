@@ -4,6 +4,7 @@ import * as React from "react"
 import * as HoverCardPrimitive from "@radix-ui/react-hover-card"
 
 import { cn } from "@/lib/utils"
+import { useLanguageProvider } from "@/components/providers/LanguageProvider"
 
 function HoverCard({
   ...props
@@ -25,10 +26,11 @@ function HoverCardContent({
   sideOffset = 4,
   ...props
 }: React.ComponentProps<typeof HoverCardPrimitive.Content>) {
+  const { dir } = useLanguageProvider();
   return (
     <HoverCardPrimitive.Portal data-slot="hover-card-portal">
       <HoverCardPrimitive.Content
-        dir="rtl"
+        dir={dir}
         data-slot="hover-card-content"
         align={align}
         sideOffset={sideOffset}

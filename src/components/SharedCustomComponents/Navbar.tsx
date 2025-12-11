@@ -2,9 +2,9 @@
 
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { LogOut, Sun, Moon } from 'lucide-react';
+import { LogOut, Sun, Moon, Globe } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { useTranslation } from '@/components/providers/LanguageProvider';
+import { useTranslation } from '@/hooks/useTranslation';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
@@ -23,7 +23,7 @@ interface NavbarProps {
 }
 
 export function Navbar({ className }: NavbarProps) {
-  const { t } = useTranslation();
+  const { t, language, setLanguage, isRTL, mounted: translationMounted } = useTranslation();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
@@ -44,6 +44,10 @@ export function Navbar({ className }: NavbarProps) {
   const getThemeIcon = () => {
     if (!mounted) return <Sun className="h-[18px] w-[18px]" />;
     return theme === 'dark' ? <Sun className="h-[18px] w-[18px]" /> : <Moon className="h-[18px] w-[18px]" />;
+  };
+
+  const handleLanguageChange = (newLang: 'ar' | 'en') => {
+    setLanguage(newLang);
   };
 
   return (
@@ -68,6 +72,36 @@ export function Navbar({ className }: NavbarProps) {
             className="h-9 w-9 hover:bg-accent/50 transition-colors text-muted-foreground hover:text-foreground"
           />
 
+          {/* Language Switcher */}
+          <DropdownMenu dir={isRTL ? 'rtl' : 'ltr'}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 hover:bg-accent/50 transition-colors text-muted-foreground hover:text-foreground"
+              >
+                <Globe className="h-[18px] w-[18px]" />
+                <span className="sr-only">{t('navbar.language') || 'Language'}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align={isRTL ? 'start' : 'end'} className="w-40">
+              <DropdownMenuItem
+                onClick={() => handleLanguageChange('ar')}
+                className={`cursor-pointer flex items-center gap-2 ${language === 'ar' ? 'bg-accent' : ''}`}
+              >
+                <span className="text-lg">🇪🇬</span>
+                <span>{t('navbar.arabic') || 'العربية'}</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handleLanguageChange('en')}
+                className={`cursor-pointer flex items-center gap-2 ${language === 'en' ? 'bg-accent' : ''}`}
+              >
+                <span className="text-lg">🇺🇸</span>
+                <span>{t('navbar.english') || 'English'}</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           {/* Theme Toggle */}
           <Button
             variant="ghost"
@@ -80,7 +114,7 @@ export function Navbar({ className }: NavbarProps) {
           </Button>
 
           {/* User Avatar Dropdown */}
-          <DropdownMenu dir="rtl">
+          <DropdownMenu dir={isRTL ? 'rtl' : 'ltr'}>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
@@ -95,7 +129,7 @@ export function Navbar({ className }: NavbarProps) {
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48">
+            <DropdownMenuContent align={isRTL ? 'start' : 'end'} className="w-48">
               <DropdownMenuItem
                 onClick={handleLogout}
                 disabled={isLoggingOut}

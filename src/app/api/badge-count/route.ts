@@ -46,12 +46,22 @@ export async function GET(
       );
     }
 
+    // Get query parameters
+    const { searchParams } = new URL(request.url);
+    const projectSource = searchParams.get('project_source'); // 'orders' | 'projects'
+
     // Create NetworkLayer instance with cookies from request
     const cookieHeader = request.headers.get('cookie') || '';
     const networkLayer = await NetworkLayer.createWithAutoConfig({}, cookieHeader);
 
+    // Build query string
+    let query = '';
+    if (projectSource) {
+      query = `?project_source=${projectSource}`;
+    }
+
     // Fetch badge count from backend
-    const response = await networkLayer.get<any>('/badge-count');
+    const response = await networkLayer.get<any>(`/badge-count${query}`);
 
     // Backend response is wrapped in response.data
     const backendResponse = response.data;

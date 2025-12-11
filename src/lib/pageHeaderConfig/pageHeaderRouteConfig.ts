@@ -60,6 +60,30 @@ export const pageHeaderRouteConfig: PageHeaderRouteConfigMap = {
     showHeader: true,
   },
 
+  // Projects - All
+  "/projects/all": {
+    titleKey: "pageHeaders.allProjects",
+    showHeader: true,
+    primaryAction: {
+      labelKey: "sidebar.createProject",
+      href: "/projects/create",
+      icon: Plus,
+      variant: "default",
+    },
+  },
+
+  // Projects - Current
+  "/projects/current": {
+    titleKey: "pageHeaders.currentProjects",
+    showHeader: true,
+  },
+
+  // Projects - Create
+  "/projects/create": {
+    titleKey: "pageHeaders.createProject",
+    showHeader: true,
+  },
+
   // Create Order
   "/create-order": {
     titleKey: "pageHeaders.createOrder",
@@ -101,6 +125,24 @@ export function getPageHeaderRouteConfig(
   // First try exact match
   if (pageHeaderRouteConfig[pathname]) {
     return pageHeaderRouteConfig[pathname];
+  }
+
+  // Check for edit project pattern: /projects/[id]/edit
+  const editProjectMatch = pathname.match(/^\/projects\/([^/]+)\/edit$/);
+  if (editProjectMatch && !['all', 'current', 'create'].includes(editProjectMatch[1])) {
+    return {
+      titleKey: "pageHeaders.editProject",
+      showHeader: true,
+    };
+  }
+
+  // Check for view project pattern: /projects/[id]
+  const viewProjectMatch = pathname.match(/^\/projects\/([^/]+)$/);
+  if (viewProjectMatch && !['all', 'current', 'create'].includes(viewProjectMatch[1])) {
+    return {
+      titleKey: "pageHeaders.projectDetails",
+      showHeader: true,
+    };
   }
 
   // Check for purchasing page pattern: /orders/[id]/purchasing

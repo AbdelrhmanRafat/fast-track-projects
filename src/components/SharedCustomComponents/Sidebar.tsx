@@ -15,7 +15,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect, useMemo } from 'react';
-import { useTranslation } from 'next-intl';
+import { useTranslation } from '@/components/providers/LanguageProvider';
 import { ChevronDown, LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useSidebarStore } from '@/stores/sidebarStore';
 import {
@@ -302,4 +302,139 @@ export function Sidebar() {
       <aside 
         className={`flex-col hidden lg:flex pt-3 ${isCollapsed ? 'w-[72px]' : 'w-64'}`}
         style={{
-          transition:.message truncated
+          transition: 'width 0.2s ease-in-out',
+        }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <TooltipProvider delayDuration={0}>
+          <SidebarPrimitive className="border-none bg-transparent">
+            {/* Logo and Collapse Button */}
+            <SidebarHeader className="px-3 py-2">
+              <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
+                {!isCollapsed && (
+                  <Link href="/home" className="flex items-center gap-2">
+                    <Image
+                      src={theme === 'dark' ? '/app-logo.svg' : '/app-logo.svg'}
+                      alt="Logo"
+                      width={40}
+                      height={40}
+                      className="h-10 w-10"
+                    />
+                    <span className="font-semibold text-foreground">Fast Track</span>
+                  </Link>
+                )}
+                <button
+                  onClick={toggleCollapse}
+                  className={`p-2 rounded-lg hover:bg-accent transition-colors ${isCollapsed ? '' : ''}`}
+                  title={isCollapsed ? 'Expand' : 'Collapse'}
+                >
+                  {isCollapsed ? (
+                    <PanelLeftOpen className="h-5 w-5 text-muted-foreground" />
+                  ) : (
+                    <PanelLeftClose className="h-5 w-5 text-muted-foreground" />
+                  )}
+                </button>
+              </div>
+            </SidebarHeader>
+
+            {/* Navigation Items */}
+            <SidebarContent className="px-3">
+              {filteredSidebarConfig.map((group, groupIndex) => (
+                <SidebarGroup key={group.titleKey || groupIndex}>
+                  {!isCollapsed && group.titleKey && (
+                    <button
+                      onClick={() => toggleGroup(group.titleKey!)}
+                      className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider"
+                    >
+                      <span>{t(group.titleKey as any)}</span>
+                      <ChevronDown
+                        className={`h-3 w-3 transition-transform duration-200 ${expandedGroups[group.titleKey!] !== false ? 'rotate-0' : '-rotate-90'}`}
+                      />
+                    </button>
+                  )}
+                  <SidebarGroupContent
+                    className={`space-y-1 ${!isCollapsed && group.titleKey && expandedGroups[group.titleKey!] === false ? 'hidden' : ''}`}
+                  >
+                    <SidebarMenu>
+                      {group.items.map((item, itemIndex) =>
+                        renderMenuItem(item, itemIndex)
+                      )}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </SidebarGroup>
+              ))}
+            </SidebarContent>
+
+            {/* Logout Button */}
+            <SidebarFooter className="px-3 py-4 mt-auto border-t">
+              {isCollapsed ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={handleLogout}
+                      disabled={isLoggingOut}
+                      className="flex items-center justify-center h-10 w-10 mx-auto rounded-lg text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50"
+                    >
+                      <LogOut className="h-5 w-5" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    {isLoggingOut ? t('common.loggingOut' as any) : t('sidebar.logout' as any)}
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <button
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  className="flex items-center gap-3 w-full h-10 px-3 rounded-lg text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50"
+                >
+                  <LogOut className="h-5 w-5 shrink-0" />
+                  <span className="text-sm font-medium">
+                    {isLoggingOut ? t('common.loggingOut' as any) : t('sidebar.logout' as any)}
+                  </span>
+                </button>
+              )}
+            </SidebarFooter>
+          </SidebarPrimitive>
+        </TooltipProvider>
+      </aside>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t safe-area-bottom">
+        <div className="flex items-center justify-around h-16 px-2">
+          {filteredSidebarConfig.flatMap(group => group.items).slice(0, 4).map((item, index) => {
+            const Icon = resolveIcon(item.icon);
+            const active = isItemActive(item, pathname);
+            return (
+              <Link
+                key={item.href || index}
+                href={item.href || '#'}
+                className={`flex flex-col items-center justify-center flex-1 h-full py-2 transition-colors ${
+                  active
+                    ? 'text-primary'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {Icon && <Icon className="h-5 w-5 mb-1" />}
+                <span className="text-[10px] font-medium truncate max-w-[60px]">
+                  {t(item.labelKey as any)}
+                </span>
+              </Link>
+            );
+          })}
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="flex flex-col items-center justify-center flex-1 h-full py-2 text-destructive transition-colors disabled:opacity-50"
+          >
+            <LogOut className="h-5 w-5 mb-1" />
+            <span className="text-[10px] font-medium">
+              {t('sidebar.logout' as any)}
+            </span>
+          </button>
+        </div>
+      </nav>
+    </>
+  );
+}

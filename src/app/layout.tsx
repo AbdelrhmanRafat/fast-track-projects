@@ -7,12 +7,7 @@ import { ErrorSuppressor } from "@/components/providers/ErrorSuppressor";
 import { ThemeProvider } from "next-themes";
 import { DialogManagerProvider } from "@/components/ui/dialog-manager";
 import { PWAProvider } from "@/components/providers/PWAProvider";
-import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
-import { notFound } from "next/navigation";
-
-// Can be imported from a shared config
-const locales = ['en', 'ar'];
+import { LanguageProvider } from "@/components/providers/LanguageProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -66,25 +61,13 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
-  params: {locale}
 }: {
   children: React.ReactNode;
-  params: {locale: string};
 }) {
-  // Validate that the incoming `locale` parameter is valid
-  if (!locales.includes(locale as any)) notFound();
-
-  const messages = await getMessages();
-
   return (
-    <html
-      lang={locale}
-      dir={locale === "ar" ? "rtl" : "ltr"}
-      className={locale === "ar" ? "rtl" : "ltr"}
-      suppressHydrationWarning
-    >
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
         {/* PWA Apple Touch Icons - Required for iOS home screen icon */}
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
@@ -98,7 +81,7 @@ export default async function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className="antialiased font-sans bg-background">
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <LanguageProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -114,7 +97,7 @@ export default async function RootLayout({
               </DialogManagerProvider>
             </PWAProvider>
           </ThemeProvider>
-        </NextIntlClientProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

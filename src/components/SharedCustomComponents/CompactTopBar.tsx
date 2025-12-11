@@ -7,7 +7,8 @@ import {
   Home, 
   Sun,
   Moon,
-  LogOut
+  LogOut,
+  Globe
 } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useTheme } from 'next-themes';
@@ -39,7 +40,7 @@ interface CompactTopBarProps {
 export function CompactTopBar({ className }: CompactTopBarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, language, setLanguage, isRTL } = useTranslation();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -54,6 +55,10 @@ export function CompactTopBar({ className }: CompactTopBarProps) {
     await logout();
     router.push('/auth/signin');
     router.refresh();
+  };
+
+  const handleLanguageChange = (newLang: 'ar' | 'en') => {
+    setLanguage(newLang);
   };
 
   const getThemeIcon = () => {
@@ -90,7 +95,7 @@ export function CompactTopBar({ className }: CompactTopBarProps) {
               </BreadcrumbItem>
 
               {/* Separator after home */}
-              <BreadcrumbSeparator className="rotate-180" />
+              <BreadcrumbSeparator className={isRTL ? "rotate-180" : ""} />
 
               {/* Dynamic breadcrumb items */}
               {breadcrumbTrail.map((item, index) => {
@@ -120,7 +125,7 @@ export function CompactTopBar({ className }: CompactTopBarProps) {
                       )}
                     </BreadcrumbItem>
                     {!isLast && (
-                      <BreadcrumbSeparator className="rotate-180" />
+                      <BreadcrumbSeparator className={isRTL ? "rotate-180" : ""} />
                     )}
                   </React.Fragment>
                 );
@@ -137,6 +142,36 @@ export function CompactTopBar({ className }: CompactTopBarProps) {
           className="h-9 w-9 hover:bg-accent/50 transition-colors text-muted-foreground hover:text-foreground"
         />
 
+        {/* Language Switcher */}
+        <DropdownMenu dir={isRTL ? 'rtl' : 'ltr'}>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 hover:bg-accent/50 transition-colors text-muted-foreground hover:text-foreground"
+            >
+              <Globe className="h-4 w-4" />
+              <span className="sr-only">{t('navbar.language') || 'Language'}</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align={isRTL ? 'start' : 'end'} className="w-40">
+            <DropdownMenuItem
+              onClick={() => handleLanguageChange('ar')}
+              className={`cursor-pointer flex items-center gap-2 ${language === 'ar' ? 'bg-accent' : ''}`}
+            >
+              <span className="text-lg">🇪🇬</span>
+              <span>{t('navbar.arabic') || 'العربية'}</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleLanguageChange('en')}
+              className={`cursor-pointer flex items-center gap-2 ${language === 'en' ? 'bg-accent' : ''}`}
+            >
+              <span className="text-lg">🇺🇸</span>
+              <span>{t('navbar.english') || 'English'}</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         {/* Theme Toggle */}
         <Button
           variant="ghost"
@@ -149,7 +184,7 @@ export function CompactTopBar({ className }: CompactTopBarProps) {
         </Button>
 
         {/* User Avatar Dropdown - Only Logout */}
-        <DropdownMenu dir="rtl">
+        <DropdownMenu dir={isRTL ? 'rtl' : 'ltr'}>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
@@ -164,14 +199,14 @@ export function CompactTopBar({ className }: CompactTopBarProps) {
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-48">
+          <DropdownMenuContent align={isRTL ? 'start' : 'end'} className="w-48">
             <DropdownMenuItem
               onClick={handleLogout}
               disabled={isLoggingOut}
               className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10 flex items-center gap-2"
             >
               <LogOut className="h-4 w-4" />
-              <span>{isLoggingOut ? 'جاري تسجيل الخروج...' : t('sidebar.logout')}</span>
+              <span>{isLoggingOut ? t('common.loggingOut') || 'Logging out...' : t('sidebar.logout')}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

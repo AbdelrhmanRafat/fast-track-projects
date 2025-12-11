@@ -212,6 +212,10 @@
   "sidebar": {
     "main": "الرئيسية",
     "home": "الرئيسية",
+    "projects": "المشاريع",
+    "allProjects": "جميع المشاريع",
+    "currentProjects": "المشاريع الجارية",
+    "createProject": "إنشاء مشروع",
     "orders": "الطلبات",
     "createOrder": "إنشاء طلب",
     "allOrders": "جميع الطلبات",
@@ -232,7 +236,10 @@
   },
   "navbar": {
     "notifications": "الإشعارات",
-    "theme": "المظهر"
+    "theme": "المظهر",
+    "language": "اللغة",
+    "arabic": "العربية",
+    "english": "English"
   },
   "notifications": {
     "title": "الإشعارات",
@@ -289,20 +296,245 @@
     "actions": "الإجراءات",
     "refresh": "تحديث"
   },
- "home": {
-  "welcome": "مرحباً بك، {{name}}",
-  "welcomeDefault": "مرحباً بك"
-},
-"pageHeaders": {
-  "home": "لوحة التحكم الرئيسية لمتابعة نظرة عامة على النظام والعمليات الأخيرة.",
-  "createOrder": "صفحة لإنشاء طلب شراء جديد وإدخال التفاصيل المطلوبة.",
-  "allOrders": "تعرض جميع الطلبات المسجلة مع إمكانية البحث والفرز.",
-  "currentOrders": "صفحة لعرض الطلبات الجارية حالياً تحت المعالجة.",
-  "orderDetails": "استعراض تفاصيل الطلب المحدد بما يشمل العناصر والملاحظات.",
-  "editOrder": "تتيح تعديل بيانات الطلب وتحديث التفاصيل قبل الحفظ.",
-  "purchasingStatus": "تعديل حالة المشتريات وتحديث بيانات الشراء للعناصر.",
-  "users": "تعرض قائمة المستخدمين وإدارة الحسابات بسهولة."
-},
+  "home": {
+    "welcome": "مرحباً بك، {{name}}",
+    "welcomeDefault": "مرحباً بك",
+    "greeting": {
+      "morning": "صباح الخير",
+      "afternoon": "مساء الخير",
+      "evening": "مساء الخير"
+    },
+    "hero": {
+      "title": "نظام إدارة المشاريع",
+      "subtitle": "منصة متكاملة لإدارة مشاريعك بكفاءة واحترافية",
+      "description": "تابع مشاريعك، أدر فريقك، وحقق أهدافك بسهولة من خلال لوحة تحكم ذكية ومتطورة"
+    },
+    "stats": {
+      "title": "نظرة عامة",
+      "totalProjects": "إجمالي المشاريع",
+      "activeProjects": "المشاريع النشطة",
+      "completedProjects": "المشاريع المكتملة",
+      "overdueProjects": "المشاريع المتأخرة",
+      "teamMembers": "أعضاء الفريق",
+      "thisMonth": "هذا الشهر",
+      "increase": "زيادة",
+      "decrease": "انخفاض",
+      "fromLastMonth": "عن الشهر الماضي"
+    },
+    "quickActions": {
+      "title": "إجراءات سريعة",
+      "subtitle": "ابدأ العمل بسرعة",
+      "createProject": "إنشاء مشروع جديد",
+      "createProjectDesc": "أنشئ مشروعاً جديداً وابدأ بإضافة الخطوات",
+      "viewProjects": "عرض المشاريع",
+      "viewProjectsDesc": "استعرض جميع مشاريعك وتابع تقدمها",
+      "manageTeam": "إدارة الفريق",
+      "manageTeamDesc": "أضف أعضاء جدد وأدر صلاحياتهم",
+      "viewReports": "التقارير",
+      "viewReportsDesc": "اطلع على تقارير الأداء والإحصائيات"
+    },
+    "recentProjects": {
+      "title": "المشاريع الأخيرة",
+      "subtitle": "آخر المشاريع التي تم العمل عليها",
+      "viewAll": "عرض الكل",
+      "noProjects": "لا توجد مشاريع حتى الآن",
+      "noProjectsDesc": "ابدأ بإنشاء مشروعك الأول",
+      "progress": "التقدم",
+      "steps": "خطوة",
+      "dueDate": "تاريخ الانتهاء",
+      "createdBy": "أنشأه"
+    },
+    "activity": {
+      "title": "النشاط الأخير",
+      "subtitle": "آخر التحديثات والإجراءات",
+      "noActivity": "لا يوجد نشاط حتى الآن",
+      "projectCreated": "تم إنشاء مشروع جديد",
+      "projectCompleted": "تم إكمال المشروع",
+      "stepFinalized": "تم إكمال خطوة",
+      "userAdded": "تم إضافة عضو جديد",
+      "justNow": "الآن",
+      "minutesAgo": "منذ {{minutes}} دقيقة",
+      "hoursAgo": "منذ {{hours}} ساعة",
+      "daysAgo": "منذ {{days}} يوم"
+    },
+    "projectTypes": {
+      "title": "أنواع المشاريع",
+      "siteProject": "مشاريع المواقع",
+      "siteProjectDesc": "مشاريع البناء والتطوير في المواقع",
+      "designProject": "مشاريع التصميم",
+      "designProjectDesc": "مشاريع التصميم الهندسي والمعماري"
+    },
+    "tips": {
+      "title": "نصائح وإرشادات",
+      "tip1": {
+        "title": "نظم خطواتك",
+        "description": "قسّم مشروعك إلى خطوات صغيرة لتسهيل المتابعة والإنجاز"
+      },
+      "tip2": {
+        "title": "حدد المواعيد",
+        "description": "ضع مواعيد نهائية واقعية لكل خطوة لضمان إنجاز المشروع في الوقت المحدد"
+      },
+      "tip3": {
+        "title": "تابع التقدم",
+        "description": "راجع تقدم مشاريعك بانتظام وقم بتحديث حالة الخطوات"
+      }
+    },
+    "emptyState": {
+      "title": "ابدأ رحلتك",
+      "description": "لم تقم بإنشاء أي مشروع بعد. ابدأ الآن وأنشئ مشروعك الأول!",
+      "buttonText": "إنشاء مشروع جديد"
+    },
+    "footer": {
+      "copyright": "جميع الحقوق محفوظة",
+      "version": "الإصدار",
+      "support": "الدعم الفني",
+      "documentation": "التوثيق"
+    }
+  },
+  "pageHeaders": {
+    "home": "لوحة التحكم الرئيسية لمتابعة نظرة عامة على النظام والعمليات الأخيرة.",
+    "createOrder": "صفحة لإنشاء طلب شراء جديد وإدخال التفاصيل المطلوبة.",
+    "allOrders": "تعرض جميع الطلبات المسجلة مع إمكانية البحث والفرز.",
+    "currentOrders": "صفحة لعرض الطلبات الجارية حالياً تحت المعالجة.",
+    "orderDetails": "استعراض تفاصيل الطلب المحدد بما يشمل العناصر والملاحظات.",
+    "editOrder": "تتيح تعديل بيانات الطلب وتحديث التفاصيل قبل الحفظ.",
+    "purchasingStatus": "تعديل حالة المشتريات وتحديث بيانات الشراء للعناصر.",
+    "users": "تعرض قائمة المستخدمين وإدارة الحسابات بسهولة.",
+    "allProjects": "عرض جميع المشاريع المسجلة في النظام مع إمكانية البحث والتصفية.",
+    "currentProjects": "متابعة المشاريع الجارية حالياً قيد التنفيذ.",
+    "createProject": "إنشاء مشروع جديد وإدخال البيانات الأساسية.",
+    "projectDetails": "استعراض تفاصيل المشروع بما يشمل المراحل والحالة.",
+    "editProject": "تعديل بيانات المشروع وتحديث المعلومات."
+  },
+  "projects": {
+    "title": "المشاريع",
+    "allProjects": "كل المشاريع",
+    "currentProjects": "المشاريع الحالية",
+    "createProject": "إنشاء مشروع جديد",
+    "editProject": "تعديل المشروع",
+    "deleteProject": "حذف المشروع",
+    "projectDetails": "تفاصيل المشروع",
+    "noProjects": "لا توجد مشاريع",
+    "noProjectsDescription": "لم يتم إنشاء أي مشاريع بعد",
+    "loadingProjects": "جاري تحميل المشاريع...",
+    "types": {
+      "all": "كل الأنواع",
+      "siteProject": "مشروع موقع",
+      "designProject": "مشروع تصميم"
+    },
+    "status": {
+      "all": "كل الحالات",
+      "active": "نشط",
+      "completed": "مكتمل",
+      "overdue": "متأخر"
+    },
+    "fields": {
+      "projectName": "اسم المشروع",
+      "projectType": "نوع المشروع",
+      "projectDescription": "وصف المشروع",
+      "companyName": "اسم الشركة",
+      "durationFrom": "تاريخ البداية",
+      "durationTo": "تاريخ النهاية",
+      "status": "الحالة",
+      "progress": "التقدم",
+      "creator": "المنشئ",
+      "createdAt": "تاريخ الإنشاء",
+      "updatedAt": "تاريخ التحديث"
+    },
+    "steps": {
+      "title": "خطوات المشروع",
+      "addStep": "إضافة خطوة",
+      "editStep": "تعديل الخطوة",
+      "deleteStep": "حذف الخطوة",
+      "stepName": "اسم الخطوة",
+      "stepDescription": "وصف الخطوة",
+      "stepOrder": "ترتيب الخطوة",
+      "finalize": "إكمال الخطوة",
+      "finalized": "مكتملة",
+      "pending": "قيد التنفيذ",
+      "notStarted": "لم تبدأ",
+      "finalizedAt": "تاريخ الإكمال",
+      "noSteps": "لا توجد خطوات",
+      "addFirstStep": "أضف أول خطوة للمشروع",
+      "stepNumber": "الخطوة {number}",
+      "confirmFinalize": "هل أنت متأكد من إكمال هذه الخطوة؟",
+      "cannotUnfinalize": "لا يمكن التراجع عن إكمال الخطوة"
+    },
+    "form": {
+      "createTitle": "إنشاء مشروع جديد",
+      "editTitle": "تعديل المشروع",
+      "projectInfo": "معلومات المشروع",
+      "stepsSection": "خطوات المشروع",
+      "addStepButton": "إضافة خطوة",
+      "removeStep": "حذف الخطوة",
+      "submit": "إنشاء المشروع",
+      "update": "تحديث المشروع",
+      "cancel": "إلغاء",
+      "saving": "جاري الحفظ...",
+      "minOneStep": "يجب إضافة خطوة واحدة على الأقل"
+    },
+    "validation": {
+      "projectNameRequired": "اسم المشروع مطلوب",
+      "projectTypeRequired": "نوع المشروع مطلوب",
+      "durationFromRequired": "تاريخ البداية مطلوب",
+      "durationToAfterFrom": "تاريخ النهاية يجب أن يكون بعد تاريخ البداية",
+      "stepNameRequired": "اسم الخطوة مطلوب",
+      "atLeastOneStep": "يجب إضافة خطوة واحدة على الأقل"
+    },
+    "messages": {
+      "createSuccess": "تم إنشاء المشروع بنجاح",
+      "updateSuccess": "تم تحديث المشروع بنجاح",
+      "deleteSuccess": "تم حذف المشروع بنجاح",
+      "deleteConfirm": "هل أنت متأكد من حذف هذا المشروع؟",
+      "deleteWarning": "سيتم حذف جميع الخطوات المرتبطة بهذا المشروع",
+      "stepAddSuccess": "تم إضافة الخطوة بنجاح",
+      "stepUpdateSuccess": "تم تحديث الخطوة بنجاح",
+      "stepDeleteSuccess": "تم حذف الخطوة بنجاح",
+      "stepFinalizeSuccess": "تم إكمال الخطوة بنجاح",
+      "projectCompleted": "تم إكمال المشروع بالكامل",
+      "fetchError": "فشل في جلب المشاريع",
+      "createError": "فشل في إنشاء المشروع",
+      "updateError": "فشل في تحديث المشروع",
+      "deleteError": "فشل في حذف المشروع"
+    },
+    "filters": {
+      "search": "بحث...",
+      "searchPlaceholder": "ابحث باسم المشروع أو الشركة",
+      "filterByType": "تصفية حسب النوع",
+      "filterByStatus": "تصفية حسب الحالة",
+      "filterByCompany": "تصفية حسب الشركة",
+      "clearFilters": "مسح الفلاتر",
+      "applyFilters": "تطبيق"
+    },
+    "table": {
+      "columns": {
+        "projectName": "اسم المشروع",
+        "projectType": "النوع",
+        "companyName": "الشركة",
+        "status": "الحالة",
+        "progress": "التقدم",
+        "creator": "المنشئ",
+        "createdAt": "تاريخ الإنشاء",
+        "durationFrom": "تاريخ البداية",
+        "durationTo": "تاريخ النهاية",
+        "actions": "الإجراءات"
+      },
+      "empty": "لا توجد مشاريع متاحة"
+    },
+    "notifications": {
+      "projectCreated": "مشروع جديد",
+      "projectCreatedBody": "تم إنشاء مشروع جديد: {projectName}",
+      "projectCompleted": "تم إكمال مشروع",
+      "projectCompletedBody": "المهندس {engineerName} أكمل المشروع \"{projectName}\"",
+      "projectOverdue": "مشروع متأخر",
+      "projectOverdueBody": "المشروع \"{projectName}\" للمهندس {engineerName} تجاوز الموعد النهائي"
+    },
+    "permissions": {
+      "cannotEdit": "ليس لديك صلاحية لتعديل هذا المشروع",
+      "cannotDelete": "ليس لديك صلاحية لحذف هذا المشروع",
+      "onlyCreatorCanManage": "فقط منشئ المشروع يمكنه إدارته"
+    }
+  },
   "orders": {
     "title": "الطلبات",
     "subtitle": "إدارة الطلبات",

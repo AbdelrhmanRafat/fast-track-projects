@@ -58,18 +58,40 @@ export interface SubscribeRequest {
 // ==========================================
 
 /**
- * Notification types - matches backend
+ * Order notification types enum - matches backend
+ */
+export enum OrderNotificationType {
+  OrderCreated = 'order_created',           // طلب جديد - New order created
+  EngineeringReview = 'engineering_review', // تمت المراجعة الهندسية
+  AdminReview = 'admin_review',             // مراجعة الطلب من الإدارة
+  OwnerApproved = 'owner_approved',         // تمت الموافقة من الادارة
+  OwnerRejected = 'owner_rejected',         // تم رفض الطلب
+  PurchasingStarted = 'purchasing_started', // بدأت عملية الشراء
+  OrderClosed = 'order_closed',             // تم إغلاق الطلب
+  ItemStatusChanged = 'item_status_changed', // تم تحديث حالة البند
+}
+
+/**
+ * Project notification types enum - matches backend
+ */
+export enum ProjectNotificationType {
+  ProjectCreated = 'project_created',     // مشروع جديد - New project created
+  ProjectCompleted = 'project_completed', // تم إكمال المشروع - Project completed
+  ProjectOverdue = 'project_overdue',     // مشروع متأخر - Project overdue
+}
+
+/**
+ * All notification types
  */
 export type NotificationType = 
-  | 'order_created'        // طلب جديد - New order created
-  | 'engineering_review'   // تمت المراجعة الهندسية
-  | 'admin_review'         // مراجعة الطلب من الإدارة
-  | 'owner_approved'       // تمت الموافقة من الادارة
-  | 'owner_rejected'       // تم رفض الطلب
-  | 'purchasing_started'   // بدأت عملية الشراء
-  | 'order_closed'         // تم إغلاق الطلب
-  | 'item_status_changed'  // تم تحديث حالة البند
+  | OrderNotificationType
+  | ProjectNotificationType
   | 'system';              // نظام
+
+/**
+ * Project source for filtering notifications
+ */
+export type ProjectSource = 'orders' | 'projects';
 
 /**
  * Notification stored in database
@@ -83,6 +105,7 @@ export interface Notification {
   type: NotificationType;
   data: NotificationData;
   is_read: boolean;
+  project_source?: ProjectSource;
   created_at: string;
 }
 
@@ -90,10 +113,16 @@ export interface Notification {
  * Additional notification data
  */
 export interface NotificationData {
+  // Order-related data
   orderId?: string;
   orderNumber?: string;
   oldStatus?: string;
   newStatus?: string;
+  // Project-related data
+  projectId?: string;
+  projectName?: string;
+  projectType?: 'siteProject' | 'designProject';
+  // Common data
   actionUrl?: string;
   [key: string]: any;
 }
@@ -299,11 +328,56 @@ export const STATUS_MESSAGES: Record<string, string> = {
  * Maps order status to notification type
  */
 export const STATUS_TO_NOTIFICATION_TYPE: Record<string, NotificationType> = {
-  'تم اجراء الطلب': 'order_created',
-  'تمت المراجعة الهندسية': 'engineering_review',
-  'مراجعة الطلب من الادارة': 'admin_review',
-  'تمت الموافقة من الادارة': 'owner_approved',
-  'تم الرفض من الادارة': 'owner_rejected',
-  'جاري الان عملية الشراء': 'purchasing_started',
-  'تم غلق طلب الشراء': 'order_closed',
+  'تم اجراء الطلب': OrderNotificationType.OrderCreated,
+  'تمت المراجعة الهندسية': OrderNotificationType.EngineeringReview,
+  'مراجعة الطلب من الادارة': OrderNotificationType.AdminReview,
+  'تمت الموافقة من الادارة': OrderNotificationType.OwnerApproved,
+  'تم الرفض من الادارة': OrderNotificationType.OwnerRejected,
+  'جاري الان عملية الشراء': OrderNotificationType.PurchasingStarted,
+  'تم غلق طلب الشراء': OrderNotificationType.OrderClosed,
+};
+
+// ==========================================
+// Project Notification Constants
+// ==========================================
+
+/**
+ * Project notification messages - use translation keys
+ * Keys: projects.notifications.projectCreatedBody, etc.
+ */
+export const PROJECT_NOTIFICATION_MESSAGE_KEYS: Record<ProjectNotificationType, string> = {
+  [ProjectNotificationType.ProjectCreated]: 'projects.notifications.projectCreatedBody',
+  [ProjectNotificationType.ProjectCompleted]: 'projects.notifications.projectCompletedBody',
+  [ProjectNotificationType.ProjectOverdue]: 'projects.notifications.projectOverdueBody',
+};
+
+/**
+ * Project notification titles - use translation keys
+ * Keys: projects.notifications.projectCreated, etc.
+ */
+export const PROJECT_NOTIFICATION_TITLE_KEYS: Record<ProjectNotificationType, string> = {
+  [ProjectNotificationType.ProjectCreated]: 'projects.notifications.projectCreated',
+  [ProjectNotificationType.ProjectCompleted]: 'projects.notifications.projectCompleted',
+  [ProjectNotificationType.ProjectOverdue]: 'projects.notifications.projectOverdue',
+};
+
+/**
+ * Project notification targets
+ * - project_created: When project-engineer creates a project → notify admin/sub-admin
+ * - project_completed: When all steps finalized → notify admin/sub-admin  
+ * - project_overdue: When project passes duration_to → notify admin/sub-admin
+ */
+export const PROJECT_NOTIFICATION_TARGETS: Record<ProjectNotificationType, NotificationTargets> = {
+  [ProjectNotificationType.ProjectCreated]: {
+    roles: ['admin', 'sub-admin'],
+    includeCreator: false,
+  },
+  [ProjectNotificationType.ProjectCompleted]: {
+    roles: ['admin', 'sub-admin'],
+    includeCreator: false,
+  },
+  [ProjectNotificationType.ProjectOverdue]: {
+    roles: ['admin', 'sub-admin'],
+    includeCreator: false,
+  },
 };

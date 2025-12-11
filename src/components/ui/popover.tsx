@@ -4,6 +4,7 @@ import * as React from "react"
 import * as PopoverPrimitive from "@radix-ui/react-popover"
 
 import { cn } from "@/lib/utils"
+import { useLanguageProvider } from "@/components/providers/LanguageProvider"
 
 function Popover({
   ...props
@@ -23,10 +24,11 @@ function PopoverContent({
   sideOffset = 4,
   ...props
 }: React.ComponentProps<typeof PopoverPrimitive.Content>) {
+  const { dir } = useLanguageProvider();
   return (
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Content
-        dir="rtl"
+        dir={dir}
         data-slot="popover-content"
         align={align}
         sideOffset={sideOffset}

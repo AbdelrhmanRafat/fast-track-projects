@@ -5,11 +5,13 @@ import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { useLanguageProvider } from "@/components/providers/LanguageProvider"
 
 function DropdownMenu({
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) {
-  return <DropdownMenuPrimitive.Root dir="rtl" data-slot="dropdown-menu" {...props} />
+  const { dir } = useLanguageProvider();
+  return <DropdownMenuPrimitive.Root dir={dir} data-slot="dropdown-menu" {...props} />
 }
 
 function DropdownMenuPortal({

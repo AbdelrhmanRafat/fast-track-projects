@@ -6,25 +6,20 @@ import { COOKIE_TOKEN, COOKIE_USER_ROLE } from '@/lib/cookies';
 enum UserRole {
   Admin = "admin",
   SubAdmin = "sub-admin",
-  Engineering = "engineering",
-  Purchasing = "purchasing",
-  Site = "site",
+  ProjectEngineers = "project-engineers",
 }
 
 // Define route patterns with role-based access control
 const ROUTE_CONFIG = {
-  // Protected routes that require authentication (based on sidebar configuration)
+  // Protected routes that require authentication
   // More specific routes should come before less specific ones
   protected: [
     { path: '/home', roles: null }, // All authenticated users
-    { path: '/create-order', roles: [UserRole.Admin, UserRole.SubAdmin, UserRole.Engineering, UserRole.Site] },
-    { path: '/orders/all', roles: [UserRole.Admin, UserRole.SubAdmin] },
-    { path: '/orders/current', roles: null }, // All authenticated users
-    // Order edit routes - Admin, SubAdmin, Engineering, and Site can access edit pages
-    // Note: Actual edit permission is controlled by order status in the edit page component
-    { path: '/orders/', roles: null, pattern: /^\/orders\/[^/]+\/edit$/, restrictedRoles: [UserRole.Admin, UserRole.SubAdmin, UserRole.Engineering, UserRole.Site] },
-    { path: '/orders', roles: null }, // Base orders path - allow for dynamic routes (view pages)
-    { path: '/users', roles: [UserRole.Admin, UserRole.SubAdmin] }, // Admin and SubAdmin can access users
+    // Projects module routes - all roles can access
+    { path: '/projects/create', roles: [UserRole.Admin, UserRole.SubAdmin, UserRole.ProjectEngineers] },
+    { path: '/projects', roles: [UserRole.Admin, UserRole.SubAdmin, UserRole.ProjectEngineers] },
+    // Users management - Admin and SubAdmin only
+    { path: '/users', roles: [UserRole.Admin, UserRole.SubAdmin] },
   ],
   
   // Authentication routes (based on actual app structure)
@@ -45,7 +40,7 @@ const ROUTE_CONFIG = {
   api: ['/api'],
   
   // Static assets and Next.js internal routes
-  static: ['/_next', '/favicon.ico', '/assets', '/public', '/fonts']
+  static: ['/_next', '/favicon.ico', '/assets', '/public', '/fonts', '/icons', '/locales']
 } as const;
 
 /**
@@ -66,15 +61,8 @@ function matchesRoute(pathname: string, routes: readonly string[]): boolean {
  * Find the matching protected route config for a pathname
  */
 function findRouteConfig(pathname: string) {
-  // First check for pattern-based routes (most specific)
-  for (const route of ROUTE_CONFIG.protected) {
-    if ('pattern' in route && route.pattern && route.pattern.test(pathname)) {
-      return route;
-    }
-  }
-  
-  // Then sort by path length descending to match most specific route first
-  const sortedRoutes = [...ROUTE_CONFIG.protected].filter(r => !('pattern' in r && r.pattern));
+  // Sort by path length descending to match most specific route first
+  const sortedRoutes = [...ROUTE_CONFIG.protected];
   sortedRoutes.sort((a, b) => b.path.length - a.path.length);
   
   for (const route of sortedRoutes) {
@@ -140,15 +128,7 @@ export default function middleware(request: NextRequest) {
     }
     
     // Check role-based access
-    // First check restrictedRoles (for pattern-based routes like edit pages)
-    if (routeConfig && 'restrictedRoles' in routeConfig && routeConfig.restrictedRoles) {
-      if (!hasRoleAccess(userRole, routeConfig.restrictedRoles)) {
-        // Redirect to 404 for unauthorized access to edit pages
-        return NextResponse.redirect(new URL('/not-found', request.url));
-      }
-    }
-    // Then check general roles restriction
-    else if (routeConfig && routeConfig.roles && !hasRoleAccess(userRole, routeConfig.roles)) {
+    if (routeConfig && routeConfig.roles && !hasRoleAccess(userRole, routeConfig.roles)) {
       // Redirect to unauthorized page
       return NextResponse.redirect(new URL('/unauthorized', request.url));
     }

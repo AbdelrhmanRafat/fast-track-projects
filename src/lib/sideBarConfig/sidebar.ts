@@ -109,7 +109,7 @@ export const sidebarConfig: SidebarGroup[] = [
         href: "/projects/create",
         icon: Plus,
         theme: "primary",
-        allowedRoles: [UserRole.Admin, UserRole.SubAdmin, UserRole.Engineering, UserRole.Site],
+        allowedRoles: [UserRole.Admin, UserRole.SubAdmin, UserRole.ProjectEngineers],
       },
     ],
   },
