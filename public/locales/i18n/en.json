@@ -1,0 +1,10 @@
+{
+  "sidebar": {
+    "projects": "Projects",
+    "allProjects": "All Projects",
+    "currentProjects": "Current Projects",
+    "createProject": "Create Project",
+    "users": "Users",
+    "userslist": "Users List"
+  }
+}

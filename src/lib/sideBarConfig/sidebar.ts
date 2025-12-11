@@ -1,12 +1,10 @@
 import {
-  Home,
   Users,
   LucideIcon,
-  ShoppingCart,
   Plus,
   List,
   Clock,
-  Eye,
+  Briefcase,
 } from "lucide-react";
 import { UserRole } from "@/lib/types/userRoles";
 
@@ -81,57 +79,37 @@ export const COLOR_CLASSES: Record<ThemeKey, ThemeColors> = {
 
 // Enhanced icon registry
 export const ICON_REGISTRY: Record<string, LucideIcon> = {
-  Home,
   Users,
-  ShoppingCart,
   Plus,
   List,
   Clock,
-  Eye,
+  Briefcase,
 };
 
 // Sidebar configuration with role-based access
 export const sidebarConfig: SidebarGroup[] = [
   {
-    titleKey: "sidebar.main",
-    expandable: true,
-    // All roles can see the main section
-    items: [
-      {
-        labelKey: "sidebar.home",
-        href: "/home",
-        icon: Home,
-        theme: "primary",
-        // All roles can access home
-      },
-    ],
-  },
-  {
-    titleKey: "sidebar.orders",
+    titleKey: "sidebar.projects",
     expandable: true,
     items: [
       {
-        labelKey: "sidebar.createOrder",
-        href: "/create-order",
-        icon: Plus,
-        theme: "primary",
-        // Only Admin, SubAdmin, Engineering, and Site can create orders
-        allowedRoles: [UserRole.Admin, UserRole.SubAdmin, UserRole.Engineering, UserRole.Site],
-      },
-      {
-        labelKey: "sidebar.allOrders",
-        href: "/orders/all",
+        labelKey: "sidebar.allProjects",
+        href: "/projects/all",
         icon: List,
         theme: "primary",
-        // Only Admin and SubAdmin can see all orders
-        allowedRoles: [UserRole.Admin, UserRole.SubAdmin],
       },
       {
-        labelKey: "sidebar.currentOrders",
-        href: "/orders/current",
+        labelKey: "sidebar.currentProjects",
+        href: "/projects/current",
         icon: Clock,
         theme: "primary",
-        // All roles can see current orders (filtered by backend based on role)
+      },
+      {
+        labelKey: "sidebar.createProject",
+        href: "/projects/create",
+        icon: Plus,
+        theme: "primary",
+        allowedRoles: [UserRole.Admin, UserRole.SubAdmin, UserRole.Engineering, UserRole.Site],
       },
     ],
   },

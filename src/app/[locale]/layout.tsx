@@ -2,12 +2,17 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { GlobalModal } from "@/components/providers/GlobalModal";
-import { LanguageProvider } from "@/components/providers/LanguageProvider";
 import LoadingOverlay from "@/components/providers/LoadingOverlay";
 import { ErrorSuppressor } from "@/components/providers/ErrorSuppressor";
 import { ThemeProvider } from "next-themes";
 import { DialogManagerProvider } from "@/components/ui/dialog-manager";
 import { PWAProvider } from "@/components/providers/PWAProvider";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+import { notFound } from "next/navigation";
+
+// Can be imported from a shared config
+const locales = ['en', 'ar'];
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -63,14 +68,21 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({
   children,
-}: Readonly<{
+  params: {locale}
+}: {
   children: React.ReactNode;
-}>) {
+  params: {locale: string};
+}) {
+  // Validate that the incoming `locale` parameter is valid
+  if (!locales.includes(locale as any)) notFound();
+
+  const messages = await getMessages();
+
   return (
     <html
-      lang="ar"
-      dir="rtl"
-      className="rtl"
+      lang={locale}
+      dir={locale === "ar" ? "rtl" : "ltr"}
+      className={locale === "ar" ? "rtl" : "ltr"}
       suppressHydrationWarning
     >
       <head>
@@ -86,7 +98,7 @@ export default async function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className="antialiased font-sans bg-background">
-        <LanguageProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -102,7 +114,7 @@ export default async function RootLayout({
               </DialogManagerProvider>
             </PWAProvider>
           </ThemeProvider>
-        </LanguageProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
