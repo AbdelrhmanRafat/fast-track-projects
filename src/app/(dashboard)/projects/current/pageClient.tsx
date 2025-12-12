@@ -4,7 +4,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/components/providers/LanguageProvider';
 import { RouteBasedPageHeader } from '@/components/SharedCustomComponents/RouteBasedPageHeader';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -15,6 +14,7 @@ import {
   ChevronLeft,
   ChevronRight,
   FolderKanban,
+  Download,
 } from 'lucide-react';
 import type {
   Project,
@@ -158,25 +158,35 @@ export default function CurrentProjectsTableClient({
 
   const projects = data?.data || [];
 
-  // Table columns configuration
+  // Table columns configuration - optimized for mobile
   const columns: TableColumn<Project>[] = useMemo(() => [
     {
       key: 'project_name',
       label: t('projects.table.columns.projectName'),
-      render: (value) => <span className="font-medium">{value}</span>,
+      width: 'min-w-[140px]',
+      render: (value, row) => (
+        <div className="space-y-1">
+          <span className="font-medium text-sm block">{value}</span>
+          <span className="text-xs text-muted-foreground block sm:hidden">
+            {row.company_name || '-'}
+          </span>
+        </div>
+      ),
     },
     {
       key: 'company_name',
       label: t('projects.table.columns.companyName'),
-      render: (value) => value || '-',
+      className: 'hidden sm:table-cell',
+      render: (value) => <span className="text-sm">{value || '-'}</span>,
     },
     {
       key: 'project_type',
       label: t('projects.table.columns.projectType'),
+      width: 'w-[90px]',
       render: (value: ProjectType) => (
         <Badge
           variant="outline"
-          className={PROJECT_TYPE_BADGE_CLASSES[value] || ''}
+          className={`text-xs ${PROJECT_TYPE_BADGE_CLASSES[value] || ''}`}
         >
           {t(`projects.types.${value}` as any)}
         </Badge>
@@ -184,11 +194,12 @@ export default function CurrentProjectsTableClient({
     },
     {
       key: 'duration_from',
-      label: `${t('projects.fields.durationFrom')} - ${t('projects.fields.durationTo')}`,
+      label: t('projects.view.duration'),
+      className: 'hidden md:table-cell',
       render: (value, row) => (
-        <div className="flex flex-col gap-0.5">
-          <span>{formatDate(row.duration_from, language)}</span>
-          <span className="text-muted-foreground">
+        <div className="text-xs space-y-0.5">
+          <span className="block">{formatDate(row.duration_from, language)}</span>
+          <span className="text-muted-foreground block">
             → {formatDate(row.duration_to, language)}
           </span>
         </div>
@@ -197,10 +208,11 @@ export default function CurrentProjectsTableClient({
     {
       key: 'status',
       label: t('projects.table.columns.status'),
+      width: 'w-[80px]',
       render: (value: ProjectStatus) => (
         <Badge
           variant="outline"
-          className={PROJECT_STATUS_BADGE_CLASSES[value] || ''}
+          className={`text-xs ${PROJECT_STATUS_BADGE_CLASSES[value] || ''}`}
         >
           {t(`projects.status.${value}` as any)}
         </Badge>
@@ -209,18 +221,20 @@ export default function CurrentProjectsTableClient({
     {
       key: 'creator',
       label: t('projects.table.columns.creator'),
-      render: (value) => value?.name || '-',
+      className: 'hidden lg:table-cell',
+      render: (value) => <span className="text-sm">{value?.name || '-'}</span>,
     },
     {
       key: 'progress',
       label: t('projects.table.columns.progress'),
+      width: 'w-[100px]',
       render: (value) => (
-        <div className="flex items-center gap-2 min-w-[100px]">
+        <div className="flex items-center gap-2">
           <Progress
             value={value?.percentage || 0}
-            className="h-2 flex-1"
+            className="h-1.5 flex-1 min-w-[50px]"
           />
-          <span className="text-sm text-muted-foreground w-10 text-end">
+          <span className="text-xs text-muted-foreground w-8 text-end">
             {value?.percentage || 0}%
           </span>
         </div>
@@ -240,107 +254,118 @@ export default function CurrentProjectsTableClient({
   ], [t]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <RouteBasedPageHeader />
 
-      <Card className="overflow-hidden p-0 gap-0">
-        {/* Brand Header */}
-        <div className="bg-[#5C1A1B] px-5 py-4 flex items-center gap-3">
-          <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-white/15">
-            <FolderKanban className="h-4 w-4 text-white" />
+      {/* Page Title with Icon */}
+      <div className="flex items-center justify-between px-1">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-[#5C1A1B]">
+            <FolderKanban className="h-5 w-5 text-white" />
           </div>
-          <span className="font-semibold text-white">{t('projects.currentProjects')}</span>
+          <div>
+            <h2 className="font-semibold text-lg">{t('projects.currentProjects')}</h2>
+            <p className="text-xs text-muted-foreground">
+              {pagination.total} {t('projects.title')}
+            </p>
+          </div>
         </div>
-        <CardContent className="p-5 space-y-5">
-          {/* Search and Filters using SearchComponent */}
-          <div className="pb-4">
-            <SearchComponent
-              config={searchConfig}
-              onSearch={handleSearch}
-              onClear={handleClearFilters}
-              initialValues={searchInitialValues}
-            />
+      </div>
+
+      {/* Search and Filters */}
+      <div className="space-y-3">
+        <SearchComponent
+          config={searchConfig}
+          onSearch={handleSearch}
+          onClear={handleClearFilters}
+          initialValues={searchInitialValues}
+        />
+      </div>
+
+      {/* Table Component - No Card Wrapper */}
+      <div className="rounded-xl border bg-card overflow-hidden">
+        <Table<Project>
+          columns={columns}
+          data={projects}
+          loading={loading}
+          actions={actions}
+          showActions={true}
+          searchable={false}
+          showPagination={false}
+          emptyMessage={t('projects.noProjects')}
+          exportable={true}
+          exportFileName="current-projects"
+          className="border-0 shadow-none"
+        />
+      </div>
+
+      {/* Mobile-Optimized Pagination */}
+      {!loading && projects.length > 0 && pagination.totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-1">
+          {/* Pagination Info */}
+          <div className="text-xs text-muted-foreground order-2 sm:order-1">
+            {t('table.showing')} {((pagination.page - 1) * pagination.limit) + 1}
+            {' '}-{' '}
+            {Math.min(pagination.page * pagination.limit, pagination.total)}
+            {' '}{t('table.of')}{' '}
+            {pagination.total}
           </div>
 
-          {/* Table Component */}
-          <Table<Project>
-            columns={columns}
-            data={projects}
-            loading={loading}
-            actions={actions}
-            showActions={true}
-            searchable={false}
-            showPagination={false}
-            emptyMessage={t('projects.noProjects')}
-          />
+          {/* Pagination Controls */}
+          <div className="flex items-center gap-1.5 order-1 sm:order-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(pagination.page - 1)}
+              disabled={pagination.page <= 1 || loading}
+              className="h-9 px-3"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              <span className="hidden sm:inline ms-1">{t('table.previous')}</span>
+            </Button>
 
-          {/* Server-Side Pagination */}
-          {!loading && projects.length > 0 && pagination.totalPages > 1 && (
-            <div className="flex items-center justify-between pt-4 border-t">
-              {/* Pagination Info */}
-              <div className="text-sm text-muted-foreground">
-                {t('table.showing')} {((pagination.page - 1) * pagination.limit) + 1}
-                {' '}{t('table.to')}{' '}
-                {Math.min(pagination.page * pagination.limit, pagination.total)}
-                {' '}{t('table.of')}{' '}
-                {pagination.total} {t('table.entries')}
-              </div>
+            {/* Page Numbers - Simplified for Mobile */}
+            <div className="flex items-center gap-1">
+              {Array.from({ length: Math.min(3, pagination.totalPages) }, (_, i) => {
+                let pageNum: number;
+                if (pagination.totalPages <= 3) {
+                  pageNum = i + 1;
+                } else if (pagination.page <= 2) {
+                  pageNum = i + 1;
+                } else if (pagination.page >= pagination.totalPages - 1) {
+                  pageNum = pagination.totalPages - 2 + i;
+                } else {
+                  pageNum = pagination.page - 1 + i;
+                }
 
-              {/* Pagination Controls */}
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(pagination.page - 1)}
-                  disabled={pagination.page <= 1 || loading}
-                >
-                  <ChevronLeft className="h-4 w-4 me-1" />
-                  {t('table.previous')}
-                </Button>
-
-                {/* Page Numbers */}
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
-                    let pageNum: number;
-                    if (pagination.totalPages <= 5) {
-                      pageNum = i + 1;
-                    } else if (pagination.page <= 3) {
-                      pageNum = i + 1;
-                    } else if (pagination.page >= pagination.totalPages - 2) {
-                      pageNum = pagination.totalPages - 4 + i;
-                    } else {
-                      pageNum = pagination.page - 2 + i;
-                    }
-
-                    return (
-                      <Button
-                        key={pageNum}
-                        variant={pagination.page === pageNum ? 'default' : 'outline'}
-                        size="sm"
-                        className="w-8 h-8 p-0"
-                        onClick={() => handlePageChange(pageNum)}
-                        disabled={loading}
-                      >
-                        {pageNum}
-                      </Button>
-                    );
-                  })}
-                </div>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(pagination.page + 1)}
-                  disabled={!pagination.hasMore || loading}
-                >
-                  {t('table.next')}
-                  <ChevronRight className="h-4 w-4 ms-1" />
-                </Button>
-              </div>
+                return (
+                  <Button
+                    key={pageNum}
+                    variant={pagination.page === pageNum ? 'default' : 'outline'}
+                    size="sm"
+                    className="w-9 h-9 p-0"
+                    onClick={() => handlePageChange(pageNum)}
+                    disabled={loading}
+                  >
+                    {pageNum}
+                  </Button>
+                );
+              })}
             </div>
-          )}
-        </CardContent>
-      </Card>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(pagination.page + 1)}
+              disabled={!pagination.hasMore || loading}
+              className="h-9 px-3"
+            >
+              <span className="hidden sm:inline me-1">{t('table.next')}</span>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

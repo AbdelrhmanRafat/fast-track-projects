@@ -14,6 +14,7 @@
   "common": {
     "success": "نجح",
     "error": "خطأ",
+    "OR": "أو",
     "save": "حفظ",
     "edit": "تعديل",
     "delete": "حذف",
