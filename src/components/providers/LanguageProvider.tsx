@@ -30,7 +30,9 @@ interface LanguageContextType {
   dir: 'rtl' | 'ltr';
   t: (key: TranslationKeys, fallback?: string) => string;
   switchLanguage: (newLanguage: Language) => void;
+  setLanguage: (newLanguage: Language) => void; // Alias for switchLanguage
   isHydrated: boolean;
+  mounted: boolean; // Alias for isHydrated
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -160,7 +162,9 @@ export function LanguageProvider({ children, initialLanguage }: LanguageProvider
     dir,
     t,
     switchLanguage,
+    setLanguage: switchLanguage, // Alias for backward compatibility
     isHydrated,
+    mounted: isHydrated, // Alias for backward compatibility
   }), [language, isRTL, dir, t, switchLanguage, isHydrated]);
 
   return (

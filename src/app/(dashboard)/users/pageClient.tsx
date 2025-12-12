@@ -111,7 +111,7 @@ export default function UsersClient({ users }: UsersClientProps) {
     name: '',
     account_name: '',
     password: '',
-    role: UserRole.Engineering
+    role: UserRole.ProjectEngineers
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -152,7 +152,7 @@ export default function UsersClient({ users }: UsersClientProps) {
       name: '',
       account_name: '',
       password: '',
-      role: UserRole.Engineering
+      role: UserRole.ProjectEngineers
     })
     setShowPassword(false)
     setErrors({})
@@ -212,7 +212,7 @@ export default function UsersClient({ users }: UsersClientProps) {
       name: '',
       account_name: '',
       password: '',
-      role: UserRole.Engineering
+      role: UserRole.ProjectEngineers
     })
     setShowPassword(false)
     setErrors({})
@@ -280,9 +280,7 @@ export default function UsersClient({ users }: UsersClientProps) {
 
   const roleOptions = [
     { value: UserRole.SubAdmin, label: t('users.roles.sub-admin') },
-    { value: UserRole.Engineering, label: t('users.roles.engineering') },
-    { value: UserRole.Purchasing, label: t('users.roles.purchasing') },
-    { value: UserRole.Site, label: t('users.roles.site') },
+    { value: UserRole.ProjectEngineers, label: t('users.roles.project-engineers') },
   ]
 
   // Table columns configuration
@@ -330,12 +328,10 @@ export default function UsersClient({ users }: UsersClientProps) {
       key: 'role',
       label: t('users.columns.role'),
       render: (value: string, row: User) => {
-        const roleColors = {
-          [UserRole.SubAdmin]: 'bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-800/50 text-purple-700 dark:text-purple-400',
-          [UserRole.Engineering]: 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-400',
-          [UserRole.Purchasing]: 'bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800/50 text-orange-700 dark:text-orange-400',
+        const roleColors: Record<string, string> = {
           [UserRole.Admin]: 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-400',
-          [UserRole.Site]: 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800/50 text-green-700 dark:text-green-400'
+          [UserRole.SubAdmin]: 'bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-800/50 text-purple-700 dark:text-purple-400',
+          [UserRole.ProjectEngineers]: 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-400',
         }
         
         return (

@@ -475,11 +475,15 @@
     },
     "validation": {
       "projectNameRequired": "اسم المشروع مطلوب",
+      "companyNameRequired": "اسم الشركة مطلوب",
+      "descriptionRequired": "وصف المشروع مطلوب",
       "projectTypeRequired": "نوع المشروع مطلوب",
       "durationFromRequired": "تاريخ البداية مطلوب",
+      "durationToRequired": "تاريخ النهاية مطلوب",
       "durationToAfterFrom": "تاريخ النهاية يجب أن يكون بعد تاريخ البداية",
-      "stepNameRequired": "اسم الخطوة مطلوب",
-      "atLeastOneStep": "يجب إضافة خطوة واحدة على الأقل"
+      "stepNameRequired": "عنوان الخطوة مطلوب",
+      "atLeastOneStep": "يجب إضافة خطوة واحدة على الأقل",
+      "stepDurationToAfterFrom": "تاريخ نهاية الخطوة يجب أن يكون بعد تاريخ البداية"
     },
     "messages": {
       "createSuccess": "تم إنشاء المشروع بنجاح",
@@ -511,6 +515,7 @@
         "projectName": "اسم المشروع",
         "projectType": "النوع",
         "companyName": "الشركة",
+        "duration": "المدة",
         "status": "الحالة",
         "progress": "التقدم",
         "creator": "المنشئ",
@@ -806,11 +811,9 @@
       "inactive": "غير نشط"
     },
     "roles": {
-      "admin": "مدير",
+      "admin": "مدير النظام",
       "sub-admin": "مدير مساعد",
-      "engineering": "هندسة",
-      "purchasing": "مشتريات",
-      "site": "موقع"
+      "project-engineers": "مهندس مشاريع"
     },
     "form": {
       "title": "إضافة مستخدم جديد",

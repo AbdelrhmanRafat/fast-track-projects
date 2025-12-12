@@ -5,6 +5,14 @@ export enum UserRole {
 }
 
 /**
+ * Roles available for user creation (excludes Admin)
+ */
+export const CREATABLE_USER_ROLES: UserRole[] = [
+  UserRole.SubAdmin,
+  UserRole.ProjectEngineers,
+];
+
+/**
  * Roles that can access the Projects module
  */
 export const PROJECT_MODULE_ROLES: UserRole[] = [
@@ -42,8 +50,8 @@ export const USERS_MANAGEMENT_ROLES: UserRole[] = [
  */
 export const USER_ROLE_TRANSLATION_KEYS: Record<UserRole, string> = {
   [UserRole.Admin]: 'users.roles.admin',
-  [UserRole.SubAdmin]: 'users.roles.subAdmin',
-  [UserRole.ProjectEngineers]: 'users.roles.projectEngineers',
+  [UserRole.SubAdmin]: 'users.roles.sub-admin',
+  [UserRole.ProjectEngineers]: 'users.roles.project-engineers',
 };
 
 /**

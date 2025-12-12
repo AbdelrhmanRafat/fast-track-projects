@@ -9,7 +9,6 @@ export default async function UsersPage() {
   // Extract users data - handle different response structures
   // API might return: { data: { data: User[] } } or { data: User[] }
   let users: User[] = [];
-  console.log('Users Response:', usersResponse);
   
   if (usersResponse?.data) {
     const responseData = usersResponse.data;

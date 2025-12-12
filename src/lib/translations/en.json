@@ -475,11 +475,15 @@
     },
     "validation": {
       "projectNameRequired": "Project name is required",
+      "companyNameRequired": "Company name is required",
+      "descriptionRequired": "Project description is required",
       "projectTypeRequired": "Project type is required",
       "durationFromRequired": "Start date is required",
+      "durationToRequired": "End date is required",
       "durationToAfterFrom": "End date must be after start date",
-      "stepNameRequired": "Step name is required",
-      "atLeastOneStep": "At least one step is required"
+      "stepNameRequired": "Step title is required",
+      "atLeastOneStep": "At least one step is required",
+      "stepDurationToAfterFrom": "Step end date must be after start date"
     },
     "messages": {
       "createSuccess": "Project created successfully",
@@ -511,6 +515,7 @@
         "projectName": "Project Name",
         "projectType": "Type",
         "companyName": "Company",
+        "duration": "Duration",
         "status": "Status",
         "progress": "Progress",
         "creator": "Creator",
@@ -806,11 +811,9 @@
       "inactive": "Inactive"
     },
     "roles": {
-      "admin": "Admin",
+      "admin": "System Admin",
       "sub-admin": "Sub Admin",
-      "engineering": "Engineering",
-      "purchasing": "Purchasing",
-      "site": "Site"
+      "project-engineers": "Project Engineer"
     },
     "form": {
       "title": "Add New User",
