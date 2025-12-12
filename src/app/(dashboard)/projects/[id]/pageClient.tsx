@@ -240,18 +240,6 @@ export default function ProjectViewClient({ project }: ProjectViewClientProps) {
     <div className="space-y-4 sm:space-y-6">
       <RouteBasedPageHeader />
 
-      {/* Back Button */}
-      <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => router.back()}
-          className="gap-2 h-9"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          {t('common.back')}
-        </Button>
-      </div>
 
       {/* Project Header - Mobile Optimized */}
       <div className="space-y-4">
