@@ -76,7 +76,7 @@ export function NotificationList({
         className="flex flex-col items-center justify-center py-16 px-6 text-center"
       >
         <div className="relative">
-          <div className="w-20 h-20 bg-gradient-to-br from-[#5C1A1B]/10 to-[#5C1A1B]/5 rounded-full flex items-center justify-center mb-6 shadow-inner">
+          <div className="w-20 h-20 bg-linear-to-br from-[#5C1A1B]/10 to-[#5C1A1B]/5 rounded-full flex items-center justify-center mb-6 shadow-inner">
             <Bell className="w-10 h-10 text-[#5C1A1B]/40" />
           </div>
           <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500/20 rounded-full flex items-center justify-center">
@@ -110,7 +110,7 @@ export function NotificationList({
   return (
     <div className="flex flex-col h-full">
       {/* Header with actions - Modern gradient design */}
-      <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-[#5C1A1B]/5 to-transparent border-b border-[#5C1A1B]/10">
+      <div className="flex items-center justify-between px-4 py-3 bg-linear-to-r from-[#5C1A1B]/5 to-transparent border-b border-[#5C1A1B]/10">
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold text-foreground">
             {t('notifications.title')}
@@ -218,8 +218,8 @@ function NotificationItem({
 
   // Get translated type label
   const getTypeLabel = (type: string): string => {
-    const key = `notifications.types.${type}`;
-    const translated = t(key);
+    const key = `notifications.types.${type}` as const;
+    const translated = t(key as any);
     // If translation key returns itself, use default
     return translated === key ? t('notifications.types.default') : translated;
   };
@@ -228,15 +228,15 @@ function NotificationItem({
     <div
       className={cn(
         'relative px-4 py-4 transition-all duration-200 group',
-        'hover:bg-gradient-to-r hover:from-accent/50 hover:to-transparent',
-        !notification.is_read && 'bg-gradient-to-r from-[#5C1A1B]/5 to-transparent'
+        'hover:bg-linear-to-r hover:from-accent/50 hover:to-transparent',
+        !notification.is_read && 'bg-linear-to-r from-[#5C1A1B]/5 to-transparent'
       )}
     >
       {/* Unread indicator - Modern bar design */}
       {!notification.is_read && (
         <div 
           className={cn(
-            "absolute top-0 bottom-0 w-1 bg-gradient-to-b from-[#5C1A1B] to-[#5C1A1B]/50 rounded-full",
+            "absolute top-0 bottom-0 w-1 bg-linear-to-b from-[#5C1A1B] to-[#5C1A1B]/50 rounded-full",
             isRTL ? "right-0" : "left-0"
           )} 
         />
@@ -263,7 +263,7 @@ function NotificationItem({
             </div>
             
             {/* Time - Elegant display */}
-            <span className="text-[11px] text-muted-foreground whitespace-nowrap flex-shrink-0 mt-0.5">
+            <span className="text-[11px] text-muted-foreground whitespace-nowrap shrink-0 mt-0.5">
               {getTimeAgo()}
             </span>
           </div>
