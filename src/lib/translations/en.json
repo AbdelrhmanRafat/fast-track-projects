@@ -247,19 +247,37 @@
     "title": "Notifications",
     "noNotifications": "No notifications",
     "noNotificationsDescription": "New notifications will appear here when they arrive",
-    "unread": "Unread",
+    "unread": "unread",
+    "unreadCount": "{{count}} unread",
     "markAsRead": "Mark as read",
     "markAllAsRead": "Mark all as read",
     "delete": "Delete",
     "deleteAll": "Delete all",
     "viewOrder": "View Order",
+    "settings": "Settings",
+    "loading": "Loading notifications...",
+    "ariaLabel": "Notifications - {{count}} unread",
+    "timeAgo": {
+      "justNow": "Just now",
+      "minutesAgo": "{{count}} min ago",
+      "hoursAgo": "{{count}}h ago",
+      "daysAgo": "{{count}}d ago"
+    },
     "types": {
       "order_created": "New Order",
+      "engineering_review": "Engineering Review",
+      "admin_review": "Admin Review",
+      "owner_approved": "Approved",
+      "owner_rejected": "Rejected",
+      "Projects_started": "Purchasing",
+      "order_closed": "Closed",
+      "item_status_changed": "Item Update",
       "order_status_changed": "Update",
       "order_approved": "Approved",
       "order_rejected": "Rejected",
       "order_completed": "Completed",
-      "system": "System"
+      "system": "System",
+      "default": "Notification"
     },
     "pushSettings": {
       "title": "Push Notifications",
@@ -395,6 +413,58 @@
         "description": "Regularly review your project progress and update step statuses"
       }
     },
+    "workflow": {
+      "title": "Project Lifecycle",
+      "subtitle": "Understanding the complete project workflow",
+      "step1": {
+        "title": "Create Project",
+        "description": "Engineer creates a new project in Tendering phase"
+      },
+      "step2": {
+        "title": "Steps Locked",
+        "description": "All steps are locked after creation - no edits allowed"
+      },
+      "step3": {
+        "title": "Add Notes",
+        "description": "Review steps and add notes during the tendering process"
+      },
+      "step4": {
+        "title": "Decision Point",
+        "description": "Choose to move to Progress or finalize as Tendering Only"
+      },
+      "step5": {
+        "title": "Project Closed",
+        "description": "All steps verified and project is marked as completed"
+      }
+    },
+    "decisions": {
+      "title": "After Tendering Review",
+      "subtitle": "Choose the next step for your project",
+      "progress": {
+        "title": "Move to Progress",
+        "description": "Define all required progress steps and start the execution verification process"
+      },
+      "finalize": {
+        "title": "Finalize as Tendering",
+        "description": "Close the project as Tendering Only without moving to the Progress phase"
+      }
+    },
+    "features": {
+      "title": "Key Features",
+      "subtitle": "What makes our system powerful",
+      "security": {
+        "title": "Creator-Only Editing",
+        "description": "Only the engineer who created the project can edit it, ensuring accountability and control"
+      },
+      "workflow": {
+        "title": "Structured Workflow",
+        "description": "Clear progression from Tendering to Progress to Closed with defined decision points"
+      },
+      "efficiency": {
+        "title": "Streamlined Process",
+        "description": "Locked steps prevent accidental changes while notes allow communication"
+      }
+    },
     "emptyState": {
       "title": "Start Your Journey",
       "description": "You haven't created any projects yet. Start now and create your first project!",
@@ -446,6 +516,7 @@
       "overdue": "Overdue"
     },
     "openingStatus": {
+      "all": "All Project Statuses",
       "tinder": "Tendering",
       "inProgress": "Progress"
     },
@@ -576,6 +647,7 @@
       "searchPlaceholder": "Search by project name or company",
       "filterByType": "Filter by Type",
       "filterByStatus": "Filter by Status",
+      "filterByOpeningStatus": "Filter by Project Status",
       "filterByCompany": "Filter by Company",
       "clearFilters": "Clear Filters",
       "applyFilters": "Apply"

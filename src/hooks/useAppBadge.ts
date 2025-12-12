@@ -11,29 +11,25 @@ interface UseAppBadgeOptions {
 interface BadgeResponse {
   code: number;
   data?: {
-    count: number;
     unreadNotifications: number;
-    pendingOrders: number;
   };
   message?: string;
 }
 
 /**
- * Custom hook to manage PWA app badge for pending orders
+ * Custom hook to manage PWA app badge for unread notifications
  * Automatically polls the server and updates the badge count
  */
 export function useAppBadge({ 
   enabled = true, 
   pollingInterval = 30000 // 30 seconds default
 }: UseAppBadgeOptions = {}) {
-  const [pendingCount, setPendingCount] = useState(0);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
-  const [pendingOrders, setPendingOrders] = useState(0);
   const [isLoading, setIsLoading] = useState(true); // Initial loading state
   const [error, setError] = useState<string | null>(null);
   const [hasFetched, setHasFetched] = useState(false);
 
-  const fetchPendingCount = useCallback(async () => {
+  const fetchUnreadCount = useCallback(async () => {
     // Only show loading spinner on initial fetch, not background polling
     if (!hasFetched) {
       setIsLoading(true);
@@ -52,17 +48,13 @@ export function useAppBadge({
       const data: BadgeResponse = await response.json();
 
       if (data.code === 200 && data.data) {
-        const { count, unreadNotifications: unread, pendingOrders: pending } = data.data;
-        setPendingCount(count);
+        const { unreadNotifications: unread } = data.data;
         setUnreadNotifications(unread);
-        setPendingOrders(pending);
-        // Update the app badge
-        await setBadge(count);
+        // Update the app badge with unread notifications count
+        await setBadge(unread);
       } else if (data.code === 401) {
         // User not authenticated - clear badge
-        setPendingCount(0);
         setUnreadNotifications(0);
-        setPendingOrders(0);
         await clearBadge();
       } else {
         setError(data.message || 'فشل في جلب عدد الإشعارات');
@@ -80,17 +72,17 @@ export function useAppBadge({
     if (!enabled) return;
 
     // Initial fetch
-    fetchPendingCount();
+    fetchUnreadCount();
 
     // Set up polling interval
-    const intervalId = setInterval(fetchPendingCount, pollingInterval);
+    const intervalId = setInterval(fetchUnreadCount, pollingInterval);
 
     // Cleanup
     return () => {
       clearInterval(intervalId);
       clearBadge();
     };
-  }, [enabled, pollingInterval, fetchPendingCount]);
+  }, [enabled, pollingInterval, fetchUnreadCount]);
 
   // Refresh when tab becomes visible
   useEffect(() => {
@@ -98,32 +90,30 @@ export function useAppBadge({
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        fetchPendingCount();
+        fetchUnreadCount();
       }
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [enabled, fetchPendingCount]);
+  }, [enabled, fetchUnreadCount]);
 
   // Refresh when user comes back online
   useEffect(() => {
     if (!enabled) return;
 
     const handleOnline = () => {
-      fetchPendingCount();
+      fetchUnreadCount();
     };
 
     window.addEventListener('online', handleOnline);
     return () => window.removeEventListener('online', handleOnline);
-  }, [enabled, fetchPendingCount]);
+  }, [enabled, fetchUnreadCount]);
 
   return { 
-    pendingCount, 
     unreadNotifications,
-    pendingOrders,
     isLoading, 
     error, 
-    refresh: fetchPendingCount 
+    refresh: fetchUnreadCount 
   };
 }

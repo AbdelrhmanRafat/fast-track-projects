@@ -248,18 +248,36 @@
     "noNotifications": "لا توجد إشعارات",
     "noNotificationsDescription": "ستظهر هنا الإشعارات الجديدة عند وصولها",
     "unread": "غير مقروء",
+    "unreadCount": "{{count}} غير مقروء",
     "markAsRead": "تحديد كمقروء",
     "markAllAsRead": "قراءة الكل",
     "delete": "حذف",
     "deleteAll": "حذف الكل",
     "viewOrder": "عرض الطلب",
+    "settings": "الإعدادات",
+    "loading": "جاري تحميل الإشعارات...",
+    "ariaLabel": "الإشعارات - {{count}} غير مقروء",
+    "timeAgo": {
+      "justNow": "الآن",
+      "minutesAgo": "منذ {{count}} دقيقة",
+      "hoursAgo": "منذ {{count}} ساعة",
+      "daysAgo": "منذ {{count}} يوم"
+    },
     "types": {
       "order_created": "طلب جديد",
+      "engineering_review": "مراجعة هندسية",
+      "admin_review": "مراجعة إدارية",
+      "owner_approved": "موافقة",
+      "owner_rejected": "رفض",
+      "Projects_started": "شراء",
+      "order_closed": "مغلق",
+      "item_status_changed": "تحديث بند",
       "order_status_changed": "تحديث",
       "order_approved": "موافقة",
       "order_rejected": "رفض",
       "order_completed": "مكتمل",
-      "system": "نظام"
+      "system": "نظام",
+      "default": "إشعار"
     },
     "pushSettings": {
       "title": "إشعارات الدفع",
@@ -395,6 +413,58 @@
         "description": "راجع تقدم مشاريعك بانتظام وقم بتحديث حالة الخطوات"
       }
     },
+    "workflow": {
+      "title": "دورة حياة المشروع",
+      "subtitle": "فهم سير عمل المشروع بالكامل",
+      "step1": {
+        "title": "إنشاء المشروع",
+        "description": "المهندس ينشئ مشروعاً جديداً في مرحلة المناقصة"
+      },
+      "step2": {
+        "title": "قفل الخطوات",
+        "description": "جميع الخطوات مقفلة بعد الإنشاء - لا يمكن التعديل عليها"
+      },
+      "step3": {
+        "title": "إضافة ملاحظات",
+        "description": "مراجعة الخطوات وإضافة ملاحظات أثناء عملية المناقصة"
+      },
+      "step4": {
+        "title": "نقطة القرار",
+        "description": "اختر الانتقال للتنفيذ أو إنهاء كمناقصة فقط"
+      },
+      "step5": {
+        "title": "إغلاق المشروع",
+        "description": "تم التحقق من جميع الخطوات وتم تحديد المشروع كمكتمل"
+      }
+    },
+    "decisions": {
+      "title": "بعد مراجعة المناقصة",
+      "subtitle": "اختر الخطوة التالية لمشروعك",
+      "progress": {
+        "title": "الانتقال للتنفيذ",
+        "description": "تحديد جميع خطوات التنفيذ المطلوبة وبدء عملية التحقق"
+      },
+      "finalize": {
+        "title": "إنهاء كمناقصة",
+        "description": "إغلاق المشروع كمناقصة فقط دون الانتقال لمرحلة التنفيذ"
+      }
+    },
+    "features": {
+      "title": "المميزات الرئيسية",
+      "subtitle": "ما يجعل نظامنا قوياً",
+      "security": {
+        "title": "تعديل المُنشئ فقط",
+        "description": "فقط المهندس الذي أنشأ المشروع يمكنه تعديله، مما يضمن المسؤولية والتحكم"
+      },
+      "workflow": {
+        "title": "سير عمل منظم",
+        "description": "تقدم واضح من المناقصة إلى التنفيذ إلى الإغلاق مع نقاط قرار محددة"
+      },
+      "efficiency": {
+        "title": "عملية مبسطة",
+        "description": "الخطوات المقفلة تمنع التغييرات العرضية بينما تسمح الملاحظات بالتواصل"
+      }
+    },
     "emptyState": {
       "title": "ابدأ رحلتك",
       "description": "لم تقم بإنشاء أي مشروع بعد. ابدأ الآن وأنشئ مشروعك الأول!",
@@ -446,6 +516,7 @@
       "overdue": "متأخر"
     },
     "openingStatus": {
+      "all": "جميع حالات المشروع",
       "tinder": "مناقصة",
       "inProgress": "التنفيذ"
     },
@@ -576,6 +647,7 @@
       "searchPlaceholder": "ابحث باسم المشروع أو الشركة",
       "filterByType": "تصفية حسب النوع",
       "filterByStatus": "تصفية حسب الحالة",
+      "filterByOpeningStatus": "تصفية حسب حالة المشروع",
       "filterByCompany": "تصفية حسب الشركة",
       "clearFilters": "مسح الفلاتر",
       "applyFilters": "تطبيق"

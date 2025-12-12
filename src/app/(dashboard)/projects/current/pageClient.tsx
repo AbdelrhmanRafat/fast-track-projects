@@ -37,6 +37,7 @@ interface CurrentProjectsTableClientProps {
     limit: number;
     search: string;
     project_type: string;
+    project_opening_status: string;
   };
 }
 
@@ -91,6 +92,16 @@ export default function CurrentProjectsTableClient({
           { value: 'designProject', label: t('projects.types.designProject') },
         ],
       },
+      {
+        key: 'project_opening_status',
+        type: 'select',
+        label: t('projects.filters.filterByOpeningStatus'),
+        placeholder: t('projects.openingStatus.all'),
+        options: [
+          { value: 'tinder', label: t('projects.openingStatus.tinder') },
+          { value: 'inProgress', label: t('projects.openingStatus.inProgress') },
+        ],
+      },
     ],
   }), [t]);
 
@@ -98,6 +109,7 @@ export default function CurrentProjectsTableClient({
   const searchInitialValues = useMemo(() => ({
     search: searchParams.search || '',
     project_type: searchParams.project_type || '',
+    project_opening_status: searchParams.project_opening_status || '',
   }), [searchParams]);
 
   /**
@@ -109,6 +121,7 @@ export default function CurrentProjectsTableClient({
     // Always reset to page 1 when filters change
     if (values.search) urlParams.set('search', values.search);
     if (values.project_type) urlParams.set('project_type', values.project_type);
+    if (values.project_opening_status) urlParams.set('project_opening_status', values.project_opening_status);
 
     const queryString = urlParams.toString();
     const url = queryString ? `/projects/current?${queryString}` : '/projects/current';
@@ -134,6 +147,7 @@ export default function CurrentProjectsTableClient({
     if (newPage > 1) urlParams.set('page', newPage.toString());
     if (searchParams.search) urlParams.set('search', searchParams.search);
     if (searchParams.project_type) urlParams.set('project_type', searchParams.project_type);
+    if (searchParams.project_opening_status) urlParams.set('project_opening_status', searchParams.project_opening_status);
 
     const queryString = urlParams.toString();
     const url = queryString ? `/projects/current?${queryString}` : '/projects/current';
@@ -160,25 +174,19 @@ export default function CurrentProjectsTableClient({
 
   const projects = data?.data || [];
 
-  // Table columns configuration - optimized for mobile
+  // Table columns configuration - unified for all screen sizes
   const columns: TableColumn<Project>[] = useMemo(() => [
     {
       key: 'project_name',
       label: t('projects.table.columns.projectName'),
       width: 'min-w-[140px]',
-      render: (value, row) => (
-        <div className="space-y-1">
-          <span className="font-medium text-sm block">{value}</span>
-          <span className="text-xs text-muted-foreground block sm:hidden">
-            {row.company_name || '-'}
-          </span>
-        </div>
+      render: (value) => (
+        <span className="font-medium text-sm">{value}</span>
       ),
     },
     {
       key: 'company_name',
       label: t('projects.table.columns.companyName'),
-      className: 'hidden sm:table-cell',
       render: (value) => <span className="text-sm">{value || '-'}</span>,
     },
     {
@@ -197,7 +205,6 @@ export default function CurrentProjectsTableClient({
     {
       key: 'duration_from',
       label: t('projects.view.duration'),
-      className: 'hidden md:table-cell',
       render: (value, row) => (
         <div className="text-xs space-y-0.5">
           <span className="block">{formatDate(row.duration_from, language)}</span>
@@ -224,7 +231,6 @@ export default function CurrentProjectsTableClient({
       key: 'project_opening_status',
       label: t('projects.table.columns.openingStatus'),
       width: 'w-[90px]',
-      className: 'hidden sm:table-cell',
       render: (value: ProjectOpeningStatus) => (
         <Badge
           variant="outline"
@@ -237,7 +243,6 @@ export default function CurrentProjectsTableClient({
     {
       key: 'creator',
       label: t('projects.table.columns.creator'),
-      className: 'hidden lg:table-cell',
       render: (value) => <span className="text-sm">{value?.name || '-'}</span>,
     },
     {

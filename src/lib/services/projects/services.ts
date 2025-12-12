@@ -50,6 +50,7 @@ export async function getProjects(
     if (filters.project_type) params.append('project_type', filters.project_type);
     if (filters.status) params.append('status', filters.status);
     if (filters.company_name) params.append('company_name', filters.company_name);
+    if (filters.project_opening_status) params.append('project_opening_status', filters.project_opening_status);
     
     const queryString = params.toString();
     const url = queryString ? `/projects?${queryString}` : '/projects';

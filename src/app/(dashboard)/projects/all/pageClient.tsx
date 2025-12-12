@@ -38,6 +38,7 @@ interface ProjectsTableClientProps {
     search: string;
     project_type: string;
     status: string;
+    project_opening_status: string;
   };
 }
 
@@ -103,6 +104,16 @@ export default function ProjectsTableClient({
           { value: 'overdue', label: t('projects.status.overdue') },
         ],
       },
+      {
+        key: 'project_opening_status',
+        type: 'select',
+        label: t('projects.filters.filterByOpeningStatus'),
+        placeholder: t('projects.openingStatus.all'),
+        options: [
+          { value: 'tinder', label: t('projects.openingStatus.tinder') },
+          { value: 'inProgress', label: t('projects.openingStatus.inProgress') },
+        ],
+      },
     ],
   }), [t]);
 
@@ -111,6 +122,7 @@ export default function ProjectsTableClient({
     search: searchParams.search || '',
     project_type: searchParams.project_type || '',
     status: searchParams.status || '',
+    project_opening_status: searchParams.project_opening_status || '',
   }), [searchParams]);
 
   /**
@@ -123,6 +135,7 @@ export default function ProjectsTableClient({
     if (values.search) urlParams.set('search', values.search);
     if (values.project_type) urlParams.set('project_type', values.project_type);
     if (values.status) urlParams.set('status', values.status);
+    if (values.project_opening_status) urlParams.set('project_opening_status', values.project_opening_status);
 
     const queryString = urlParams.toString();
     const url = queryString ? `/projects/all?${queryString}` : '/projects/all';
@@ -149,6 +162,7 @@ export default function ProjectsTableClient({
     if (searchParams.search) urlParams.set('search', searchParams.search);
     if (searchParams.project_type) urlParams.set('project_type', searchParams.project_type);
     if (searchParams.status) urlParams.set('status', searchParams.status);
+    if (searchParams.project_opening_status) urlParams.set('project_opening_status', searchParams.project_opening_status);
 
     const queryString = urlParams.toString();
     const url = queryString ? `/projects/all?${queryString}` : '/projects/all';
@@ -175,25 +189,19 @@ export default function ProjectsTableClient({
 
   const projects = data?.data || [];
 
-  // Table columns configuration - optimized for mobile
+  // Table columns configuration - unified for all screen sizes
   const columns: TableColumn<Project>[] = useMemo(() => [
     {
       key: 'project_name',
       label: t('projects.table.columns.projectName'),
       width: 'min-w-[140px]',
-      render: (value, row) => (
-        <div className="space-y-1">
-          <span className="font-medium text-sm block">{value}</span>
-          <span className="text-xs text-muted-foreground block sm:hidden">
-            {row.company_name || '-'}
-          </span>
-        </div>
+      render: (value) => (
+        <span className="font-medium text-sm">{value}</span>
       ),
     },
     {
       key: 'company_name',
       label: t('projects.table.columns.companyName'),
-      className: 'hidden sm:table-cell',
       render: (value) => <span className="text-sm">{value || '-'}</span>,
     },
     {
@@ -212,7 +220,6 @@ export default function ProjectsTableClient({
     {
       key: 'duration_from',
       label: t('projects.view.duration'),
-      className: 'hidden md:table-cell',
       render: (value, row) => (
         <div className="text-xs space-y-0.5">
           <span className="block">{formatDate(row.duration_from, language)}</span>
@@ -239,7 +246,6 @@ export default function ProjectsTableClient({
       key: 'project_opening_status',
       label: t('projects.table.columns.openingStatus'),
       width: 'w-[90px]',
-      className: 'hidden sm:table-cell',
       render: (value: ProjectOpeningStatus) => (
         <Badge
           variant="outline"
@@ -252,7 +258,6 @@ export default function ProjectsTableClient({
     {
       key: 'creator',
       label: t('projects.table.columns.creator'),
-      className: 'hidden lg:table-cell',
       render: (value) => <span className="text-sm">{value?.name || '-'}</span>,
     },
     {

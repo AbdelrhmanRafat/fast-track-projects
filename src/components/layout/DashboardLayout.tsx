@@ -7,6 +7,7 @@ import { CompactSidebar } from '@/components/SharedCustomComponents/CompactSideb
 import { CompactTopBar } from '@/components/SharedCustomComponents/CompactTopBar';
 import { NavigationProgress } from '@/components/SharedCustomComponents/NavigationProgress';
 import { MobileBottomNav } from '@/components/SharedCustomComponents/MobileBottomNav';
+import { ScrollToTop } from '@/components/providers/ScrollToTop';
 import {
   SidebarProvider
 } from '@/components/ui/sidebar';
@@ -34,6 +35,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // Render Compact Layout
   return (
     <SidebarProvider>
+      <ScrollToTop />
       <NavigationProgress />
       <TopBar />
       <div className="flex h-screen w-full">
@@ -60,6 +62,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               
               {/* Scrollable Content Area - Account for bottom nav height (64px + safe area) */}
               <div 
+                data-scroll-container="mobile"
                 className="flex-1 overflow-y-auto overscroll-y-contain bg-background"
                 style={{ 
                   WebkitOverflowScrolling: 'touch',
@@ -73,7 +76,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
 
             {/* Desktop: Compact layout style with breadcrumbs */}
-            <div className="hidden lg:flex flex-1 overflow-y-auto bg-background">
+            <div data-scroll-container="desktop" className="hidden lg:flex flex-1 overflow-y-auto bg-background">
               <div className="w-full min-h-full flex flex-col bg-background">
                 <div className="flex-1 bg-background">
                   <div className="w-full lg:max-w-7xl mx-auto bg-background py-6 px-4">

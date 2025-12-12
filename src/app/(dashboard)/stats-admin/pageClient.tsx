@@ -126,7 +126,7 @@ export default function StatsAdminClient({ stats }: StatsAdminClientProps) {
   ];
 
   return (
-    <div className="space-y-4 sm:space-y-6 pb-20 lg:pb-6">
+    <div className="space-y-6">
       <RouteBasedPageHeader />
 
       {/* Page Title & Description */}

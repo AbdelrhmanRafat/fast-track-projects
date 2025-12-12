@@ -254,6 +254,7 @@ export interface ProjectFilters {
   search?: string;
   project_type?: ProjectType;
   status?: ProjectStatus;
+  project_opening_status?: ProjectOpeningStatus;
   company_name?: string;
 }
 

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useBadgeContext } from '@/components/providers/BadgeProvider';
 import { useNotifications } from '@/hooks/useNotifications';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Bell, Loader2, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -21,8 +22,8 @@ interface NotificationBellProps {
 }
 
 /**
- * Notification Bell Component
- * Displays a bell icon with the pending orders count badge
+ * Notification Bell Component - Modern Design with i18n
+ * Displays a bell icon with the unread notifications count badge
  * Opens a popover with the full notifications list
  */
 export function NotificationBell({ 
@@ -31,7 +32,8 @@ export function NotificationBell({
   onClick 
 }: NotificationBellProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { pendingCount, isLoading: badgeLoading, refresh: refreshBadge } = useBadgeContext();
+  const { t } = useTranslation();
+  const { unreadNotifications: badgeUnreadCount, isLoading: badgeLoading, refresh: refreshBadge } = useBadgeContext();
   const {
     notifications,
     unreadCount,
@@ -61,8 +63,8 @@ export function NotificationBell({
   // Wrapper to convert single ID to array for markAsRead
   const handleMarkAsRead = (id: string) => markAsRead([id]);
 
-  // Use unreadCount from notifications if available, otherwise fall back to pendingCount
-  const displayCount = unreadCount > 0 ? unreadCount : pendingCount;
+  // Use unreadCount from notifications hook, fallback to badge context unreadNotifications
+  const displayCount = unreadCount > 0 ? unreadCount : badgeUnreadCount;
   
   // Only show loading spinner on initial load when there's no data yet
   const showSpinner = badgeLoading && displayCount === 0 && notifications.length === 0;
@@ -73,29 +75,36 @@ export function NotificationBell({
         <button 
           onClick={handleRefresh}
           className={cn(
-            "relative p-2 rounded-full transition-colors",
-            "hover:bg-accent hover:text-accent-foreground",
-            "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+            "relative p-2 rounded-full transition-all duration-200",
+            "hover:bg-[#5C1A1B]/10 hover:text-[#5C1A1B]",
+            "focus:outline-none focus:ring-2 focus:ring-[#5C1A1B]/30 focus:ring-offset-2",
+            "active:scale-95",
+            displayCount > 0 && "text-[#5C1A1B]",
             className
           )}
-          title="الإشعارات"
-          aria-label={`الإشعارات - ${displayCount} غير مقروء`}
+          title={t('notifications.title')}
+          aria-label={`${t('notifications.title')} - ${displayCount} ${t('notifications.unread')}`}
         >
           {showSpinner ? (
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
           ) : (
-            <Bell className="h-5 w-5" />
+            <Bell className={cn(
+              "h-5 w-5 transition-transform",
+              displayCount > 0 && "animate-[wiggle_0.5s_ease-in-out]"
+            )} />
           )}
           
           {showCount && displayCount > 0 && (
             <span 
               className={cn(
                 "absolute -top-0.5 -right-0.5",
-                "bg-destructive text-destructive-foreground",
-                "text-xs font-bold rounded-full",
+                "bg-gradient-to-br from-[#5C1A1B] to-[#7a2324]",
+                "text-white shadow-lg",
+                "text-[10px] font-bold rounded-full",
                 "min-w-[18px] h-[18px]",
                 "flex items-center justify-center",
-                "px-1 animate-in zoom-in-50 duration-200"
+                "px-1 animate-in zoom-in-50 duration-200",
+                "ring-2 ring-background"
               )}
             >
               {displayCount > 99 ? '99+' : displayCount}
@@ -104,19 +113,30 @@ export function NotificationBell({
         </button>
       </PopoverTrigger>
       <PopoverContent 
-        className="w-[380px] p-0" 
+        className="w-[380px] p-0 shadow-xl border-[#5C1A1B]/10" 
         align="end" 
         sideOffset={8}
       >
         <Tabs defaultValue="notifications" className="w-full">
-          <TabsList className="w-full grid grid-cols-2 rounded-none border-b">
-            <TabsTrigger value="notifications" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
-              <Bell className="w-4 h-4 ml-2" />
-              الإشعارات
+          <TabsList className="w-full grid grid-cols-2 rounded-none border-b bg-gradient-to-r from-[#5C1A1B]/5 to-transparent">
+            <TabsTrigger 
+              value="notifications" 
+              className="rounded-none gap-2 data-[state=active]:border-b-2 data-[state=active]:border-[#5C1A1B] data-[state=active]:text-[#5C1A1B]"
+            >
+              <Bell className="w-4 h-4" />
+              {t('notifications.title')}
+              {displayCount > 0 && (
+                <span className="text-[10px] px-1.5 py-0.5 bg-[#5C1A1B] text-white rounded-full">
+                  {displayCount}
+                </span>
+              )}
             </TabsTrigger>
-            <TabsTrigger value="settings" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
-              <Settings className="w-4 h-4 ml-2" />
-              الإعدادات
+            <TabsTrigger 
+              value="settings" 
+              className="rounded-none gap-2 data-[state=active]:border-b-2 data-[state=active]:border-[#5C1A1B] data-[state=active]:text-[#5C1A1B]"
+            >
+              <Settings className="w-4 h-4" />
+              {t('notifications.settings')}
             </TabsTrigger>
           </TabsList>
           <TabsContent value="notifications" className="mt-0">

@@ -12,6 +12,7 @@ interface ProjectsPageProps {
     search?: string;
     project_type?: string;
     status?: string;
+    project_opening_status?: string;
   }>;
 }
 
@@ -28,6 +29,7 @@ async function ProjectsContent({ searchParams }: ProjectsPageProps) {
   const search = params.search || '';
   const project_type = params.project_type || '';
   const status = params.status || '';
+  const project_opening_status = params.project_opening_status || '';
 
   // Fetch projects from API (server-side)
   let projectsResponse: ApiResponse<ProjectsListData> | null = null;
@@ -39,6 +41,7 @@ async function ProjectsContent({ searchParams }: ProjectsPageProps) {
       search: search || undefined,
       project_type: project_type as any || undefined,
       status: status as any || undefined,
+      project_opening_status: project_opening_status as any || undefined,
     });
   } catch (error) {
     console.error('Error fetching projects:', error);
@@ -53,6 +56,7 @@ async function ProjectsContent({ searchParams }: ProjectsPageProps) {
         search,
         project_type,
         status,
+        project_opening_status,
       }}
     />
   );

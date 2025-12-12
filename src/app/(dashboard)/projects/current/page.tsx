@@ -11,6 +11,7 @@ interface CurrentProjectsPageProps {
     limit?: string;
     search?: string;
     project_type?: string;
+    project_opening_status?: string;
   }>;
 }
 
@@ -26,6 +27,7 @@ async function CurrentProjectsContent({ searchParams }: CurrentProjectsPageProps
   const limit = parseInt(params.limit || '10', 10);
   const search = params.search || '';
   const project_type = params.project_type || '';
+  const project_opening_status = params.project_opening_status || '';
 
   // Fetch current projects (status=active) from API (server-side)
   let projectsResponse: ApiResponse<ProjectsListData> | null = null;
@@ -36,6 +38,7 @@ async function CurrentProjectsContent({ searchParams }: CurrentProjectsPageProps
       limit,
       search: search || undefined,
       project_type: project_type as any || undefined,
+      project_opening_status: project_opening_status as any || undefined,
       status: ProjectStatus.Active, // Always filter for active projects
     });
   } catch (error) {
@@ -50,6 +53,7 @@ async function CurrentProjectsContent({ searchParams }: CurrentProjectsPageProps
         limit,
         search,
         project_type,
+        project_opening_status,
       }}
     />
   );

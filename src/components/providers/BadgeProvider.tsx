@@ -18,18 +18,14 @@ export function triggerBadgeRefresh() {
 }
 
 interface BadgeContextType {
-  pendingCount: number;
   unreadNotifications: number;
-  pendingOrders: number;
   isLoading: boolean;
   error: string | null;
   refresh: () => void;
 }
 
 const BadgeContext = createContext<BadgeContextType>({
-  pendingCount: 0,
   unreadNotifications: 0,
-  pendingOrders: 0,
   isLoading: false,
   error: null,
   refresh: () => {},

@@ -4,21 +4,11 @@ import type { ApiResponse } from '@/lib/types/response';
 import { COOKIE_TOKEN } from '@/lib/cookies';
 
 /**
- * Backend badge count response structure
- */
-interface BackendBadgeCountData {
-  unread_notifications: number;
-  pending_orders: number;
-  total_badge: number;
-}
-
-/**
  * Frontend badge count response structure
+ * This app only uses unreadNotifications
  */
 interface BadgeCountData {
-  count: number;
   unreadNotifications: number;
-  pendingOrders: number;
 }
 
 /**
@@ -68,7 +58,7 @@ export async function GET(
 
     // Check if backend returned success (code: 0)
     if (backendResponse?.code === 0 && backendResponse?.data) {
-      const { unread_notifications, pending_orders, total_badge } = backendResponse.data;
+      const { unread_notifications } = backendResponse.data;
       
       return NextResponse.json({
         code: 200,
@@ -76,9 +66,7 @@ export async function GET(
         message: 'Success',
         errors: null,
         data: {
-          count: total_badge || 0,
           unreadNotifications: unread_notifications || 0,
-          pendingOrders: pending_orders || 0,
         }
       });
     }
@@ -90,9 +78,7 @@ export async function GET(
       message: 'Success',
       errors: null,
       data: {
-        count: 0,
         unreadNotifications: 0,
-        pendingOrders: 0,
       }
     });
 
@@ -104,9 +90,7 @@ export async function GET(
       message: 'Success',
       errors: null,
       data: {
-        count: 0,
         unreadNotifications: 0,
-        pendingOrders: 0,
       }
     });
   }
