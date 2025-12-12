@@ -337,13 +337,13 @@ export default function CreateProjectClient() {
               )}
             </div>
 
-            {/* Duration - Side by Side */}
+            {/* Duration - Stacked */}
             <div className="space-y-3">
               <Label className="text-sm font-medium">
                 {t('projects.view.duration')} <span className="text-destructive">*</span>
               </Label>
-              <div className="flex gap-3">
-                <div className="flex-1 space-y-1.5">
+              <div className="grid grid-cols-1 gap-3">
+                <div className="space-y-1.5">
                   <Label htmlFor="duration_from" className="text-xs text-muted-foreground">
                     {t('projects.fields.durationFrom')}
                   </Label>
@@ -357,7 +357,7 @@ export default function CreateProjectClient() {
                     <p className="text-xs text-destructive">{errors.duration_from}</p>
                   )}
                 </div>
-                <div className="flex-1 space-y-1.5">
+                <div className="space-y-1.5">
                   <Label htmlFor="duration_to" className="text-xs text-muted-foreground">
                     {t('projects.fields.durationTo')}
                   </Label>
