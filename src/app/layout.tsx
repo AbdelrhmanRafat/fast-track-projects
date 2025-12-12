@@ -20,8 +20,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fast Track Projects",
-  description: "Fast Track Projects - نظام إدارة طلبات الشراء",
+  title: "FT Projects",
+  description: "FT Projects - نظام إدارة المشاريع",
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -39,13 +39,13 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "FT Purchase",
+    title: "FT Projects",
   },
   formatDetection: {
     telephone: false,
   },
-  applicationName: "Fast Track Projects",
-  keywords: ["Projects", "procurement", "orders", "management", "شراء", "طلبات"],
+  applicationName: "FT Projects",
+  keywords: ["Projects", "project management", "tasks", "management", "مشاريع", "إدارة"],
   authors: [{ name: "Fast Track Team" }],
 };
 
@@ -77,7 +77,7 @@ export default function RootLayout({
         {/* PWA meta tags for iOS */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="FT Purchase" />
+        <meta name="apple-mobile-web-app-title" content="FT Projects" />
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className="antialiased font-sans bg-background">

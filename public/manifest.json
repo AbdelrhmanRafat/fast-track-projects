@@ -1,7 +1,7 @@
 {
-  "name": "Fast Track Projects",
-  "short_name": "FT Purchase",
-  "description": "نظام إدارة طلبات الشراء - Streamlined procurement management system",
+  "name": "FT Projects",
+  "short_name": "FT Projects",
+  "description": "نظام إدارة المشاريع - Streamlined project management system",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

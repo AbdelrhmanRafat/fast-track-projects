@@ -1,8 +1,8 @@
 // Service Worker for Push Notifications
-// فاست تراك للمشتريات - Service Worker
+// FT Projects - Service Worker
 
-const CACHE_NAME = 'ft-purchase-v1';
-const APP_NAME = 'فاست تراك للمشتريات';
+const CACHE_NAME = 'ft-projects-v1';
+const APP_NAME = 'FT Projects';
 
 // Install event
 self.addEventListener('install', (event) => {
@@ -51,8 +51,8 @@ self.addEventListener('push', (event) => {
         badge: payload.badge || data.badge,
         tag: payload.tag || `notification-${Date.now()}`,
         data: {
-          url: payload.data?.url || '/orders',
-          orderId: payload.data?.orderId,
+          url: payload.data?.url || '/projects',
+          projectId: payload.data?.projectId,
           type: payload.data?.type,
           ...payload.data,
         },
@@ -112,8 +112,8 @@ self.addEventListener('notificationclick', (event) => {
   
   if (data.url) {
     urlToOpen = data.url;
-  } else if (data.orderId) {
-    urlToOpen = `/orders/${data.orderId}`;
+  } else if (data.projectId) {
+    urlToOpen = `/projects/${data.projectId}`;
   }
 
   // Focus existing window or open new one
