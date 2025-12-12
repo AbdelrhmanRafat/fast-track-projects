@@ -19,8 +19,10 @@ import type {
   UpdateProjectRequest,
   AddStepRequest,
   UpdateStepRequest,
+  UpdateStepActionRequest,
   FinalizeStepResponseData,
   CheckOverdueResponseData,
+  CheckPermissionResponseData,
   ProjectEngineer,
 } from './types';
 
@@ -214,6 +216,47 @@ export async function getStep(
 }
 
 /**
+ * Check if user has permission to edit project steps (Server-Side)
+ */
+export async function checkEditPermission(
+  projectId: string
+): Promise<ApiResponse<CheckPermissionResponseData> | null> {
+  try {
+    const api = await NetworkLayer.createWithAutoConfig();
+    const res = await api.get<ApiResponse<CheckPermissionResponseData>>(
+      `/project-steps?project_id=${projectId}&check_permission=true`
+    );
+    return res.data;
+  } catch (error: any) {
+    console.error(`Error checking edit permission for project ${projectId}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Check if user has permission to edit project steps (Client-Side)
+ */
+export async function checkEditPermissionClient(
+  projectId: string
+): Promise<ApiResponse<CheckPermissionResponseData> | null> {
+  try {
+    const response = await networkClient.get(
+      `/api/project-steps?project_id=${projectId}&check_permission=true`
+    );
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to check permission');
+    }
+    
+    return result as ApiResponse<CheckPermissionResponseData>;
+  } catch (error: any) {
+    console.error(`Error checking edit permission for project ${projectId}:`, error);
+    return null;
+  }
+}
+
+/**
  * Get a single step by ID (Client-Side)
  */
 export async function getStepClient(
@@ -257,7 +300,8 @@ export async function addStep(
 }
 
 /**
- * Update an existing step
+ * Update an existing step - DEPRECATED
+ * Steps can no longer be edited. Use updateStepAction instead.
  */
 export async function updateStep(
   stepId: string,
@@ -279,7 +323,35 @@ export async function updateStep(
 }
 
 /**
- * Finalize a step
+ * Update step action - Finalize and/or add notes to a step
+ * PUT /project-steps
+ * 
+ * Options:
+ * - Add note only: { id, finalized_notes: [{ note: "..." }] }
+ * - Finalize only: { id, is_finalized: true }
+ * - Both: { id, is_finalized: true, finalized_notes: [{ note: "..." }] }
+ */
+export async function updateStepAction(
+  data: UpdateStepActionRequest
+): Promise<ApiResponse<ProjectStep> | null> {
+  try {
+    const response = await networkClient.put('/api/project-steps', data);
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to update step');
+    }
+    
+    return result as ApiResponse<ProjectStep>;
+  } catch (error: any) {
+    console.error(`Error updating step ${data.id}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Finalize a step - DEPRECATED
+ * Use updateStepAction instead
  */
 export async function finalizeStep(
   stepId: string

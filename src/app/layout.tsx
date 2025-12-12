@@ -20,8 +20,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fast Track Purchasing",
-  description: "Fast Track Purchasing - نظام إدارة طلبات الشراء",
+  title: "Fast Track Projects",
+  description: "Fast Track Projects - نظام إدارة طلبات الشراء",
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -44,8 +44,8 @@ export const metadata: Metadata = {
   formatDetection: {
     telephone: false,
   },
-  applicationName: "Fast Track Purchasing",
-  keywords: ["purchasing", "procurement", "orders", "management", "شراء", "طلبات"],
+  applicationName: "Fast Track Projects",
+  keywords: ["Projects", "procurement", "orders", "management", "شراء", "طلبات"],
   authors: [{ name: "Fast Track Team" }],
 };
 

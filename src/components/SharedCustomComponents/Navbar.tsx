@@ -57,7 +57,7 @@ export function Navbar({ className }: NavbarProps) {
         <Link href="/home" className="flex items-center">
           <Image
             src="/app-logo.svg"
-            alt="Fast Track Purchasing"
+            alt="Fast Track Projects"
             width={40}
             height={40}
             className="h-10 w-10 object-contain"

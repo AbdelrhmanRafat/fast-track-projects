@@ -43,7 +43,7 @@ App Badge API يسمح بإظهار عداد على أيقونة التطبيق 
 ### manifest.json
 ```json
 {
-  "name": "Fast Track Purchasing",
+  "name": "Fast Track Projects",
   "short_name": "FT Purchase",
   "description": "نظام إدارة طلبات الشراء",
   "start_url": "/",

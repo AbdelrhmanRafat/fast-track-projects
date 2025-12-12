@@ -13,17 +13,17 @@ This project uses **Firebase Cloud Messaging (FCM)** to send push notifications 
 | `تم اجراء الطلب` (Order Created) | Site | **Engineering** only |
 | `تمت المراجعة الهندسية` (Engineering Review Done) | Engineering | **Site** (creator) + **Admin** |
 | `مراجعة الطلب من الادارة` (Admin Review) | Admin | **Site** (creator) + **Engineering** |
-| `تمت الموافقة من الادارة` (Admin Approved) | Admin | **Purchasing** + **Site** + **Engineering** |
-| `تم الرفض من الادارة` (Admin Rejected) | Admin | **Site** + **Engineering** (NOT Purchasing) |
-| `جاري الان عملية الشراء` (Purchasing In Progress) | Purchasing | **ALL roles** |
-| `تم غلق طلب الشراء` (Order Closed) | Purchasing | **ALL roles** |
+| `تمت الموافقة من الادارة` (Admin Approved) | Admin | **Projects** + **Site** + **Engineering** |
+| `تم الرفض من الادارة` (Admin Rejected) | Admin | **Site** + **Engineering** (NOT Projects) |
+| `جاري الان عملية الشراء` (Projects In Progress) | Projects | **ALL roles** |
+| `تم غلق طلب الشراء` (Order Closed) | Projects | **ALL roles** |
 
 ### Key Rules
 
 1. **Admin does NOT receive notifications when orders are created** - Only Engineering gets notified
-2. **Purchasing does NOT receive rejection notifications** - Only approved orders go to Purchasing
+2. **Projects does NOT receive rejection notifications** - Only approved orders go to Projects
 3. **Site (creator) always receives notifications** about their order after the initial creation
-4. **Purchasing updates notify everyone** - All roles are informed when purchase status changes
+4. **Projects updates notify everyone** - All roles are informed when purchase status changes
 
 ---
 
@@ -202,19 +202,19 @@ export const STATUS_NOTIFICATION_MAP: Record<string, NotificationTargets> = {
     includeCreator: true,
   },
   
-  // Approved → Purchasing + Site + Engineering
+  // Approved → Projects + Site + Engineering
   'تمت الموافقة من الادارة': {
-    roles: ['purchasing', 'engineering'],
+    roles: ['Projects', 'engineering'],
     includeCreator: true,
   },
   
-  // Rejected → Site + Engineering (NOT Purchasing)
+  // Rejected → Site + Engineering (NOT Projects)
   'تم الرفض من الادارة': {
     roles: ['engineering'],
     includeCreator: true,
   },
   
-  // Purchasing → ALL
+  // Projects → ALL
   'جاري الان عملية الشراء': {
     roles: ['admin', 'sub-admin', 'engineering', 'site'],
     includeCreator: true,

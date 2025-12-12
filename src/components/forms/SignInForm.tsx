@@ -30,7 +30,7 @@ interface SignInFormProps {
 }
 
 export default function SignInForm({ onSubmit, isLoading = false }: SignInFormProps) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -60,16 +60,16 @@ export default function SignInForm({ onSubmit, isLoading = false }: SignInFormPr
       {/* Email Field */}
       <div className="space-y-2">
         <Label htmlFor="email" className="text-foreground font-medium">{t('signin.email')}</Label>
-        <div className="relative">
+        <div className="relative"             dir={language === 'ar' ? 'ltr' : 'rtl'}>
           <div className="absolute inset-y-0 end-0 flex items-center pe-3 pointer-events-none">
             <Mail className="h-4 w-4 text-muted-foreground" />
           </div>
           <Input
             id="email"
             type="email"
+            dir="ltr"
             placeholder={t('signin.emailPlaceholder')}
             className="ps-10 h-12 bg-background/50 border-border/50 focus:border-primary focus:ring-primary"
-            dir="ltr"
             disabled={isFormLoading}
             {...register('email')}
           />

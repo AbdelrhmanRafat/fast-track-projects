@@ -52,7 +52,7 @@ export default function SignInPageClient() {
             <div className="mx-auto mb-4">
               <Image
                 src="/app-logo.svg"
-                alt="Fast Track Purchasing"
+                alt="Fast Track Projects"
                 width={80}
                 height={80}
                 className="h-20 w-20"
@@ -73,7 +73,7 @@ export default function SignInPageClient() {
         
         {/* Footer branding */}
         <p className="text-center text-white/70 text-sm mt-6">
-          © {new Date().getFullYear()} Fast Track Purchasing
+          © {new Date().getFullYear()} Fast Track Projects
         </p>
       </div>
     </div>

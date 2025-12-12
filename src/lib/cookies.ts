@@ -29,7 +29,7 @@ export interface UserData {
 /* ========================= */
 
 // Encryption key derived from environment or fallback (should be set in .env)
-const ENCRYPTION_KEY = process.env.NEXT_PUBLIC_ENCRYPTION_KEY || 'fast-track-purchasing-secret-key-2024';
+const ENCRYPTION_KEY = process.env.NEXT_PUBLIC_ENCRYPTION_KEY || 'fast-track-Projects-secret-key-2024';
 
 /**
  * Generate a random IV for AES encryption

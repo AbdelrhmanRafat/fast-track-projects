@@ -112,7 +112,7 @@ export function CompactSidebar() {
         <div className="h-14 flex items-center justify-center border-b border-border">
           <Image
             src="/app-logo.svg"
-            alt="Fast Track Purchasing"
+            alt="Fast Track Projects"
             width={56}
             height={56}
             className="h-14 w-14 object-contain"
@@ -134,7 +134,7 @@ export function CompactSidebar() {
         >
           <Image
             src="/app-logo.svg"
-            alt="Fast Track Purchasing"
+            alt="Fast Track Projects"
             width={56}
             height={56}
             className="h-14 w-14 object-contain"

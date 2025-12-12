@@ -9,18 +9,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { SearchComponent, SearchComponentConfig } from '@/components/ui/SearchComponent';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+
 import { Skeleton } from '@/components/ui/skeleton';
 import {
-  MoreHorizontal,
   Eye,
-  Edit,
-  Trash2,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
@@ -168,21 +160,6 @@ export default function ProjectsTableClient({
    */
   const handleViewProject = (projectId: string) => {
     router.push(`/projects/${projectId}`);
-  };
-
-  /**
-   * Navigate to edit project
-   */
-  const handleEditProject = (projectId: string) => {
-    router.push(`/projects/${projectId}/edit`);
-  };
-
-  /**
-   * Handle delete project (placeholder)
-   */
-  const handleDeleteProject = (projectId: string) => {
-    // TODO: Implement delete confirmation dialog
-    console.log('Delete project:', projectId);
   };
 
   // Extract pagination info
@@ -334,31 +311,15 @@ export default function ProjectsTableClient({
 
                       {/* Actions */}
                       <td className="p-4 align-middle text-center">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">{t('common.actions')}</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleViewProject(project.id)}>
-                              <Eye className="h-4 w-4 me-2" />
-                              {t('common.viewDetails')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleEditProject(project.id)}>
-                              <Edit className="h-4 w-4 me-2" />
-                              {t('common.edit')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => handleDeleteProject(project.id)}
-                              className="text-destructive focus:text-destructive"
-                            >
-                              <Trash2 className="h-4 w-4 me-2" />
-                              {t('common.delete')}
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleViewProject(project.id)}
+                          className="gap-2"
+                        >
+                          <Eye className="h-4 w-4" />
+                          {t('common.viewDetails')}
+                        </Button>
                       </td>
                     </tr>
                   ))

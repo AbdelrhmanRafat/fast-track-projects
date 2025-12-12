@@ -66,7 +66,7 @@ export enum OrderNotificationType {
   AdminReview = 'admin_review',             // مراجعة الطلب من الإدارة
   OwnerApproved = 'owner_approved',         // تمت الموافقة من الادارة
   OwnerRejected = 'owner_rejected',         // تم رفض الطلب
-  PurchasingStarted = 'purchasing_started', // بدأت عملية الشراء
+  ProjectsStarted = 'Projects_started', // بدأت عملية الشراء
   OrderClosed = 'order_closed',             // تم إغلاق الطلب
   ItemStatusChanged = 'item_status_changed', // تم تحديث حالة البند
 }
@@ -269,9 +269,9 @@ export interface UseNotificationsReturn {
  * 1. Site creates order → Notify Engineering only
  * 2. Engineering updates status → Notify Site + Admin
  * 3. Admin updates status → Notify Site + Engineering  
- * 4. Admin approves → Notify Purchasing + Site + Engineering
- * 5. Admin rejects → Notify Site + Engineering (NOT Purchasing)
- * 6. Purchasing updates → Notify ALL roles
+ * 4. Admin approves → Notify Projects + Site + Engineering
+ * 5. Admin rejects → Notify Site + Engineering (NOT Projects)
+ * 6. Projects updates → Notify ALL roles
  */
 export const STATUS_NOTIFICATION_MAP: Record<string, NotificationTargets> = {
   // Order created by Site - notify Engineering only
@@ -289,22 +289,22 @@ export const STATUS_NOTIFICATION_MAP: Record<string, NotificationTargets> = {
     roles: ['engineering'],
     includeCreator: true, // Site (the creator)
   },
-  // Admin approved - notify Purchasing + Site + Engineering
+  // Admin approved - notify Projects + Site + Engineering
   'تمت الموافقة من الادارة': {
-    roles: ['purchasing', 'engineering'],
+    roles: ['Projects', 'engineering'],
     includeCreator: true, // Site (the creator)
   },
-  // Admin rejected - notify Site + Engineering (NOT Purchasing)
+  // Admin rejected - notify Site + Engineering (NOT Projects)
   'تم الرفض من الادارة': {
     roles: ['engineering'],
     includeCreator: true, // Site (the creator)
   },
-  // Purchasing in progress - notify ALL roles
+  // Projects in progress - notify ALL roles
   'جاري الان عملية الشراء': {
     roles: ['admin', 'sub-admin', 'engineering', 'site'],
     includeCreator: true,
   },
-  // Order closed by Purchasing - notify ALL roles
+  // Order closed by Projects - notify ALL roles
   'تم غلق طلب الشراء': {
     roles: ['admin', 'sub-admin', 'engineering', 'site'],
     includeCreator: true,
@@ -333,7 +333,7 @@ export const STATUS_TO_NOTIFICATION_TYPE: Record<string, NotificationType> = {
   'مراجعة الطلب من الادارة': OrderNotificationType.AdminReview,
   'تمت الموافقة من الادارة': OrderNotificationType.OwnerApproved,
   'تم الرفض من الادارة': OrderNotificationType.OwnerRejected,
-  'جاري الان عملية الشراء': OrderNotificationType.PurchasingStarted,
+  'جاري الان عملية الشراء': OrderNotificationType.ProjectsStarted,
   'تم غلق طلب الشراء': OrderNotificationType.OrderClosed,
 };
 

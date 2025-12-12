@@ -212,7 +212,7 @@ export function SearchComponent({
             value={value}
             onChange={(e) => handleFieldChange(field.key, e.target.value)}
             className="w-full"
-            dir="rtl"
+            dir="ltr"
           />
         );
         
@@ -428,7 +428,7 @@ export function SearchComponent({
               value={formValues[textField.key] || ''}
               onChange={(e) => handleFieldChange(textField.key, e.target.value)}
               className="ps-10 h-11 rounded-xl bg-muted/50 border-0 focus-visible:ring-2 focus-visible:ring-primary/20"
-              dir="rtl"
+              dir="ltr"
             />
           </div>
         )}
@@ -456,7 +456,7 @@ export function SearchComponent({
                 )}
               </Button>
             </DrawerTrigger>
-            <DrawerContent dir="rtl">
+            <DrawerContent dir="ltr">
               <DrawerHeader className="px-6 pb-2">
                 <DrawerTitle className="flex items-center justify-between text-lg">
                   <span className="font-semibold">{config.title || "التصفية"}</span>
@@ -527,7 +527,7 @@ export function SearchComponent({
               value={formValues[textField.key] || ''}
               onChange={(e) => handleFieldChange(textField.key, e.target.value)}
               className="ps-9 h-9 w-64 rounded-full bg-secondary/80 border-0 focus-visible:ring-2 focus-visible:ring-primary/30 text-sm"
-              dir="rtl"
+              dir="ltr"
             />
           </div>
         )}

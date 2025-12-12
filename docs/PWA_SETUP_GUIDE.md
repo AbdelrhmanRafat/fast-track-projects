@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide explains how to set up PWA Push Notifications and App Badge for the Fast Track Purchasing application.
+This guide explains how to set up PWA Push Notifications and App Badge for the Fast Track Projects application.
 
 ---
 

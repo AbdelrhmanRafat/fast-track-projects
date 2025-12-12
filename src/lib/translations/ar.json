@@ -398,7 +398,7 @@
     "currentOrders": "صفحة لعرض الطلبات الجارية حالياً تحت المعالجة.",
     "orderDetails": "استعراض تفاصيل الطلب المحدد بما يشمل العناصر والملاحظات.",
     "editOrder": "تتيح تعديل بيانات الطلب وتحديث التفاصيل قبل الحفظ.",
-    "purchasingStatus": "تعديل حالة المشتريات وتحديث بيانات الشراء للعناصر.",
+    "ProjectsStatus": "تعديل حالة المشتريات وتحديث بيانات الشراء للعناصر.",
     "users": "تعرض قائمة المستخدمين وإدارة الحسابات بسهولة.",
     "allProjects": "عرض جميع المشاريع المسجلة في النظام مع إمكانية البحث والتصفية.",
     "currentProjects": "متابعة المشاريع الجارية حالياً قيد التنفيذ.",
@@ -449,7 +449,8 @@
       "stepName": "اسم الخطوة",
       "stepDescription": "وصف الخطوة",
       "stepOrder": "ترتيب الخطوة",
-      "finalize": "إكمال الخطوة",
+      "actions": "إجراءات الخطوة",
+      "finalize": "إكمال",
       "finalized": "مكتملة",
       "pending": "قيد التنفيذ",
       "notStarted": "لم تبدأ",
@@ -458,7 +459,25 @@
       "addFirstStep": "أضف أول خطوة للمشروع",
       "stepNumber": "الخطوة {number}",
       "confirmFinalize": "هل أنت متأكد من إكمال هذه الخطوة؟",
-      "cannotUnfinalize": "لا يمكن التراجع عن إكمال الخطوة"
+      "cannotUnfinalize": "لا يمكن التراجع عن إكمال الخطوة",
+      "finalizeDialog": {
+        "title": "إجراءات الخطوة",
+        "description": "يمكنك إضافة ملاحظة لتتبع التقدم، أو إكمال الخطوة عند الانتهاء.",
+        "noteLabel": "إضافة ملاحظة",
+        "notePlaceholder": "أدخل ملاحظة لهذه الخطوة...",
+        "noteRequired": "الرجاء إدخال ملاحظة للمتابعة",
+        "addNoteOnly": "حفظ الملاحظة فقط",
+        "finalizeOnly": "إكمال الخطوة (قفل)",
+        "addNoteAndFinalize": "حفظ الملاحظة وإكمال"
+      },
+      "confirmDialog": {
+        "title": "تأكيد الإكمال",
+        "message": "أنت على وشك إكمال هذه الخطوة.",
+        "warning": "بمجرد الإكمال، لا يمكن تعديل أو تغيير هذه الخطوة. هذا الإجراء دائم ولا يمكن التراجع عنه.",
+        "stepLabel": "الخطوة",
+        "confirm": "نعم، إكمال الخطوة",
+        "cancel": "إلغاء"
+      }
     },
     "form": {
       "createTitle": "إنشاء مشروع جديد",
@@ -495,6 +514,9 @@
       "stepUpdateSuccess": "تم تحديث الخطوة بنجاح",
       "stepDeleteSuccess": "تم حذف الخطوة بنجاح",
       "stepFinalizeSuccess": "تم إكمال الخطوة بنجاح",
+      "stepFinalizedSuccess": "تم إكمال الخطوة بنجاح",
+      "noteAddedSuccess": "تم إضافة الملاحظة بنجاح",
+      "stepFinalizedWithNoteSuccess": "تم إكمال الخطوة مع الملاحظة بنجاح",
       "projectCompleted": "تم إكمال المشروع بالكامل",
       "fetchError": "فشل في جلب المشاريع",
       "createError": "فشل في إنشاء المشروع",
@@ -538,6 +560,28 @@
       "cannotEdit": "ليس لديك صلاحية لتعديل هذا المشروع",
       "cannotDelete": "ليس لديك صلاحية لحذف هذا المشروع",
       "onlyCreatorCanManage": "فقط منشئ المشروع يمكنه إدارته"
+    },
+    "view": {
+      "overallProgress": "التقدم الإجمالي",
+      "stepsCompleted": "خطوات مكتملة",
+      "duration": "المدة",
+      "timeStatus": "حالة الوقت",
+      "daysRemaining": "{days} أيام متبقية",
+      "daysOverdue": "{days} أيام تأخير",
+      "dueToday": "مستحق اليوم",
+      "totalSteps": "إجمالي الخطوات",
+      "finalized": "مكتملة",
+      "finalizedNotes": "ملاحظات الإكمال"
+    },
+    "edit": {
+      "enterEditMode": "وضع التحرير",
+      "exitEditMode": "إنهاء التحرير",
+      "editModeActive": "وضع التحرير مفعّل",
+      "editModeDescription": "يمكنك الآن تعديل الخطوات غير المكتملة. الخطوات المكتملة لا يمكن تعديلها.",
+      "editingStep": "تحرير الخطوة",
+      "finalizedLocked": "مقفلة",
+      "addNote": "إضافة ملاحظة",
+      "notePlaceholder": "أدخل ملاحظة لهذه الخطوة..."
     }
   },
   "orders": {
@@ -570,7 +614,7 @@
       "underAdminReview": "مراجعة الطلب من الادارة",
       "ownerApproved": "تمت الموافقة من الادارة",
       "ownerRejected": "تم الرفض من الادارة",
-      "purchasingInProgress": "جاري الان عملية الشراء",
+      "ProjectsInProgress": "جاري الان عملية الشراء",
       "closed": "تم غلق طلب الشراء",
       "awaitingApproval": "الطلب في انتظار موافقة الادارة"
     },
@@ -673,7 +717,7 @@
     "sidebar": {
       "lastUpdate": "آخر تحديث",
       "lastUpdateBy": "آخر تحديث بواسطة",
-      "purchasingNotes": "ملاحظات المشتريات",
+      "ProjectsNotes": "ملاحظات المشتريات",
       "rejectionReason": "سبب الرفض"
     },
     "review": {
@@ -728,8 +772,8 @@
       "reviewCompleted": "تمت المراجعة الهندسية",
       "awaitingAdminReview": "الطلب في انتظار مراجعة الإدارة"
     },
-    "purchasing": {
-      "startPurchasing": "بدء عملية الشراء",
+    "Projects": {
+      "startProjects": "بدء عملية الشراء",
       "startSuccess": "تم بدء عملية الشراء بنجاح",
       "startFailed": "فشل في بدء عملية الشراء",
       "startError": "حدث خطأ أثناء بدء عملية الشراء",

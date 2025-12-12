@@ -36,6 +36,15 @@ export enum ProjectStatus {
 // ==========================================
 
 /**
+ * Finalized note entry in project step
+ */
+export interface FinalizedNote {
+  note: string;
+  timestamp: string;
+  created_by: string;
+}
+
+/**
  * Project step stored in database
  */
 export interface ProjectStep {
@@ -47,6 +56,7 @@ export interface ProjectStep {
   duration_to: string | null;
   is_finalized: boolean;
   finalized_at: string | null;
+  finalized_notes: FinalizedNote[];
   step_order: number;
   created_at: string;
   updated_at: string;
@@ -145,7 +155,9 @@ export interface UpdateProjectRequest {
 }
 
 /**
- * Update step request body
+ * Update step request body - DEPRECATED
+ * Steps can no longer be edited (title, description, duration)
+ * Only finalization and notes are allowed via UpdateStepActionRequest
  */
 export interface UpdateStepRequest {
   step_name?: string;
@@ -156,7 +168,18 @@ export interface UpdateStepRequest {
 }
 
 /**
- * Finalize step request body
+ * Step action request body for finalization and adding notes
+ * Used for PUT /project-steps
+ */
+export interface UpdateStepActionRequest {
+  id: string;
+  is_finalized?: true;
+  finalized_notes?: Array<{ note: string }>;
+}
+
+/**
+ * Finalize step request body - DEPRECATED
+ * Use UpdateStepActionRequest instead
  */
 export interface FinalizeStepRequest {
   finalize: true;
@@ -231,6 +254,15 @@ export interface CheckOverdueResponseData {
     duration_to: string;
     engineer: string;
   }>;
+}
+
+/**
+ * Check permission response data
+ */
+export interface CheckPermissionResponseData {
+  can_edit: boolean;
+  project_id: string;
+  reason: string;
 }
 
 /**

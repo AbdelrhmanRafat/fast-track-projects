@@ -181,7 +181,7 @@
     "createAccount": "Create New Account",
     "forgotPassword": "Forgot Password",
     "resetPassword": "Reset Password",
-    "signInDescription": "Sign in to access the purchasing management system",
+    "signInDescription": "Sign in to access the Projects management system",
     "orContinueWith": "Or continue with",
     "termsAgreement": "By signing in, you agree to the",
     "termsOfService": "Terms of Service",
@@ -398,7 +398,7 @@
     "currentOrders": "Page for viewing orders currently under processing.",
     "orderDetails": "Review order details including items and notes.",
     "editOrder": "Allows editing order data and updating details before saving.",
-    "purchasingStatus": "Modify purchasing status and update item purchase data.",
+    "ProjectsStatus": "Modify Projects status and update item purchase data.",
     "users": "Displays user list and account management easily.",
     "allProjects": "View all registered projects in the system with search and filter options.",
     "currentProjects": "Track projects currently in progress.",
@@ -449,7 +449,8 @@
       "stepName": "Step Name",
       "stepDescription": "Step Description",
       "stepOrder": "Step Order",
-      "finalize": "Finalize Step",
+      "actions": "Step Actions",
+      "finalize": "Finalize",
       "finalized": "Finalized",
       "pending": "In Progress",
       "notStarted": "Not Started",
@@ -458,7 +459,25 @@
       "addFirstStep": "Add the first step to this project",
       "stepNumber": "Step {number}",
       "confirmFinalize": "Are you sure you want to finalize this step?",
-      "cannotUnfinalize": "This action cannot be undone"
+      "cannotUnfinalize": "This action cannot be undone",
+      "finalizeDialog": {
+        "title": "Step Actions",
+        "description": "You can add a note to track progress, or finalize the step when completed.",
+        "noteLabel": "Add a Note",
+        "notePlaceholder": "Enter a note for this step...",
+        "noteRequired": "Please enter a note to proceed",
+        "addNoteOnly": "Save Note Only",
+        "finalizeOnly": "Finalize Step (Lock)",
+        "addNoteAndFinalize": "Save Note & Finalize"
+      },
+      "confirmDialog": {
+        "title": "Confirm Finalization",
+        "message": "You are about to finalize this step.",
+        "warning": "Once finalized, this step cannot be edited or changed. This action is permanent and irreversible.",
+        "stepLabel": "Step",
+        "confirm": "Yes, Finalize Step",
+        "cancel": "Cancel"
+      }
     },
     "form": {
       "createTitle": "Create New Project",
@@ -495,6 +514,9 @@
       "stepUpdateSuccess": "Step updated successfully",
       "stepDeleteSuccess": "Step deleted successfully",
       "stepFinalizeSuccess": "Step finalized successfully",
+      "stepFinalizedSuccess": "Step finalized successfully",
+      "noteAddedSuccess": "Note added successfully",
+      "stepFinalizedWithNoteSuccess": "Step finalized with note successfully",
       "projectCompleted": "Project completed successfully",
       "fetchError": "Failed to fetch projects",
       "createError": "Failed to create project",
@@ -538,6 +560,28 @@
       "cannotEdit": "You don't have permission to edit this project",
       "cannotDelete": "You don't have permission to delete this project",
       "onlyCreatorCanManage": "Only the project creator can manage it"
+    },
+    "view": {
+      "overallProgress": "Overall Progress",
+      "stepsCompleted": "steps completed",
+      "duration": "Duration",
+      "timeStatus": "Time Status",
+      "daysRemaining": "{days} days remaining",
+      "daysOverdue": "{days} days overdue",
+      "dueToday": "Due today",
+      "totalSteps": "total steps",
+      "finalized": "finalized",
+      "finalizedNotes": "Finalized Notes"
+    },
+    "edit": {
+      "enterEditMode": "Edit Mode",
+      "exitEditMode": "Exit Edit Mode",
+      "editModeActive": "Edit Mode Active",
+      "editModeDescription": "You can now edit non-finalized steps. Finalized steps cannot be modified.",
+      "editingStep": "Editing Step",
+      "finalizedLocked": "Locked",
+      "addNote": "Add Note",
+      "notePlaceholder": "Enter a note for this step..."
     }
   },
   "orders": {
@@ -570,7 +614,7 @@
       "underAdminReview": "Under Admin Review",
       "ownerApproved": "Admin Approved",
       "ownerRejected": "Admin Rejected",
-      "purchasingInProgress": "Purchasing In Progress",
+      "ProjectsInProgress": "Projects In Progress",
       "closed": "Purchase Order Closed",
       "awaitingApproval": "Awaiting Admin Approval"
     },
@@ -659,7 +703,7 @@
       "attachmentDeleteSuccess": "Attachment deleted successfully",
       "attachmentDeleteFailed": "Failed to delete attachment"
     },
-    "itemNotes": "Purchasing Notes",
+    "itemNotes": "Projects Notes",
     "noItems": "No items in this order",
     "itemStatus": {
       "purchased": "Purchased",
@@ -673,7 +717,7 @@
     "sidebar": {
       "lastUpdate": "Last Update",
       "lastUpdateBy": "Last Updated By",
-      "purchasingNotes": "Purchasing Notes",
+      "ProjectsNotes": "Projects Notes",
       "rejectionReason": "Rejection Reason"
     },
     "review": {
@@ -728,21 +772,21 @@
       "reviewCompleted": "Engineering Review Completed",
       "awaitingAdminReview": "Order awaiting admin review"
     },
-    "purchasing": {
-      "startPurchasing": "Start Purchasing Process",
-      "startSuccess": "Purchasing process started successfully",
-      "startFailed": "Failed to start purchasing process",
-      "startError": "An error occurred while starting purchasing process",
-      "workflow": "Purchasing Workflow",
+    "Projects": {
+      "startProjects": "Start Projects Process",
+      "startSuccess": "Projects process started successfully",
+      "startFailed": "Failed to start Projects process",
+      "startError": "An error occurred while starting Projects process",
+      "workflow": "Projects Workflow",
       "steps": {
-        "step1": "Start Purchasing",
+        "step1": "Start Projects",
         "step2": "Update Items Status",
         "step3": "Finalize Order"
       },
       "itemStatus": {
         "title": "Update Item Status",
-        "description": "Select the purchasing status for this item",
-        "selectStatus": "Purchasing Status",
+        "description": "Select the Projects status for this item",
+        "selectStatus": "Projects Status",
         "purchased": "Purchased",
         "pending": "Pending",
         "notPurchased": "Not Purchased",
@@ -752,20 +796,20 @@
       },
       "finalize": {
         "title": "Finalize Order",
-        "description": "Confirm purchasing process completion and record results",
+        "description": "Confirm Projects process completion and record results",
         "confirm": "Confirm Finalization",
         "success": "Order finalized successfully",
         "failed": "Failed to finalize order"
       },
       "summary": {
-        "title": "Purchasing Summary",
+        "title": "Projects Summary",
         "total": "Total Items",
         "purchased": "Purchased",
         "notPurchased": "Not Purchased"
       },
       "notes": {
-        "title": "Purchasing Notes",
-        "placeholder": "Enter notes about the purchasing process..."
+        "title": "Projects Notes",
+        "placeholder": "Enter notes about the Projects process..."
       },
       "itemNotes": {
         "title": "Item Notes",

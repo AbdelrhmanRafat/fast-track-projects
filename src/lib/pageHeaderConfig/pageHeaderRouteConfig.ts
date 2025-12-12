@@ -145,11 +145,11 @@ export function getPageHeaderRouteConfig(
     };
   }
 
-  // Check for purchasing page pattern: /orders/[id]/purchasing
-  const purchasingMatch = pathname.match(/^\/orders\/([^/]+)\/purchasing$/);
-  if (purchasingMatch) {
+  // Check for Projects page pattern: /orders/[id]/Projects
+  const ProjectsMatch = pathname.match(/^\/orders\/([^/]+)\/Projects$/);
+  if (ProjectsMatch) {
     return {
-      titleKey: "pageHeaders.purchasingStatus",
+      titleKey: "pageHeaders.ProjectsStatus",
       showHeader: true,
     };
   }

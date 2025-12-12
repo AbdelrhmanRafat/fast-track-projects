@@ -205,7 +205,7 @@ self.addEventListener('push', (event) => {
   console.log('Push received:', event);
 
   let data = {
-    title: 'Fast Track Purchasing',
+    title: 'Fast Track Projects',
     body: 'لديك إشعار جديد',
     icon: '/icons/icon-192.png',
     badge: '/icons/badge-72.png',
@@ -1553,7 +1553,7 @@ function getUsersToNotify(newStatus: string): { roles: string[], includeCreator:
       includeCreator: false 
     },
     'تمت الموافقة من الادارة': { 
-      roles: ['purchasing'], 
+      roles: ['Projects'], 
       includeCreator: true 
     },
     'تم الرفض من الادارة': { 
@@ -1788,7 +1788,7 @@ supabase/
 |---------------|----------------|------------------|
 | → تمت المراجعة الهندسية | Admin, Sub-Admin | ❌ |
 | → مراجعة الطلب من الادارة | Admin, Sub-Admin | ❌ |
-| → تمت الموافقة من الادارة | Purchasing | ✅ |
+| → تمت الموافقة من الادارة | Projects | ✅ |
 | → تم الرفض من الادارة | - | ✅ |
 | → جاري الان عملية الشراء | Admin, Sub-Admin | ✅ |
 | → تم غلق طلب الشراء | Admin, Sub-Admin | ✅ |
