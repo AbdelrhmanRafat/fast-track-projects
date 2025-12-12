@@ -296,6 +296,20 @@
     "actions": "الإجراءات",
     "refresh": "تحديث"
   },
+  "search": {
+    "filters": "التصفية",
+    "clearFilters": "مسح التصفية",
+    "applyFilters": "تطبيق التصفية",
+    "enterValue": "أدخل القيمة...",
+    "allOptions": "جميع الخيارات",
+    "chooseValue": "اختر القيمة...",
+    "pickDate": "اختر التاريخ",
+    "fromDate": "من تاريخ",
+    "toDate": "إلى تاريخ",
+    "selectMainFieldFirst": "اختر الحقل الرئيسي أولاً",
+    "loading": "جاري التحميل...",
+    "noOptions": "لا توجد خيارات"
+  },
   "home": {
     "welcome": "مرحباً بك، {{name}}",
     "welcomeDefault": "مرحباً بك",

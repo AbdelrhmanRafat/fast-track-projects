@@ -10,6 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { Calendar } from "./calendar";
 import { format } from "date-fns";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "./drawer";
+import { useTranslation } from "@/components/providers/LanguageProvider";
 
 // Generic field types for the search component
 export type SearchFieldType = 'text' | 'select' | 'date' | 'dateRange' | 'dependentSelect';
@@ -57,8 +58,8 @@ export function SearchComponent({
   initialValues = {},
   className,
 }: SearchComponentProps) {
+  const { t } = useTranslation();
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
-  const searchTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   // Initialize form values with initial values or empty strings
   const [formValues, setFormValues] = useState<Record<string, any>>(() => {
@@ -74,51 +75,23 @@ export function SearchComponent({
     return values;
   });
 
-  // Auto-trigger search function with debouncing
-  const triggerSearch = React.useCallback((values: Record<string, any>) => {
-    // Clear existing timeout
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
-    }
+  const handleFieldChange = (fieldKey: string, value: any) => {
+    setFormValues({
+      ...formValues,
+      [fieldKey]: value
+    });
+  };
 
+  const handleSearch = () => {
     // Filter out empty values
     const searchValues: Record<string, any> = {};
-    Object.entries(values).forEach(([key, val]) => {
+    Object.entries(formValues).forEach(([key, val]) => {
       if (val && val.toString().trim() !== '') {
         searchValues[key] = val;
       }
     });
-
-    // Debounce the search to avoid too many API calls
-    searchTimeoutRef.current = setTimeout(() => {
-      onSearch(searchValues);
-    }, 300);
-  }, [onSearch]);
-
-  // Cleanup timeout on unmount
-  React.useEffect(() => {
-    return () => {
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  const handleFieldChange = (fieldKey: string, value: any) => {
-    const updatedValues = {
-      ...formValues,
-      [fieldKey]: value
-    };
     
-    setFormValues(updatedValues);
-    
-    // Auto-trigger search when field changes
-    triggerSearch(updatedValues);
-  };
-
-  const handleSearch = () => {
-    // Trigger search immediately (for mobile drawer close)
-    triggerSearch(formValues);
+    onSearch(searchValues);
     setIsMobileDrawerOpen(false);
   };
 
@@ -138,7 +111,6 @@ export function SearchComponent({
     if (onClear) {
       onClear();
     } else {
-      // Automatically trigger search with empty values to update backend/routes
       onSearch({});
     }
     setIsMobileDrawerOpen(false);
@@ -163,9 +135,6 @@ export function SearchComponent({
     
     // Update state
     setFormValues(updatedValues);
-    
-    // Auto-trigger search with updated values
-    triggerSearch(updatedValues);
   };
 
   const getActiveFiltersCount = () => {
@@ -208,7 +177,7 @@ export function SearchComponent({
           <Input
             id={fieldId}
             type="text"
-            placeholder={field.placeholder || "أدخل القيمة..."}
+            placeholder={field.placeholder || t('search.enterValue')}
             value={value}
             onChange={(e) => handleFieldChange(field.key, e.target.value)}
             className="w-full"
@@ -220,12 +189,12 @@ export function SearchComponent({
         return (
           <CustomSelect
             options={[
-              { value: "", label: "جميع الخيارات" },
+              { value: "", label: t('search.allOptions') },
               ...(field.options || [])
             ]}
             value={value}
             onValueChange={(newValue) => handleFieldChange(field.key, newValue)}
-            placeholder={field.placeholder || "اختر القيمة..."}
+            placeholder={field.placeholder || t('search.chooseValue')}
             className="w-full"
           />
         );
@@ -243,7 +212,7 @@ export function SearchComponent({
                 )}
               >
                 <CalendarIcon className="h-4 w-4 me-2" />
-                {value ? format(new Date(value), "PPP") : <span>{field.placeholder || "Pick a date"}</span>}
+                {value ? format(new Date(value), "PPP") : <span>{field.placeholder || t('search.pickDate')}</span>}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -267,7 +236,7 @@ export function SearchComponent({
           <div className="grid grid-cols-2 gap-2">
             <div className="flex flex-col gap-3">
               <label htmlFor={`${fieldId}-from`} className="text-xs font-medium text-muted-foreground">
-                من تاريخ
+                {t('search.fromDate')}
               </label>
               <Popover>
                 <PopoverTrigger asChild>
@@ -280,7 +249,7 @@ export function SearchComponent({
                     )}
                   >
                     <CalendarIcon className="h-3 w-3 me-1.5" />
-                    {fromValue ? format(new Date(fromValue), "PP") : <span>من تاريخ</span>}
+                    {fromValue ? format(new Date(fromValue), "PP") : <span>{t('search.fromDate')}</span>}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -295,7 +264,7 @@ export function SearchComponent({
             </div>
             <div className="flex flex-col gap-3">
               <label htmlFor={`${fieldId}-to`} className="text-xs font-medium text-muted-foreground">
-                إلى تاريخ
+                {t('search.toDate')}
               </label>
               <Popover>
                 <PopoverTrigger asChild>
@@ -308,7 +277,7 @@ export function SearchComponent({
                     )}
                   >
                     <CalendarIcon className="h-3 w-3 me-1.5" />
-                    {toValue ? format(new Date(toValue), "PP") : <span>إلى تاريخ</span>}
+                    {toValue ? format(new Date(toValue), "PP") : <span>{t('search.toDate')}</span>}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -329,10 +298,10 @@ export function SearchComponent({
         if (field.disabled) {
           return (
             <CustomSelect
-              options={[{ value: "", label: field.disabledPlaceholder || "اختر الحقل الرئيسي أولاً" }]}
+              options={[{ value: "", label: field.disabledPlaceholder || t('search.selectMainFieldFirst') }]}
               value=""
               onValueChange={() => {}}
-              placeholder={field.disabledPlaceholder || "اختر الحقل الرئيسي أولاً"}
+              placeholder={field.disabledPlaceholder || t('search.selectMainFieldFirst')}
               className="w-full opacity-50"
               disabled
             />
@@ -341,10 +310,10 @@ export function SearchComponent({
         if (field.loading) {
           return (
             <CustomSelect
-              options={[{ value: "", label: field.loadingPlaceholder || "جاري التحميل..." }]}
+              options={[{ value: "", label: field.loadingPlaceholder || t('search.loading') }]}
               value=""
               onValueChange={() => {}}
-              placeholder={field.loadingPlaceholder || "جاري التحميل..."}
+              placeholder={field.loadingPlaceholder || t('search.loading')}
               className="w-full opacity-50"
               disabled
             />
@@ -353,10 +322,10 @@ export function SearchComponent({
         if (!field.options || field.options.length === 0) {
           return (
             <CustomSelect
-              options={[{ value: "", label: field.emptyPlaceholder || "لا توجد خيارات" }]}
+              options={[{ value: "", label: field.emptyPlaceholder || t('search.noOptions') }]}
               value=""
               onValueChange={() => {}}
-              placeholder={field.emptyPlaceholder || "لا توجد خيارات"}
+              placeholder={field.emptyPlaceholder || t('search.noOptions')}
               className="w-full opacity-50"
               disabled
             />
@@ -365,12 +334,12 @@ export function SearchComponent({
         return (
           <CustomSelect
             options={[
-              { value: "", label: "جميع الخيارات" },
+              { value: "", label: t('search.allOptions') },
               ...(field.options || [])
             ]}
             value={value}
             onValueChange={(newValue) => handleFieldChange(field.key, newValue)}
-            placeholder={field.placeholder || "اختر القيمة..."}
+            placeholder={field.placeholder || t('search.chooseValue')}
             className="w-full"
           />
         );
@@ -424,7 +393,7 @@ export function SearchComponent({
             <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
-              placeholder={textField.placeholder || "أدخل القيمة..."}
+              placeholder={textField.placeholder || t('search.enterValue')}
               value={formValues[textField.key] || ''}
               onChange={(e) => handleFieldChange(textField.key, e.target.value)}
               className="ps-10 h-11 rounded-xl bg-muted/50 border-0 focus-visible:ring-2 focus-visible:ring-primary/20"
@@ -447,7 +416,7 @@ export function SearchComponent({
               >
                 <span className="flex items-center">
                   <SlidersHorizontal className="h-4 w-4 me-2" />
-                  {config.title || "التصفية"}
+                  {config.title || t('search.filters')}
                 </span>
                 {activeCount > 0 && (
                   <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-medium flex items-center justify-center">
@@ -456,10 +425,10 @@ export function SearchComponent({
                 )}
               </Button>
             </DrawerTrigger>
-            <DrawerContent dir="ltr">
+            <DrawerContent dir="ltr" className="max-h-[85vh]">
               <DrawerHeader className="px-6 pb-2">
                 <DrawerTitle className="flex items-center justify-between text-lg">
-                  <span className="font-semibold">{config.title || "التصفية"}</span>
+                  <span className="font-semibold">{config.title || t('search.filters')}</span>
                   {activeCount > 0 && (
                     <Button 
                       variant="ghost" 
@@ -468,12 +437,12 @@ export function SearchComponent({
                       className="text-destructive hover:text-destructive hover:bg-destructive/10 -me-2"
                     >
                       <X className="h-4 w-4 me-1" />
-                      {config.clearButtonText || "مسح التصفية"}
+                      {config.clearButtonText || t('search.clearFilters')}
                     </Button>
                   )}
                 </DrawerTitle>
               </DrawerHeader>
-              <div className="px-6 pb-8 space-y-6 overflow-y-auto max-h-[60vh]">
+              <div className="px-6 pb-4 space-y-6 overflow-y-auto flex-1">
                 {config.fields.map((field) => (
                   <div key={field.key} className="space-y-2">
                     <label 
@@ -486,6 +455,16 @@ export function SearchComponent({
                     {renderField(field, `mobile-${field.key}`)}
                   </div>
                 ))}
+              </div>
+              {/* Apply Button for Mobile */}
+              <div className="px-6 pb-6 pt-4 border-t">
+                <Button 
+                  onClick={handleSearch}
+                  className="w-full h-11"
+                  size="default"
+                >
+                  {config.searchButtonText || t('search.applyFilters')}
+                </Button>
               </div>
             </DrawerContent>
           </Drawer>
@@ -523,9 +502,14 @@ export function SearchComponent({
             <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
-              placeholder={textField.placeholder || "أدخل القيمة..."}
+              placeholder={textField.placeholder || t('search.enterValue')}
               value={formValues[textField.key] || ''}
               onChange={(e) => handleFieldChange(textField.key, e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
               className="ps-9 h-9 w-64 rounded-full bg-secondary/80 border-0 focus-visible:ring-2 focus-visible:ring-primary/30 text-sm"
               dir="ltr"
             />
@@ -550,8 +534,8 @@ export function SearchComponent({
                     {field.disabled 
                       ? (field.disabledPlaceholder || field.label || field.key)
                       : field.loading 
-                        ? (field.loadingPlaceholder || 'جاري التحميل...')
-                        : (field.emptyPlaceholder || 'لا توجد خيارات')
+                        ? (field.loadingPlaceholder || t('search.loading'))
+                        : (field.emptyPlaceholder || t('search.noOptions'))
                     }
                   </Button>
                 </div>
@@ -592,7 +576,7 @@ export function SearchComponent({
                             : "hover:bg-muted"
                         )}
                       >
-                        جميع الخيارات
+                        {t('search.allOptions')}
                       </button>
                       {field.options.map((option) => (
                         <button
@@ -619,7 +603,7 @@ export function SearchComponent({
                   ) : field.type === 'dateRange' ? (
                     <div className="space-y-3">
                       <div>
-                        <div className="text-xs text-muted-foreground mb-2">من تاريخ</div>
+                        <div className="text-xs text-muted-foreground mb-2">{t('search.fromDate')}</div>
                         <Calendar
                           mode="single"
                           selected={formValues[`${field.key}_from`] ? new Date(formValues[`${field.key}_from`]) : undefined}
@@ -627,7 +611,7 @@ export function SearchComponent({
                         />
                       </div>
                       <div className="border-t pt-3">
-                        <div className="text-xs text-muted-foreground mb-2">إلى تاريخ</div>
+                        <div className="text-xs text-muted-foreground mb-2">{t('search.toDate')}</div>
                         <Calendar
                           mode="single"
                           selected={formValues[`${field.key}_to`] ? new Date(formValues[`${field.key}_to`]) : undefined}
@@ -653,6 +637,15 @@ export function SearchComponent({
           );
         })}
 
+        {/* Apply Button for Desktop */}
+        <Button
+          onClick={handleSearch}
+          size="sm"
+          className="h-9 rounded-full"
+        >
+          {config.searchButtonText || t('search.applyFilters')}
+        </Button>
+
         {/* Clear All Button */}
         {activeCount > 0 && (
           <Button
@@ -662,12 +655,10 @@ export function SearchComponent({
             className="h-9 rounded-full text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10"
           >
             <X className="h-3.5 w-3.5 me-1" />
-            {config.clearButtonText || "مسح التصفية"}
+            {config.clearButtonText || t('search.clearFilters')}
           </Button>
         )}
       </div>
     </div>
   );
 }
-
-export default SearchComponent;

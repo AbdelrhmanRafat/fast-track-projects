@@ -296,6 +296,20 @@
     "actions": "Actions",
     "refresh": "Refresh"
   },
+  "search": {
+    "filters": "Filters",
+    "clearFilters": "Clear Filters",
+    "applyFilters": "Apply Filters",
+    "enterValue": "Enter value...",
+    "allOptions": "All Options",
+    "chooseValue": "Choose value...",
+    "pickDate": "Pick a date",
+    "fromDate": "From date",
+    "toDate": "To date",
+    "selectMainFieldFirst": "Select main field first",
+    "loading": "Loading...",
+    "noOptions": "No options"
+  },
   "home": {
     "welcome": "Welcome, {{name}}",
     "welcomeDefault": "Welcome",

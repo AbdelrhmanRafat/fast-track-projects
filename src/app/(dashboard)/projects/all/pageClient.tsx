@@ -9,8 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { SearchComponent, SearchComponentConfig } from '@/components/ui/SearchComponent';
-
-import { Skeleton } from '@/components/ui/skeleton';
+import { Table, TableColumn, TableAction } from '@/components/ui/Table';
 import {
   Eye,
   ChevronLeft,
@@ -174,6 +173,87 @@ export default function ProjectsTableClient({
 
   const projects = data?.data || [];
 
+  // Table columns configuration
+  const columns: TableColumn<Project>[] = useMemo(() => [
+    {
+      key: 'project_name',
+      label: t('projects.table.columns.projectName'),
+      render: (value) => <span className="font-medium">{value}</span>,
+    },
+    {
+      key: 'company_name',
+      label: t('projects.table.columns.companyName'),
+      render: (value) => value || '-',
+    },
+    {
+      key: 'project_type',
+      label: t('projects.table.columns.projectType'),
+      render: (value: ProjectType) => (
+        <Badge
+          variant="outline"
+          className={PROJECT_TYPE_BADGE_CLASSES[value] || ''}
+        >
+          {t(`projects.types.${value}` as any)}
+        </Badge>
+      ),
+    },
+    {
+      key: 'duration_from',
+      label: `${t('projects.fields.durationFrom')} - ${t('projects.fields.durationTo')}`,
+      render: (value, row) => (
+        <div className="flex flex-col gap-0.5">
+          <span>{formatDate(row.duration_from, language)}</span>
+          <span className="text-muted-foreground">
+            → {formatDate(row.duration_to, language)}
+          </span>
+        </div>
+      ),
+    },
+    {
+      key: 'status',
+      label: t('projects.table.columns.status'),
+      render: (value: ProjectStatus) => (
+        <Badge
+          variant="outline"
+          className={PROJECT_STATUS_BADGE_CLASSES[value] || ''}
+        >
+          {t(`projects.status.${value}` as any)}
+        </Badge>
+      ),
+    },
+    {
+      key: 'creator',
+      label: t('projects.table.columns.creator'),
+      render: (value) => value?.name || '-',
+    },
+    {
+      key: 'progress',
+      label: t('projects.table.columns.progress'),
+      render: (value) => (
+        <div className="flex items-center gap-2 min-w-[100px]">
+          <Progress
+            value={value?.percentage || 0}
+            className="h-2 flex-1"
+          />
+          <span className="text-sm text-muted-foreground w-10 text-end">
+            {value?.percentage || 0}%
+          </span>
+        </div>
+      ),
+    },
+  ], [t, language]);
+
+  // Table actions configuration
+  const actions: TableAction[] = useMemo(() => [
+    {
+      key: 'view',
+      label: t('common.viewDetails'),
+      icon: <Eye className="h-4 w-4" />,
+      onClick: (row: Project) => handleViewProject(row.id),
+      variant: 'default',
+    },
+  ], [t]);
+
   return (
     <div className="space-y-6">
       <RouteBasedPageHeader />
@@ -197,148 +277,21 @@ export default function ProjectsTableClient({
             />
           </div>
 
-          {/* Table */}
-          <div className="rounded-lg border overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-muted/50 border-b">
-                <tr>
-                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground text-sm">
-                    {t('projects.table.columns.projectName')}
-                  </th>
-                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground text-sm">
-                    {t('projects.table.columns.companyName')}
-                  </th>
-                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground text-sm">
-                    {t('projects.table.columns.projectType')}
-                  </th>
-                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground text-sm">
-                    {t('projects.fields.durationFrom')} - {t('projects.fields.durationTo')}
-                  </th>
-                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground text-sm">
-                    {t('projects.table.columns.status')}
-                  </th>
-                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground text-sm">
-                    {t('projects.table.columns.creator')}
-                  </th>
-                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground text-sm">
-                    {t('projects.table.columns.progress')}
-                  </th>
-                  <th className="h-12 px-4 text-center align-middle font-medium text-muted-foreground text-sm">
-                    {t('projects.table.columns.actions')}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  // Loading skeleton rows
-                  Array.from({ length: 5 }).map((_, index) => (
-                    <tr key={`skeleton-${index}`} className="border-b">
-                      <td className="p-4"><Skeleton className="h-5 w-32" /></td>
-                      <td className="p-4"><Skeleton className="h-5 w-24" /></td>
-                      <td className="p-4"><Skeleton className="h-6 w-20" /></td>
-                      <td className="p-4"><Skeleton className="h-5 w-36" /></td>
-                      <td className="p-4"><Skeleton className="h-6 w-16" /></td>
-                      <td className="p-4"><Skeleton className="h-5 w-20" /></td>
-                      <td className="p-4"><Skeleton className="h-4 w-24" /></td>
-                      <td className="p-4"><Skeleton className="h-8 w-8 mx-auto" /></td>
-                    </tr>
-                  ))
-                ) : projects.length === 0 ? (
-                  // Empty state
-                  <tr>
-                    <td colSpan={8} className="h-32 text-center">
-                      <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                        <p className="text-lg font-medium">{t('projects.noProjects')}</p>
-                        <p className="text-sm">{t('projects.noProjectsDescription')}</p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  // Data rows
-                  projects.map((project) => (
-                    <tr key={project.id} className="border-b last:border-b-0 hover:bg-muted/50 transition-colors">
-                      {/* Project Name */}
-                      <td className="p-4 align-middle font-medium">
-                        {project.project_name}
-                      </td>
+          {/* Table Component */}
+          <Table<Project>
+            columns={columns}
+            data={projects}
+            loading={loading}
+            actions={actions}
+            showActions={true}
+            searchable={false}
+            showPagination={false}
+            emptyMessage={t('projects.noProjects')}
+          />
 
-                      {/* Company Name */}
-                      <td className="p-4 align-middle">
-                        {project.company_name || '-'}
-                      </td>
-
-                      {/* Project Type */}
-                      <td className="p-4 align-middle">
-                        <Badge
-                          variant="outline"
-                          className={PROJECT_TYPE_BADGE_CLASSES[project.project_type as ProjectType] || ''}
-                        >
-                          {t(`projects.types.${project.project_type}` as any)}
-                        </Badge>
-                      </td>
-
-                      {/* Duration (From - To) */}
-                      <td className="p-4 align-middle text-sm">
-                        <div className="flex flex-col gap-0.5">
-                          <span>
-                            {formatDate(project.duration_from, language)}
-                          </span>
-                          <span className="text-muted-foreground">
-                            → {formatDate(project.duration_to, language)}
-                          </span>
-                        </div>
-                      </td>
-
-                      {/* Status */}
-                      <td className="p-4 align-middle">
-                        <Badge
-                          variant="outline"
-                          className={PROJECT_STATUS_BADGE_CLASSES[project.status as ProjectStatus] || ''}
-                        >
-                          {t(`projects.status.${project.status}` as any)}
-                        </Badge>
-                      </td>
-
-                      {/* Creator */}
-                      <td className="p-4 align-middle">
-                        {project.creator?.name || '-'}
-                      </td>
-
-                      {/* Progress */}
-                      <td className="p-4 align-middle">
-                        <div className="flex items-center gap-2 min-w-[100px]">
-                          <Progress
-                            value={project.progress?.percentage || 0}
-                            className="h-2 flex-1"
-                          />
-                          <span className="text-sm text-muted-foreground w-10 text-end">
-                            {project.progress?.percentage || 0}%
-                          </span>
-                        </div>
-                      </td>
-
-                      {/* Actions */}
-                      <td className="p-4 align-middle text-center">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleViewProject(project.id)}
-                          className="gap-2"
-                        >
-                          <Eye className="h-4 w-4" />
-                          {t('common.viewDetails')}
-                        </Button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination */}
-          {!loading && projects.length > 0 && (
-            <div className="flex items-center justify-between pt-4">
+          {/* Server-Side Pagination */}
+          {!loading && projects.length > 0 && pagination.totalPages > 1 && (
+            <div className="flex items-center justify-between pt-4 border-t">
               {/* Pagination Info */}
               <div className="text-sm text-muted-foreground">
                 {t('table.showing')} {((pagination.page - 1) * pagination.limit) + 1}
