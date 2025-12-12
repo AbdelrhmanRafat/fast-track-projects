@@ -5,6 +5,7 @@ import {
   List,
   Clock,
   Briefcase,
+  BarChart3,
 } from "lucide-react";
 import { UserRole } from "@/lib/types/userRoles";
 
@@ -84,6 +85,7 @@ export const ICON_REGISTRY: Record<string, LucideIcon> = {
   List,
   Clock,
   Briefcase,
+  BarChart3,
 };
 
 // Sidebar configuration with role-based access
@@ -110,6 +112,13 @@ export const sidebarConfig: SidebarGroup[] = [
         icon: Plus,
         theme: "primary",
         allowedRoles: [UserRole.Admin, UserRole.SubAdmin, UserRole.ProjectEngineers],
+      },
+      {
+        labelKey: "sidebar.statistics",
+        href: "/stats-admin",
+        icon: BarChart3,
+        theme: "primary",
+        allowedRoles: [UserRole.Admin, UserRole.SubAdmin],
       },
     ],
   },

@@ -113,6 +113,12 @@ export const pageHeaderRouteConfig: PageHeaderRouteConfigMap = {
     titleKey: "pageHeaders.users",
     showHeader: true,
   },
+
+  // Statistics Admin
+  "/stats-admin": {
+    titleKey: "pageHeaders.statistics",
+    showHeader: true,
+  },
 };
 
 /**

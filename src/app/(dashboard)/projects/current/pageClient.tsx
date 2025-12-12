@@ -22,10 +22,12 @@ import type {
   PaginationInfo,
   ProjectType,
   ProjectStatus,
+  ProjectOpeningStatus,
 } from '@/lib/services/projects/types';
 import {
   PROJECT_TYPE_BADGE_CLASSES,
   PROJECT_STATUS_BADGE_CLASSES,
+  PROJECT_OPENING_STATUS_BADGE_CLASSES,
 } from '@/lib/services/projects/types';
 
 interface CurrentProjectsTableClientProps {
@@ -215,6 +217,20 @@ export default function CurrentProjectsTableClient({
           className={`text-xs ${PROJECT_STATUS_BADGE_CLASSES[value] || ''}`}
         >
           {t(`projects.status.${value}` as any)}
+        </Badge>
+      ),
+    },
+    {
+      key: 'project_opening_status',
+      label: t('projects.table.columns.openingStatus'),
+      width: 'w-[90px]',
+      className: 'hidden sm:table-cell',
+      render: (value: ProjectOpeningStatus) => (
+        <Badge
+          variant="outline"
+          className={`text-xs ${PROJECT_OPENING_STATUS_BADGE_CLASSES[value] || ''}`}
+        >
+          {t(`projects.openingStatus.${value}` as any)}
         </Badge>
       ),
     },

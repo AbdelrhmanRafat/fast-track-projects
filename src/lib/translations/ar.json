@@ -90,7 +90,7 @@
     "approved": "موافق عليه",
     "rejected": "مرفوض",
     "completed": "مكتمل",
-    "inProgress": "قيد التنفيذ",
+    "inProgress": "التنفيذ",
     "new": "جديد",
     "formIncomplete": "يرجى ملء جميع الحقول المطلوبة",
     "undo": "تراجع",
@@ -217,6 +217,7 @@
     "allProjects": "جميع المشاريع",
     "currentProjects": "المشاريع الجارية",
     "createProject": "إنشاء مشروع",
+    "statistics": "الإحصائيات",
     "orders": "الطلبات",
     "createOrder": "إنشاء طلب",
     "allOrders": "جميع الطلبات",
@@ -416,10 +417,11 @@
     "ProjectsStatus": "تعديل حالة المشتريات وتحديث بيانات الشراء للعناصر.",
     "users": "تعرض قائمة المستخدمين وإدارة الحسابات بسهولة.",
     "allProjects": "عرض جميع المشاريع المسجلة في النظام مع إمكانية البحث والتصفية.",
-    "currentProjects": "متابعة المشاريع الجارية حالياً قيد التنفيذ.",
+    "currentProjects": "متابعة المشاريع الجارية حالياً التنفيذ.",
     "createProject": "إنشاء مشروع جديد وإدخال البيانات الأساسية.",
     "projectDetails": "استعراض تفاصيل المشروع بما يشمل المراحل والحالة.",
-    "editProject": "تعديل بيانات المشروع وتحديث المعلومات."
+    "editProject": "تعديل بيانات المشروع وتحديث المعلومات.",
+    "statistics": "عرض إحصائيات المشاريع والتحليلات للحصول على رؤى إدارية."
   },
   "projects": {
     "title": "المشاريع",
@@ -443,11 +445,20 @@
       "completed": "مكتمل",
       "overdue": "متأخر"
     },
+    "openingStatus": {
+      "tinder": "مناقصة",
+      "inProgress": "التنفيذ"
+    },
+    "stepPhase": {
+      "tinder": "مناقصة",
+      "inProgress": "التنفيذ"
+    },
     "fields": {
       "projectName": "اسم المشروع",
       "projectType": "نوع المشروع",
       "projectDescription": "وصف المشروع",
       "companyName": "اسم الشركة",
+      "openingStatus": "حالة المشروع",
       "durationFrom": "تاريخ البداية",
       "durationTo": "تاريخ النهاية",
       "status": "الحالة",
@@ -467,7 +478,7 @@
       "actions": "إجراءات الخطوة",
       "finalize": "إكمال",
       "finalized": "مكتملة",
-      "pending": "قيد التنفيذ",
+      "pending": "التنفيذ",
       "notStarted": "لم تبدأ",
       "finalizedAt": "تاريخ الإكمال",
       "noSteps": "لا توجد خطوات",
@@ -533,10 +544,32 @@
       "noteAddedSuccess": "تم إضافة الملاحظة بنجاح",
       "stepFinalizedWithNoteSuccess": "تم إكمال الخطوة مع الملاحظة بنجاح",
       "projectCompleted": "تم إكمال المشروع بالكامل",
+      "projectFinalizedSuccess": "تم إنهاء المشروع بنجاح",
+      "projectContinuedSuccess": "تم متابعة المشروع إلى مرحلة التنفيذ بنجاح",
+      "finalizeError": "فشل في إنهاء المشروع",
+      "continueError": "فشل في متابعة المشروع",
       "fetchError": "فشل في جلب المشاريع",
       "createError": "فشل في إنشاء المشروع",
       "updateError": "فشل في تحديث المشروع",
       "deleteError": "فشل في حذف المشروع"
+    },
+    "actions": {
+      "finalizeProject": "إنهاء المشروع",
+      "continueProject": "متابعة للتنفيذ",
+      "finalizeProjectDesc": "تحديد هذا المشروع كمكتمل",
+      "continueProjectDesc": "متابعة المشروع مع خطوات تنفيذ جديدة",
+      "confirmFinalize": "تأكيد الإنهاء",
+      "confirmFinalizeMessage": "هل أنت متأكد من إنهاء هذا المشروع؟ سيتم تحديده كمكتمل.",
+      "confirmFinalizeWarning": "لا يمكن التراجع عن هذا الإجراء.",
+      "continueProjectTitle": "متابعة المشروع للتنفيذ",
+      "continueProjectDesc": "إضافة خطوات جديدة لمرحلة التنفيذ",
+      "addNewStep": "إضافة خطوة",
+      "newStepName": "اسم الخطوة",
+      "newStepDescription": "وصف الخطوة",
+      "newStepDurationFrom": "تاريخ البداية",
+      "newStepDurationTo": "تاريخ النهاية",
+      "atLeastOneStep": "يجب إضافة خطوة واحدة على الأقل",
+      "processing": "جاري المعالجة..."
     },
     "filters": {
       "search": "بحث...",
@@ -554,6 +587,8 @@
         "companyName": "الشركة",
         "duration": "المدة",
         "status": "الحالة",
+        "openingStatus": "حالة المشروع",
+        "stepPhase": "المرحلة",
         "progress": "التقدم",
         "creator": "المنشئ",
         "createdAt": "تاريخ الإنشاء",
@@ -926,5 +961,89 @@
       "createdAt": "تاريخ الإنشاء",
       "actions": "الإجراءات"
     }
+  },
+  "statistics": {
+    "title": "الإحصائيات",
+    "description": "تحليلات ورؤى إدارة المشاريع",
+    "summary": {
+      "title": "ملخص",
+      "totalProjects": "إجمالي المشاريع",
+      "totalUsers": "إجمالي المستخدمين",
+      "avgProjectsPerUser": "متوسط المشاريع/المستخدم",
+      "projectsThisMonth": "مشاريع هذا الشهر",
+      "completionsThisMonth": "المكتملة هذا الشهر"
+    },
+    "completion": {
+      "title": "مقاييس الإنجاز",
+      "overallRate": "معدل الإنجاز الإجمالي",
+      "totalProjects": "إجمالي المشاريع",
+      "completedProjects": "المكتملة",
+      "activeProjects": "النشطة",
+      "totalSteps": "إجمالي الخطوات",
+      "finalizedSteps": "الخطوات المنجزة",
+      "stepsCompletionRate": "معدل إنجاز الخطوات",
+      "avgStepsPerProject": "متوسط الخطوات/المشروع",
+      "avgCompletionTime": "متوسط وقت الإنجاز",
+      "days": "يوم"
+    },
+    "projectStatus": {
+      "title": "حالة المشاريع",
+      "active": "نشط",
+      "completed": "مكتمل",
+      "total": "الإجمالي"
+    },
+    "projectType": {
+      "title": "أنواع المشاريع",
+      "siteProject": "مشاريع الموقع",
+      "designProject": "مشاريع التصميم"
+    },
+    "openingStatus": {
+      "title": "حالة المشروع",
+      "tinder": "طرح",
+      "inProgress": "التنفيذ"
+    },
+    "monthlyTrends": {
+      "title": "الاتجاهات الشهرية",
+      "description": "نشاط المشاريع والخطوات عبر الوقت",
+      "projectsCreated": "المشاريع المنشأة",
+      "projectsCompleted": "المشاريع المكتملة",
+      "stepsFinalized": "الخطوات المنجزة"
+    },
+    "topPerformers": {
+      "title": "الأفضل أداءً",
+      "mostProjectsCreated": "الأكثر إنشاءً للمشاريع",
+      "mostStepsFinalized": "الأكثر إنجازاً للخطوات",
+      "fastestCompletion": "الأسرع إنجازاً",
+      "projects": "مشروع",
+      "steps": "خطوة",
+      "inDays": "في {days} يوم"
+    },
+    "userPerformance": {
+      "title": "أداء المستخدمين",
+      "description": "تفصيل النشاط حسب عضو الفريق",
+      "user": "المستخدم",
+      "projectsCreated": "المنشأة",
+      "projectsUpdated": "المحدثة",
+      "stepsFinalized": "المنجزة",
+      "totalActivity": "إجمالي النشاط"
+    },
+    "recentActivity": {
+      "title": "النشاط الأخير",
+      "recentProjects": "المشاريع الأخيرة",
+      "recentCompletions": "الإنجازات الأخيرة",
+      "recentSteps": "آخر الخطوات المنجزة",
+      "by": "بواسطة",
+      "noData": "لا يوجد نشاط حديث"
+    },
+    "charts": {
+      "openingStatusTrend": "اتجاه حالة المشروع",
+      "statusDistribution": "توزيع الحالة",
+      "typeDistribution": "توزيع النوع"
+    },
+    "loading": "جاري تحميل الإحصائيات...",
+    "error": "فشل في تحميل الإحصائيات",
+    "noData": "لا تتوفر بيانات إحصائية",
+    "refresh": "تحديث",
+    "monthsLabel": "آخر {months} شهر"
   }
 }

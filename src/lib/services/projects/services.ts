@@ -17,6 +17,8 @@ import type {
   ProjectFilters,
   CreateProjectRequest,
   UpdateProjectRequest,
+  FinalizeProjectRequest,
+  ContinueProjectRequest,
   AddStepRequest,
   UpdateStepRequest,
   UpdateStepActionRequest,
@@ -191,6 +193,58 @@ export async function deleteProject(
     return result as ApiResponse<null>;
   } catch (error: any) {
     console.error(`Error deleting project ${projectId}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Finalize a project (mark as completed)
+ * PUT /projects?id={projectId}
+ * Body: { mark_as_completed: true }
+ */
+export async function finalizeProject(
+  projectId: string
+): Promise<ApiResponse<Project> | null> {
+  try {
+    const data: FinalizeProjectRequest = { mark_as_completed: true };
+    const response = await networkClient.put(`/api/projects/${projectId}`, data);
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to finalize project');
+    }
+    
+    return result as ApiResponse<Project>;
+  } catch (error: any) {
+    console.error(`Error finalizing project ${projectId}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Continue project to inProgress with new steps
+ * PUT /projects?id={projectId}
+ * Body: { project_opening_status: "inProgress", new_steps: [...] }
+ */
+export async function continueProject(
+  projectId: string,
+  newSteps: ContinueProjectRequest['new_steps']
+): Promise<ApiResponse<Project> | null> {
+  try {
+    const data: ContinueProjectRequest = {
+      project_opening_status: 'inProgress',
+      new_steps: newSteps,
+    };
+    const response = await networkClient.put(`/api/projects/${projectId}`, data);
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to continue project');
+    }
+    
+    return result as ApiResponse<Project>;
+  } catch (error: any) {
+    console.error(`Error continuing project ${projectId}:`, error);
     return null;
   }
 }

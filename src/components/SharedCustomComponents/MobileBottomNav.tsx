@@ -204,7 +204,7 @@ export function MobileBottomNav() {
                           isNavigating && 'opacity-50 cursor-not-allowed'
                         )}
                       >
-                        {Icon && <Icon className="w-5 h-5 ml-4" strokeWidth={active ? 2.5 : 2} />}
+                        {Icon && <Icon className="w-5 h-5 me-4" strokeWidth={active ? 2.5 : 2} />}
                         <span className={cn('text-base font-medium', active && 'font-semibold')}>
                           {label}
                         </span>
@@ -226,7 +226,7 @@ export function MobileBottomNav() {
                       (isLoggingOut || isNavigating) && 'opacity-50 cursor-not-allowed'
                     )}
                   >
-                    <LogOut className="w-5 h-5 ml-4" />
+                    <LogOut className="w-5 h-5 me-4" />
                     <span className="text-base font-medium">
                       {isLoggingOut ? t('common.loggingOut') || 'Logging out...' : t('sidebar.logout')}
                     </span>

@@ -90,7 +90,7 @@
     "approved": "Approved",
     "rejected": "Rejected",
     "completed": "Completed",
-    "inProgress": "In Progress",
+    "inProgress": "Progress",
     "new": "New",
     "formIncomplete": "Please fill in all required fields",
     "undo": "Undo",
@@ -217,6 +217,7 @@
     "allProjects": "All Projects",
     "currentProjects": "Current Projects",
     "createProject": "Create Project",
+    "statistics": "Statistics",
     "orders": "Orders",
     "createOrder": "Create Order",
     "allOrders": "All Orders",
@@ -416,10 +417,11 @@
     "ProjectsStatus": "Modify Projects status and update item purchase data.",
     "users": "Displays user list and account management easily.",
     "allProjects": "View all registered projects in the system with search and filter options.",
-    "currentProjects": "Track projects currently in progress.",
+    "currentProjects": "Track projects currently Progress.",
     "createProject": "Create a new project and enter basic information.",
     "projectDetails": "Review project details including phases and status.",
-    "editProject": "Edit project data and update information."
+    "editProject": "Edit project data and update information.",
+    "statistics": "View project statistics and analytics for management insights."
   },
   "projects": {
     "title": "Projects",
@@ -443,11 +445,20 @@
       "completed": "Completed",
       "overdue": "Overdue"
     },
+    "openingStatus": {
+      "tinder": "Tendering",
+      "inProgress": "Progress"
+    },
+    "stepPhase": {
+      "tinder": "Tendering",
+      "inProgress": "Progress"
+    },
     "fields": {
       "projectName": "Project Name",
       "projectType": "Project Type",
       "projectDescription": "Project Description",
       "companyName": "Company Name",
+      "openingStatus": "Project Status",
       "durationFrom": "Start Date",
       "durationTo": "End Date",
       "status": "Status",
@@ -467,7 +478,7 @@
       "actions": "Step Actions",
       "finalize": "Finalize",
       "finalized": "Finalized",
-      "pending": "In Progress",
+      "pending": "Progress",
       "notStarted": "Not Started",
       "finalizedAt": "Finalized At",
       "noSteps": "No Steps",
@@ -533,10 +544,32 @@
       "noteAddedSuccess": "Note added successfully",
       "stepFinalizedWithNoteSuccess": "Step finalized with note successfully",
       "projectCompleted": "Project completed successfully",
+      "projectFinalizedSuccess": "Project finalized successfully",
+      "projectContinuedSuccess": "Project continued to execution phase successfully",
+      "finalizeError": "Failed to finalize project",
+      "continueError": "Failed to continue project",
       "fetchError": "Failed to fetch projects",
       "createError": "Failed to create project",
       "updateError": "Failed to update project",
       "deleteError": "Failed to delete project"
+    },
+    "actions": {
+      "finalizeProject": "Finalize Project",
+      "continueProject": "Continue to Execution",
+      "finalizeProjectDesc": "Mark this project as completed",
+      "continueProjectDesc": "Continue project with new execution steps",
+      "confirmFinalize": "Confirm Finalization",
+      "confirmFinalizeMessage": "Are you sure you want to finalize this project? This will mark it as completed.",
+      "confirmFinalizeWarning": "This action cannot be undone.",
+      "continueProjectTitle": "Continue Project to Execution",
+      "continueProjectDesc": "Add new steps for the execution phase",
+      "addNewStep": "Add Step",
+      "newStepName": "Step Name",
+      "newStepDescription": "Step Description",
+      "newStepDurationFrom": "Start Date",
+      "newStepDurationTo": "End Date",
+      "atLeastOneStep": "At least one step is required",
+      "processing": "Processing..."
     },
     "filters": {
       "search": "Search...",
@@ -554,6 +587,8 @@
         "companyName": "Company",
         "duration": "Duration",
         "status": "Status",
+        "openingStatus": "Project Status",
+        "stepPhase": "Phase",
         "progress": "Progress",
         "creator": "Creator",
         "createdAt": "Created At",
@@ -629,7 +664,7 @@
       "underAdminReview": "Under Admin Review",
       "ownerApproved": "Admin Approved",
       "ownerRejected": "Admin Rejected",
-      "ProjectsInProgress": "Projects In Progress",
+      "ProjectsInProgress": "Projects Progress",
       "closed": "Purchase Order Closed",
       "awaitingApproval": "Awaiting Admin Approval"
     },
@@ -703,7 +738,7 @@
       "allOrdersTitle": "All Orders",
       "allOrdersSubtitle": "View and manage all orders in the system",
       "currentOrdersTitle": "Current Orders",
-      "currentOrdersSubtitle": "Orders in progress that have not been closed yet",
+      "currentOrdersSubtitle": "Orders Progress that have not been closed yet",
       "noOrders": "No orders",
       "noCurrentOrders": "No current orders"
     },
@@ -926,5 +961,89 @@
       "createdAt": "Created At",
       "actions": "Actions"
     }
+  },
+  "statistics": {
+    "title": "Statistics",
+    "description": "Project management insights and analytics",
+    "summary": {
+      "title": "Summary",
+      "totalProjects": "Total Projects",
+      "totalUsers": "Total Users",
+      "avgProjectsPerUser": "Avg Projects/User",
+      "projectsThisMonth": "Projects This Month",
+      "completionsThisMonth": "Completions This Month"
+    },
+    "completion": {
+      "title": "Completion Metrics",
+      "overallRate": "Overall Completion Rate",
+      "totalProjects": "Total Projects",
+      "completedProjects": "Completed",
+      "activeProjects": "Active",
+      "totalSteps": "Total Steps",
+      "finalizedSteps": "Finalized Steps",
+      "stepsCompletionRate": "Steps Completion Rate",
+      "avgStepsPerProject": "Avg Steps/Project",
+      "avgCompletionTime": "Avg Completion Time",
+      "days": "days"
+    },
+    "projectStatus": {
+      "title": "Project Status",
+      "active": "Active",
+      "completed": "Completed",
+      "total": "Total"
+    },
+    "projectType": {
+      "title": "Project Types",
+      "siteProject": "Site Projects",
+      "designProject": "Design Projects"
+    },
+    "openingStatus": {
+      "title": "Project Status",
+      "tinder": "Tendering",
+      "inProgress": "Progress"
+    },
+    "monthlyTrends": {
+      "title": "Monthly Trends",
+      "description": "Projects and steps activity over time",
+      "projectsCreated": "Projects Created",
+      "projectsCompleted": "Projects Completed",
+      "stepsFinalized": "Steps Finalized"
+    },
+    "topPerformers": {
+      "title": "Top Performers",
+      "mostProjectsCreated": "Most Projects Created",
+      "mostStepsFinalized": "Most Steps Finalized",
+      "fastestCompletion": "Fastest Completion",
+      "projects": "projects",
+      "steps": "steps",
+      "inDays": "in {days} days"
+    },
+    "userPerformance": {
+      "title": "User Performance",
+      "description": "Activity breakdown by team member",
+      "user": "User",
+      "projectsCreated": "Created",
+      "projectsUpdated": "Updated",
+      "stepsFinalized": "Finalized",
+      "totalActivity": "Total Activity"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "recentProjects": "Recent Projects",
+      "recentCompletions": "Recent Completions",
+      "recentSteps": "Recent Step Finalizations",
+      "by": "by",
+      "noData": "No recent activity"
+    },
+    "charts": {
+      "openingStatusTrend": "Project Status Trend",
+      "statusDistribution": "Status Distribution",
+      "typeDistribution": "Type Distribution"
+    },
+    "loading": "Loading statistics...",
+    "error": "Failed to load statistics",
+    "noData": "No statistics data available",
+    "refresh": "Refresh",
+    "monthsLabel": "Last {months} months"
   }
 }

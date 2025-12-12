@@ -18,6 +18,8 @@ const ROUTE_CONFIG = {
     // Projects module routes - all roles can access
     { path: '/projects/create', roles: [UserRole.Admin, UserRole.SubAdmin, UserRole.ProjectEngineers] },
     { path: '/projects', roles: [UserRole.Admin, UserRole.SubAdmin, UserRole.ProjectEngineers] },
+    // Statistics - Admin and SubAdmin only
+    { path: '/stats-admin', roles: [UserRole.Admin, UserRole.SubAdmin] },
     // Users management - Admin and SubAdmin only
     { path: '/users', roles: [UserRole.Admin, UserRole.SubAdmin] },
   ],

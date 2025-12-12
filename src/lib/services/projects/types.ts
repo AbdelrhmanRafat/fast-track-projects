@@ -31,6 +31,22 @@ export enum ProjectStatus {
   Overdue = 'overdue',
 }
 
+/**
+ * Project opening status enum (tinder/inProgress)
+ */
+export enum ProjectOpeningStatus {
+  Tinder = 'tinder',
+  InProgress = 'inProgress',
+}
+
+/**
+ * Step phase enum (tinder/inProgress)
+ */
+export enum StepPhase {
+  Tinder = 'tinder',
+  InProgress = 'inProgress',
+}
+
 // ==========================================
 // Project Step Types
 // ==========================================
@@ -58,6 +74,7 @@ export interface ProjectStep {
   finalized_at: string | null;
   finalized_notes: FinalizedNote[];
   step_order: number;
+  step_phase: StepPhase;
   created_at: string;
   updated_at: string;
 }
@@ -106,6 +123,7 @@ export interface Project {
   duration_from: string;
   duration_to: string | null;
   status: ProjectStatus;
+  project_opening_status: ProjectOpeningStatus;
   created_by: string;
   created_at: string;
   updated_at: string;
@@ -152,6 +170,33 @@ export interface UpdateProjectRequest {
   company_name?: string;
   duration_from?: string;
   duration_to?: string;
+}
+
+/**
+ * Finalize project request body
+ * Marks the project as completed
+ */
+export interface FinalizeProjectRequest {
+  mark_as_completed: true;
+}
+
+/**
+ * New step for continuing project to inProgress
+ */
+export interface NewStepRequest {
+  step_name: string;
+  step_description?: string;
+  duration_from?: string;
+  duration_to?: string;
+}
+
+/**
+ * Continue project to inProgress request body
+ * Changes project_opening_status to inProgress and adds new steps
+ */
+export interface ContinueProjectRequest {
+  project_opening_status: 'inProgress';
+  new_steps: NewStepRequest[];
 }
 
 /**
@@ -437,3 +482,23 @@ export const STEP_STATUS_BADGE_CLASSES = {
   pending: 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300 border-amber-200 dark:border-amber-800',
   notStarted: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700',
 } as const;
+
+/**
+ * Project opening status badge classes (following brand design system)
+ * tinder = Tendering phase (orange/amber)
+ * inProgress = In Progress phase (blue)
+ */
+export const PROJECT_OPENING_STATUS_BADGE_CLASSES: Record<ProjectOpeningStatus, string> = {
+  [ProjectOpeningStatus.Tinder]: 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300 border-orange-200 dark:border-orange-800',
+  [ProjectOpeningStatus.InProgress]: 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+};
+
+/**
+ * Step phase badge classes (following brand design system)
+ * tinder = Tendering phase (orange/amber)
+ * inProgress = In Progress phase (blue)
+ */
+export const STEP_PHASE_BADGE_CLASSES: Record<StepPhase, string> = {
+  [StepPhase.Tinder]: 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300 border-orange-200 dark:border-orange-800',
+  [StepPhase.InProgress]: 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+};

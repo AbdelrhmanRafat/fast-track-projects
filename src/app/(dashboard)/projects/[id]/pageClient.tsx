@@ -9,6 +9,15 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,17 +41,25 @@ import {
   AlertTriangle,
   Lock,
   StickyNote,
+  Plus,
+  Trash2,
+  Loader2,
+  CheckCheck,
+  ArrowRight,
 } from 'lucide-react';
-import type { Project, ProjectType, ProjectStatus, ProjectStep, FinalizedNote } from '@/lib/services/projects/types';
+import type { Project, ProjectType, ProjectStatus, ProjectStep, FinalizedNote, ProjectOpeningStatus, StepPhase, CreateStepRequest } from '@/lib/services/projects/types';
 import {
   PROJECT_TYPE_BADGE_CLASSES,
   PROJECT_STATUS_BADGE_CLASSES,
+  PROJECT_OPENING_STATUS_BADGE_CLASSES,
+  STEP_PHASE_BADGE_CLASSES,
 } from '@/lib/services/projects/types';
-import { updateStepAction } from '@/lib/services/projects';
+import { updateStepAction, finalizeProject, continueProject } from '@/lib/services/projects';
 import { toast } from 'sonner';
 
 interface ProjectViewClientProps {
   project: Project;
+  canEdit: boolean;
 }
 
 /**
@@ -87,7 +104,7 @@ function calculateDaysInfo(durationTo: string | null | undefined): { diffDays: n
   return { diffDays, isOverdue: diffDays < 0 };
 }
 
-export default function ProjectViewClient({ project }: ProjectViewClientProps) {
+export default function ProjectViewClient({ project, canEdit }: ProjectViewClientProps) {
   const { t, language } = useTranslation();
   const router = useRouter();
 
@@ -97,6 +114,14 @@ export default function ProjectViewClient({ project }: ProjectViewClientProps) {
   const [selectedStep, setSelectedStep] = useState<ProjectStep | null>(null);
   const [noteText, setNoteText] = useState('');
   const [pendingFinalizeWithNote, setPendingFinalizeWithNote] = useState(false);
+
+  // Project action states
+  const [projectFinalizeDialogOpen, setProjectFinalizeDialogOpen] = useState(false);
+  const [continueDialogOpen, setContinueDialogOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [newSteps, setNewSteps] = useState<CreateStepRequest[]>([
+    { step_name: '', step_description: '', duration_from: '', duration_to: '' }
+  ]);
 
   // Calculate progress
   const totalSteps = project.project_steps?.length || 0;
@@ -236,6 +261,100 @@ export default function ProjectViewClient({ project }: ProjectViewClientProps) {
     handleOpenFinalizeConfirmation(true);
   };
 
+  /**
+   * Handle finalize project action
+   */
+  const handleFinalizeProject = async () => {
+    setIsProcessing(true);
+    try {
+      const result = await finalizeProject(project.id);
+      if (result) {
+        toast.success(t('projects.messages.projectFinalizedSuccess' as any));
+        setProjectFinalizeDialogOpen(false);
+        router.refresh();
+      } else {
+        toast.error(t('projects.messages.finalizeError' as any));
+      }
+    } catch (error) {
+      console.error('Error finalizing project:', error);
+      toast.error(t('projects.messages.finalizeError' as any));
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  /**
+   * Add a new step to the form
+   */
+  const handleAddNewStep = () => {
+    setNewSteps([
+      ...newSteps,
+      { step_name: '', step_description: '', duration_from: '', duration_to: '' }
+    ]);
+  };
+
+  /**
+   * Remove a step from the form
+   */
+  const handleRemoveStep = (index: number) => {
+    if (newSteps.length > 1) {
+      setNewSteps(newSteps.filter((_, i) => i !== index));
+    }
+  };
+
+  /**
+   * Update a step field
+   */
+  const handleUpdateStep = (index: number, field: keyof CreateStepRequest, value: string) => {
+    const updated = [...newSteps];
+    updated[index] = { ...updated[index], [field]: value };
+    setNewSteps(updated);
+  };
+
+  /**
+   * Handle continue project action
+   */
+  const handleContinueProject = async () => {
+    // Validate at least one step with a name
+    const validSteps = newSteps.filter(step => step.step_name.trim());
+    if (validSteps.length === 0) {
+      toast.error(t('projects.actions.atLeastOneStep' as any));
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      // Add step_order to each step
+      const stepsWithOrder = validSteps.map((step, index) => ({
+        ...step,
+        step_order: (project.project_steps?.length || 0) + index + 1
+      }));
+
+      const result = await continueProject(project.id, stepsWithOrder);
+      if (result) {
+        toast.success(t('projects.messages.projectContinuedSuccess' as any));
+        setContinueDialogOpen(false);
+        setNewSteps([{ step_name: '', step_description: '', duration_from: '', duration_to: '' }]);
+        router.refresh();
+      } else {
+        toast.error(t('projects.messages.continueError' as any));
+      }
+    } catch (error) {
+      console.error('Error continuing project:', error);
+      toast.error(t('projects.messages.continueError' as any));
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  /**
+   * Check if project is eligible for actions (tinder status and all steps finalized)
+   */
+  const isEligibleForActions = 
+    project.project_opening_status === 'tinder' && 
+    totalSteps > 0 && 
+    finalizedSteps === totalSteps;
+
   return (
     <div className="space-y-4 sm:space-y-6">
       <RouteBasedPageHeader />
@@ -263,6 +382,12 @@ export default function ProjectViewClient({ project }: ProjectViewClientProps) {
               >
                 {t(`projects.status.${project.status}` as any)}
               </Badge>
+              <Badge
+                variant="outline"
+                className={`text-xs ${PROJECT_OPENING_STATUS_BADGE_CLASSES[project.project_opening_status as ProjectOpeningStatus] || ''}`}
+              >
+                {t(`projects.openingStatus.${project.project_opening_status}` as any)}
+              </Badge>
             </div>
           </div>
         </div>
@@ -287,6 +412,38 @@ export default function ProjectViewClient({ project }: ProjectViewClientProps) {
             <span className="text-sm font-semibold w-10 text-end">{progressPercentage}%</span>
           </div>
         </div>
+
+        {/* Project Action Buttons - Show when eligible and has permission */}
+        {canEdit && isEligibleForActions && (
+          <div className="flex flex-col sm:flex-row gap-3 p-4 rounded-xl bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-950/30 dark:to-blue-950/30 border border-emerald-200/50 dark:border-emerald-800/50">
+            <div className="flex-1 space-y-1">
+              <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">
+                {t('projects.actions.finalizeProjectDesc' as any)}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {t('projects.actions.continueProjectDesc' as any)}
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setProjectFinalizeDialogOpen(true)}
+                className="gap-2 border-emerald-500/50 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:hover:bg-emerald-950/70 dark:text-emerald-400 dark:border-emerald-700"
+              >
+                <CheckCheck className="h-4 w-4" />
+                {t('projects.actions.finalizeProject' as any)}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setContinueDialogOpen(true)}
+                className="gap-2 border-blue-500/50 bg-blue-50 hover:bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:hover:bg-blue-950/70 dark:text-blue-400 dark:border-blue-700"
+              >
+                <ArrowRight className="h-4 w-4" />
+                {t('projects.actions.continueProject' as any)}
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Project Info Cards - Mobile Grid */}
@@ -541,6 +698,192 @@ export default function ProjectViewClient({ project }: ProjectViewClientProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Project Finalize Confirmation Dialog */}
+      <AlertDialog open={projectFinalizeDialogOpen} onOpenChange={setProjectFinalizeDialogOpen}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-950/50 mx-auto mb-4">
+              <CheckCheck className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <AlertDialogTitle className="text-center text-xl">
+              {t('projects.actions.confirmFinalize' as any)}
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="text-center space-y-3">
+                <p className="text-base">
+                  {t('projects.actions.confirmFinalizeMessage' as any)}
+                </p>
+                <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+                    <p className="text-sm text-amber-800 dark:text-amber-300 text-start">
+                      {t('projects.actions.confirmFinalizeWarning' as any)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter className="flex-col gap-2 sm:flex-col mt-4">
+            <AlertDialogAction
+              onClick={handleFinalizeProject}
+              disabled={isProcessing}
+              className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white dark:bg-emerald-700 dark:hover:bg-emerald-800"
+            >
+              {isProcessing ? (
+                <>
+                  <Loader2 className="h-4 w-4 me-2 animate-spin" />
+                  {t('projects.actions.processing' as any)}
+                </>
+              ) : (
+                <>
+                  <CheckCheck className="h-4 w-4 me-2" />
+                  {t('projects.actions.finalizeProject' as any)}
+                </>
+              )}
+            </AlertDialogAction>
+            <AlertDialogCancel 
+              onClick={() => setProjectFinalizeDialogOpen(false)}
+              disabled={isProcessing}
+              className="w-full"
+            >
+              {t('common.cancel')}
+            </AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Continue Project Dialog */}
+      <Dialog open={continueDialogOpen} onOpenChange={setContinueDialogOpen}>
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950/50">
+                <ArrowRight className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <DialogTitle>{t('projects.actions.continueProjectTitle' as any)}</DialogTitle>
+                <DialogDescription className="mt-1">
+                  {t('projects.actions.continueProjectDesc' as any)}
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+
+          {/* New Steps Form */}
+          <div className="space-y-4 py-4">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm font-medium">{t('projects.actions.addNewStep' as any)}</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleAddNewStep}
+                className="gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                {t('projects.actions.addNewStep' as any)}
+              </Button>
+            </div>
+
+            <div className="space-y-4">
+              {newSteps.map((step, index) => (
+                <div 
+                  key={index} 
+                  className="relative rounded-xl border p-4 space-y-3 bg-muted/20"
+                >
+                  {/* Remove button */}
+                  {newSteps.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleRemoveStep(index)}
+                      className="absolute top-2 end-2 h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span className="flex items-center justify-center w-5 h-5 rounded bg-blue-500 text-white font-medium">
+                      {index + 1}
+                    </span>
+                    <span>{t('projects.actions.newStepName' as any)}</span>
+                  </div>
+
+                  <div className="space-y-3">
+                    <Input
+                      placeholder={t('projects.actions.newStepName' as any)}
+                      value={step.step_name}
+                      onChange={(e) => handleUpdateStep(index, 'step_name', e.target.value)}
+                      className="w-full"
+                    />
+                    <Textarea
+                      placeholder={t('projects.actions.newStepDescription' as any)}
+                      value={step.step_description || ''}
+                      onChange={(e) => handleUpdateStep(index, 'step_description', e.target.value)}
+                      rows={2}
+                      className="resize-none"
+                    />
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs">{t('projects.actions.newStepDurationFrom' as any)}</Label>
+                        <Input
+                          type="date"
+                          value={step.duration_from || ''}
+                          onChange={(e) => handleUpdateStep(index, 'duration_from', e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs">{t('projects.actions.newStepDurationTo' as any)}</Label>
+                        <Input
+                          type="date"
+                          value={step.duration_to || ''}
+                          onChange={(e) => handleUpdateStep(index, 'duration_to', e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <DialogFooter className="flex-col gap-2 sm:flex-row">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setContinueDialogOpen(false);
+                setNewSteps([{ step_name: '', step_description: '', duration_from: '', duration_to: '' }]);
+              }}
+              disabled={isProcessing}
+              className="w-full sm:w-auto"
+            >
+              {t('common.cancel')}
+            </Button>
+            <Button
+              onClick={handleContinueProject}
+              disabled={isProcessing || !newSteps.some(s => s.step_name.trim())}
+              className="w-full sm:w-auto gap-2 bg-blue-600 hover:bg-blue-700"
+            >
+              {isProcessing ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {t('projects.actions.processing' as any)}
+                </>
+              ) : (
+                <>
+                  <ArrowRight className="h-4 w-4" />
+                  {t('projects.actions.continueProject' as any)}
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -586,27 +929,37 @@ function StepCard({ step, stepNumber, language, t, onOpenActions }: StepCardProp
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <h4 className="font-medium text-sm sm:text-base">{step.step_name}</h4>
-            {/* Status Badge - Compact on mobile */}
-            <Badge 
-              variant="outline" 
-              className={`text-xs shrink-0 ${
-                isFinalized 
-                  ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800' 
-                  : 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300 border-amber-200 dark:border-amber-800'
-              }`}
-            >
-              {isFinalized ? (
-                <span className="flex items-center gap-1">
-                  <Lock className="h-3 w-3" />
-                  <span className="hidden sm:inline">{t('projects.steps.finalized')}</span>
-                </span>
-              ) : (
-                <span className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  <span className="hidden sm:inline">{t('projects.steps.pending')}</span>
-                </span>
-              )}
-            </Badge>
+            {/* Badges Row */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              {/* Step Phase Badge */}
+              <Badge 
+                variant="outline" 
+                className={`text-xs ${STEP_PHASE_BADGE_CLASSES[step.step_phase] || ''}`}
+              >
+                {t(`projects.stepPhase.${step.step_phase}` as any)}
+              </Badge>
+              {/* Status Badge - Compact on mobile */}
+              <Badge 
+                variant="outline" 
+                className={`text-xs ${
+                  isFinalized 
+                    ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800' 
+                    : 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+                }`}
+              >
+                {isFinalized ? (
+                  <span className="flex items-center gap-1">
+                    <Lock className="h-3 w-3" />
+                    <span className="hidden sm:inline">{t('projects.steps.finalized')}</span>
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    <span className="hidden sm:inline">{t('projects.steps.pending')}</span>
+                  </span>
+                )}
+              </Badge>
+            </div>
           </div>
           
           {step.step_description && (
