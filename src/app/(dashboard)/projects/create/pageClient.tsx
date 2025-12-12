@@ -185,7 +185,7 @@ export default function CreateProjectClient() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6 pb-6">
+    <div className="space-y-6">
       <RouteBasedPageHeader />
 
       <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
@@ -337,13 +337,13 @@ export default function CreateProjectClient() {
               )}
             </div>
 
-            {/* Duration - Stacked on Mobile */}
+            {/* Duration - Side by Side */}
             <div className="space-y-3">
               <Label className="text-sm font-medium">
                 {t('projects.view.duration')} <span className="text-destructive">*</span>
               </Label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="space-y-1.5">
+              <div className="flex gap-3">
+                <div className="flex-1 space-y-1.5">
                   <Label htmlFor="duration_from" className="text-xs text-muted-foreground">
                     {t('projects.fields.durationFrom')}
                   </Label>
@@ -357,7 +357,7 @@ export default function CreateProjectClient() {
                     <p className="text-xs text-destructive">{errors.duration_from}</p>
                   )}
                 </div>
-                <div className="space-y-1.5">
+                <div className="flex-1 space-y-1.5">
                   <Label htmlFor="duration_to" className="text-xs text-muted-foreground">
                     {t('projects.fields.durationTo')}
                   </Label>
@@ -528,26 +528,15 @@ export default function CreateProjectClient() {
           </CardContent>
         </Card>
 
-        {/* Form Actions - Sticky on Mobile */}
-        <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t sm:border-t-0 -mx-4 sm:mx-0 px-4 sm:px-0 py-4 sm:py-0 sm:static sm:bg-transparent sm:backdrop-blur-none">
-          <div className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleCancel}
-              disabled={isSubmitting}
-              className="h-11 sm:h-10"
-            >
-              {t('projects.form.cancel')}
-            </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="h-11 sm:h-10"
-            >
-              {isSubmitting ? t('projects.form.saving') : t('projects.form.submit')}
-            </Button>
-          </div>
+        {/* Form Actions */}
+        <div className="flex justify-end">
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="h-11 w-full sm:w-auto sm:h-10 sm:px-8"
+          >
+            {isSubmitting ? t('projects.form.saving') : t('projects.form.submit')}
+          </Button>
         </div>
       </form>
     </div>
