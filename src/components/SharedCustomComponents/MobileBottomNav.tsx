@@ -2,12 +2,15 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useMemo } from 'react';
-import { Home, Plus, LogOut, MoreHorizontal, Clock, List, Users } from 'lucide-react';
+import { LogOut, MoreHorizontal } from 'lucide-react';
 import { useTranslation } from '@/components/providers/LanguageProvider';
 import { getUserData } from '@/lib/cookies';
 import { logout } from '@/lib/services/auth/services';
 import { UserRole } from '@/lib/types/userRoles';
+import { sidebarConfig, SidebarItem } from '@/lib/sideBarConfig/sidebar';
+import { resolveIcon, isItemActive, filterSidebarByRole } from '@/lib/sideBarConfig/sidebarUtils';
 import { cn } from '@/lib/utils';
+import { useNavigationLoadingStore } from '@/stores/navigationLoadingStore';
 import {
   Drawer,
   DrawerContent,
@@ -16,49 +19,6 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer';
 
-interface NavItem {
-  labelKey: string;
-  href: string;
-  icon: React.ElementType;
-  allowedRoles?: UserRole[];
-}
-
-// Primary navigation items (shown directly in bottom bar)
-const primaryNavItems: NavItem[] = [
-  {
-    labelKey: 'sidebar.home',
-    href: '/home',
-    icon: Home,
-  },
-  {
-    labelKey: 'sidebar.createOrder',
-    href: '/create-order',
-    icon: Plus,
-    allowedRoles: [UserRole.Admin, UserRole.SubAdmin, UserRole.Engineering, UserRole.Site],
-  },
-  {
-    labelKey: 'sidebar.currentOrders',
-    href: '/orders/current',
-    icon: Clock,
-  },
-];
-
-// Secondary navigation items (shown in "More" menu)
-const secondaryNavItems: NavItem[] = [
-  {
-    labelKey: 'sidebar.allOrders',
-    href: '/orders/all',
-    icon: List,
-    allowedRoles: [UserRole.Admin, UserRole.SubAdmin],
-  },
-  {
-    labelKey: 'sidebar.userslist',
-    href: '/users',
-    icon: Users,
-    allowedRoles: [UserRole.Admin, UserRole.SubAdmin],
-  },
-];
-
 export function MobileBottomNav() {
   const pathname = usePathname();
   const router = useRouter();
@@ -66,8 +26,11 @@ export function MobileBottomNav() {
   const [userRole, setUserRole] = useState<UserRole | null>(null);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { isNavigating, startNavigation } = useNavigationLoadingStore();
 
   useEffect(() => {
+    setMounted(true);
     const fetchUserRole = async () => {
       const userData = await getUserData();
       if (userData?.role) {
@@ -77,24 +40,43 @@ export function MobileBottomNav() {
     fetchUserRole();
   }, []);
 
-  // Filter items based on user role
-  const filterByRole = (items: NavItem[]) => {
-    return items.filter(item => {
-      if (!item.allowedRoles) return true;
-      if (!userRole) return false;
-      return item.allowedRoles.includes(userRole);
+  // Get all top-level items from sidebar config and apply role-based filtering
+  const getTopLevelItems = (): SidebarItem[] => {
+    const filteredConfig = filterSidebarByRole(sidebarConfig, userRole);
+    const items: SidebarItem[] = [];
+    filteredConfig.forEach(group => {
+      group.items.forEach(item => {
+        // Only include items with direct href (no nested menus)
+        if (item.href) {
+          items.push(item);
+        } else if (item.children && item.children.length > 0) {
+          // For items with children, use the first child's href or the parent
+          items.push(item);
+        }
+      });
     });
+    return items;
   };
 
-  const filteredPrimaryItems = useMemo(() => filterByRole(primaryNavItems), [userRole]);
-  const filteredSecondaryItems = useMemo(() => filterByRole(secondaryNavItems), [userRole]);
+  const topLevelItems = useMemo(() => getTopLevelItems(), [userRole]);
+  
+  // Split items into primary (first 3) and secondary (rest)
+  const primaryItems = topLevelItems.slice(0, 3);
+  const secondaryItems = topLevelItems.slice(3);
   
   // Check if any secondary items exist to show "More" button
-  const hasSecondaryItems = filteredSecondaryItems.length > 0;
+  const hasSecondaryItems = secondaryItems.length > 0;
 
   const handleNavigation = (href: string) => {
+    if (isNavigating) return;
+    
     setIsMoreOpen(false);
-    router.push(href);
+    
+    // Only start navigation if clicking a different route
+    if (href && href !== '#' && href !== pathname) {
+      startNavigation();
+      router.push(href);
+    }
   };
 
   const handleLogout = async () => {
@@ -106,12 +88,9 @@ export function MobileBottomNav() {
     router.refresh();
   };
 
-  const isActive = (href: string) => {
-    if (href === '/home') {
-      return pathname === '/home' || pathname === '/';
-    }
-    return pathname.startsWith(href);
-  };
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <nav 
@@ -122,19 +101,23 @@ export function MobileBottomNav() {
       <div className="bg-background/95 backdrop-blur-lg border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
         <div className="flex items-center justify-around h-16 px-2">
           {/* Primary Nav Items */}
-          {filteredPrimaryItems.map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item.href);
+          {primaryItems.map((item, index) => {
+            const Icon = resolveIcon(item.icon);
+            const active = isItemActive(item, pathname);
+            const href = item.href || (item.children?.[0]?.href) || '#';
+            const label = t(item.labelKey as any);
             
             return (
               <button
-                key={item.href}
-                onClick={() => handleNavigation(item.href)}
+                key={`${item.labelKey}-${index}`}
+                onClick={() => handleNavigation(href)}
+                disabled={isNavigating}
                 className={cn(
                   'flex flex-col items-center justify-center flex-1 h-full px-2 py-1',
                   'transition-all duration-200 ease-out',
                   'active:scale-95 touch-manipulation',
-                  active ? 'text-primary' : 'text-muted-foreground'
+                  active ? 'text-primary' : 'text-muted-foreground',
+                  isNavigating && 'opacity-50 cursor-not-allowed'
                 )}
               >
                 <div className={cn(
@@ -142,19 +125,21 @@ export function MobileBottomNav() {
                   'transition-all duration-200',
                   active && 'bg-primary/10'
                 )}>
-                  <Icon 
-                    className={cn(
-                      'w-5 h-5 transition-transform duration-200',
-                      active && 'scale-110'
-                    )} 
-                    strokeWidth={active ? 2.5 : 2}
-                  />
+                  {Icon && (
+                    <Icon 
+                      className={cn(
+                        'w-5 h-5 transition-transform duration-200',
+                        active && 'scale-110'
+                      )} 
+                      strokeWidth={active ? 2.5 : 2}
+                    />
+                  )}
                 </div>
                 <span className={cn(
                   'text-[10px] font-medium leading-tight truncate max-w-[60px]',
                   active && 'font-semibold'
                 )}>
-                  {t(item.labelKey as any)}
+                  {label}
                 </span>
               </button>
             );
@@ -165,11 +150,13 @@ export function MobileBottomNav() {
             <Drawer open={isMoreOpen} onOpenChange={setIsMoreOpen}>
               <DrawerTrigger asChild>
                 <button
+                  disabled={isNavigating}
                   className={cn(
                     'flex flex-col items-center justify-center flex-1 h-full px-2 py-1',
                     'transition-all duration-200 ease-out',
                     'active:scale-95 touch-manipulation',
-                    isMoreOpen ? 'text-primary' : 'text-muted-foreground'
+                    isMoreOpen ? 'text-primary' : 'text-muted-foreground',
+                    isNavigating && 'opacity-50 cursor-not-allowed'
                   )}
                 >
                   <div className={cn(
@@ -197,25 +184,29 @@ export function MobileBottomNav() {
                 
                 <div className="px-6 pb-8 space-y-3">
                   {/* Secondary Navigation Items */}
-                  {filteredSecondaryItems.map((item) => {
-                    const Icon = item.icon;
-                    const active = isActive(item.href);
+                  {secondaryItems.map((item, index) => {
+                    const Icon = resolveIcon(item.icon);
+                    const active = isItemActive(item, pathname);
+                    const href = item.href || (item.children?.[0]?.href) || '#';
+                    const label = t(item.labelKey as any);
                     
                     return (
                       <button
-                        key={item.href}
-                        onClick={() => handleNavigation(item.href)}
+                        key={`${item.labelKey}-${index}`}
+                        onClick={() => handleNavigation(href)}
+                        disabled={isNavigating}
                         className={cn(
                           'flex items-center w-full px-5 py-4 rounded-2xl',
                           'transition-all duration-200 active:scale-[0.98]',
                           active 
                             ? 'bg-primary/10 text-primary' 
-                            : 'bg-muted/50 text-foreground hover:bg-muted'
+                            : 'bg-muted/50 text-foreground hover:bg-muted',
+                          isNavigating && 'opacity-50 cursor-not-allowed'
                         )}
                       >
-                        <Icon className="w-5 h-5 ml-4" strokeWidth={active ? 2.5 : 2} />
+                        {Icon && <Icon className="w-5 h-5 ml-4" strokeWidth={active ? 2.5 : 2} />}
                         <span className={cn('text-base font-medium', active && 'font-semibold')}>
-                          {t(item.labelKey as any)}
+                          {label}
                         </span>
                       </button>
                     );
@@ -227,12 +218,12 @@ export function MobileBottomNav() {
                   {/* Logout Button */}
                   <button
                     onClick={handleLogout}
-                    disabled={isLoggingOut}
+                    disabled={isLoggingOut || isNavigating}
                     className={cn(
                       'flex items-center w-full px-5 py-4 rounded-2xl',
                       'transition-all duration-200 active:scale-[0.98]',
                       'bg-destructive/10 text-destructive hover:bg-destructive/20',
-                      isLoggingOut && 'opacity-50 cursor-not-allowed'
+                      (isLoggingOut || isNavigating) && 'opacity-50 cursor-not-allowed'
                     )}
                   >
                     <LogOut className="w-5 h-5 ml-4" />

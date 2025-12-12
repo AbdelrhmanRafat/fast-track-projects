@@ -150,56 +150,6 @@ export function CompactSidebar() {
         </div>
       </nav>
 
-      {/* Footer Actions */}
-      <div className="border-t border-border p-2 shrink-0">
-        <div className="flex flex-col gap-1">
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="/help"
-                  onClick={(e) => handleLinkClick(e, '/help')}
-                  className={cn(
-                    'flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg transition-all duration-200 text-muted-foreground hover:bg-accent hover:text-accent-foreground',
-                    isNavigating && 'pointer-events-none opacity-50'
-                  )}
-                >
-                  <HelpCircle className="h-5 w-5" />
-                  <span className="text-[10px] font-medium leading-tight text-center break-words">
-                    {t('form.help')}
-                  </span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side={language === 'ar' ? 'left' : 'right'} className="font-medium">
-                {t('form.help')}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="/settings/system"
-                  onClick={(e) => handleLinkClick(e, '/settings/system')}
-                  className={cn(
-                    'flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-lg transition-all duration-200 text-muted-foreground hover:bg-accent hover:text-accent-foreground',
-                    isNavigating && 'pointer-events-none opacity-50'
-                  )}
-                >
-                  <Settings className="h-5 w-5" />
-                  <span className="text-[10px] font-medium leading-tight text-center break-words">
-                    {t('common.settings')}
-                  </span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side={language === 'ar' ? 'left' : 'right'} className="font-medium">
-                {t('common.settings')}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      </div>
     </aside>
   );
 }

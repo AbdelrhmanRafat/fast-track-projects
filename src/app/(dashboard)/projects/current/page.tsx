@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { getProjects } from '@/lib/services/projects';
+import { getProjects, ProjectStatus } from '@/lib/services/projects';
 import type { ProjectsListData } from '@/lib/services/projects/types';
 import type { ApiResponse } from '@/lib/types/response';
 import CurrentProjectsTableClient from './pageClient';
@@ -36,7 +36,7 @@ async function CurrentProjectsContent({ searchParams }: CurrentProjectsPageProps
       limit,
       search: search || undefined,
       project_type: project_type as any || undefined,
-      status: 'active', // Always filter for active projects
+      status: ProjectStatus.Active, // Always filter for active projects
     });
   } catch (error) {
     console.error('Error fetching current projects:', error);

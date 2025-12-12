@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/components/providers/LanguageProvider';
 import { RouteBasedPageHeader } from '@/components/SharedCustomComponents/RouteBasedPageHeader';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
@@ -256,34 +256,37 @@ export default function ProjectViewClient({ project }: ProjectViewClientProps) {
       </div>
 
       {/* Project Header Card */}
-      <Card>
-        <CardHeader className="pb-4">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="space-y-1">
-              <CardTitle className="text-2xl">{project.project_name}</CardTitle>
-              {project.project_description && (
-                <CardDescription className="text-base">
-                  {project.project_description}
-                </CardDescription>
-              )}
+      <Card className="overflow-hidden p-0 gap-0">
+        {/* Brand Header */}
+        <div className="bg-[#5C1A1B] px-5 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-white/15">
+              <FileText className="h-4 w-4 text-white" />
             </div>
-            <div className="flex flex-wrap gap-2">
-              <Badge
-                variant="outline"
-                className={PROJECT_TYPE_BADGE_CLASSES[project.project_type as ProjectType] || ''}
-              >
-                {t(`projects.types.${project.project_type}` as any)}
-              </Badge>
-              <Badge
-                variant="outline"
-                className={PROJECT_STATUS_BADGE_CLASSES[project.status as ProjectStatus] || ''}
-              >
-                {t(`projects.status.${project.status}` as any)}
-              </Badge>
-            </div>
+            <span className="font-semibold text-white">{project.project_name}</span>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
+          <div className="flex flex-wrap gap-2">
+            <Badge
+              variant="outline"
+              className={`border-white/30 ${PROJECT_TYPE_BADGE_CLASSES[project.project_type as ProjectType] || ''}`}
+            >
+              {t(`projects.types.${project.project_type}` as any)}
+            </Badge>
+            <Badge
+              variant="outline"
+              className={`border-white/30 ${PROJECT_STATUS_BADGE_CLASSES[project.status as ProjectStatus] || ''}`}
+            >
+              {t(`projects.status.${project.status}` as any)}
+            </Badge>
+          </div>
+        </div>
+        <CardContent className="p-5 space-y-5">
+          {/* Project Description */}
+          {project.project_description && (
+            <CardDescription className="text-base">
+              {project.project_description}
+            </CardDescription>
+          )}
           {/* Progress Bar */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
@@ -370,17 +373,22 @@ export default function ProjectViewClient({ project }: ProjectViewClientProps) {
       </Card>
 
       {/* Project Steps Section */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <ListChecks className="h-5 w-5" />
-            <CardTitle>{t('projects.steps.title')}</CardTitle>
+      <Card className="overflow-hidden p-0 gap-0">
+        {/* Brand Header */}
+        <div className="bg-[#5C1A1B] px-5 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-white/15">
+              <ListChecks className="h-4 w-4 text-white" />
+            </div>
+            <div>
+              <span className="font-semibold text-white">{t('projects.steps.title')}</span>
+              <p className="text-white/70 text-sm">
+                {totalSteps} {t('projects.view.totalSteps')} • {finalizedSteps} {t('projects.view.finalized')}
+              </p>
+            </div>
           </div>
-          <CardDescription>
-            {totalSteps} {t('projects.view.totalSteps')} • {finalizedSteps} {t('projects.view.finalized')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+        </div>
+        <CardContent className="p-5">
           {sortedSteps.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <FileText className="h-12 w-12 text-muted-foreground/50 mb-4" />
@@ -521,7 +529,7 @@ export default function ProjectViewClient({ project }: ProjectViewClientProps) {
                 </p>
                 <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
                   <div className="flex items-start gap-2">
-                    <Lock className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+                    <Lock className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
                     <p className="text-sm text-amber-800 dark:text-amber-300 text-start">
                       {t('projects.steps.confirmDialog.warning' as any)}
                     </p>
@@ -562,6 +570,7 @@ export default function ProjectViewClient({ project }: ProjectViewClientProps) {
 
 /**
  * Step Card Component - Read-only display with actions button
+ * Following brand design system
  */
 interface StepCardProps {
   step: ProjectStep;
@@ -577,22 +586,23 @@ function StepCard({ step, stepNumber, language, t, onOpenActions }: StepCardProp
 
   return (
     <div
-      className={`rounded-lg border p-4 transition-colors ${
-        isFinalized ? 'bg-green-50/50 dark:bg-green-950/20 border-green-200 dark:border-green-900' : ''
+      className={`relative bg-muted/40 dark:bg-muted/20 rounded-lg p-4 transition-colors ${
+        isFinalized ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800' : ''
       }`}
     >
       {/* Step Header */}
       <div className="flex items-start justify-between gap-4 mb-3">
         <div className="flex items-start gap-3">
-          <div
-            className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
+          {/* Step Number Badge - Brand styled */}
+          <span
+            className={`w-7 h-7 flex items-center justify-center rounded-md text-sm font-bold ${
               isFinalized
-                ? 'bg-green-500 text-white'
-                : 'bg-muted text-muted-foreground'
+                ? 'bg-emerald-500 text-white'
+                : 'bg-[#5C1A1B] text-white'
             }`}
           >
             {isFinalized ? <CheckCircle2 className="h-4 w-4" /> : stepNumber}
-          </div>
+          </span>
           <div>
             <h4 className="font-medium">{step.step_name}</h4>
             {step.step_description && (
@@ -613,9 +623,14 @@ function StepCard({ step, stepNumber, language, t, onOpenActions }: StepCardProp
               {t('projects.steps.actions' as any)}
             </Button>
           )}
+          {/* Status Badge - Following brand design system */}
           <Badge 
-            variant={isFinalized ? 'default' : 'secondary'} 
-            className={isFinalized ? 'bg-green-500 hover:bg-green-500' : ''}
+            variant="outline" 
+            className={
+              isFinalized 
+                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800' 
+                : 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+            }
           >
             {isFinalized ? (
               <span className="flex items-center gap-1">
@@ -623,14 +638,17 @@ function StepCard({ step, stepNumber, language, t, onOpenActions }: StepCardProp
                 {t('projects.steps.finalized')}
               </span>
             ) : (
-              t('projects.steps.pending')
+              <span className="flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                {t('projects.steps.pending')}
+              </span>
             )}
           </Badge>
         </div>
       </div>
 
       {/* Step Timeline */}
-      <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground mb-3 ps-11">
+      <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground mb-3 ps-10">
         {(step.duration_from || step.duration_to) && (
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
@@ -647,7 +665,7 @@ function StepCard({ step, stepNumber, language, t, onOpenActions }: StepCardProp
         )}
         {isFinalized && step.finalized_at && (
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500" />
+            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
             <span>
               {t('projects.steps.finalizedAt')}: {formatDateTime(step.finalized_at, language)}
             </span>
@@ -657,7 +675,7 @@ function StepCard({ step, stepNumber, language, t, onOpenActions }: StepCardProp
 
       {/* Finalized Notes */}
       {hasNotes && (
-        <div className="ps-11 mt-4">
+        <div className="ps-10 mt-4">
           <div className="flex items-center gap-2 mb-2">
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm font-medium">{t('projects.view.finalizedNotes')}</span>

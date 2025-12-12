@@ -395,43 +395,45 @@ export const PROJECT_STATUS_COLORS_DARK: Record<ProjectStatus, string> = {
 };
 
 /**
- * Project status badge classes (combined light + dark mode)
+ * Project status badge classes (following brand design system)
+ * Format: bg-[color]-100 text-[color]-700 dark:bg-[color]-900/50 dark:text-[color]-300 border-[color]-200 dark:border-[color]-800
  */
 export const PROJECT_STATUS_BADGE_CLASSES: Record<ProjectStatus, string> = {
-  [ProjectStatus.Active]: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-  [ProjectStatus.Completed]: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-  [ProjectStatus.Overdue]: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+  [ProjectStatus.Active]: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+  [ProjectStatus.Completed]: 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+  [ProjectStatus.Overdue]: 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 border-red-200 dark:border-red-800',
 };
 
 /**
  * Project type colors for UI (light mode)
  */
 export const PROJECT_TYPE_COLORS: Record<ProjectType, string> = {
-  [ProjectType.SiteProject]: 'bg-purple-100 text-purple-800',
-  [ProjectType.DesignProject]: 'bg-indigo-100 text-indigo-800',
+  [ProjectType.SiteProject]: 'bg-purple-100 text-purple-700',
+  [ProjectType.DesignProject]: 'bg-cyan-100 text-cyan-700',
 };
 
 /**
  * Project type colors for UI (dark mode)
  */
 export const PROJECT_TYPE_COLORS_DARK: Record<ProjectType, string> = {
-  [ProjectType.SiteProject]: 'dark:bg-purple-900/30 dark:text-purple-400',
-  [ProjectType.DesignProject]: 'dark:bg-indigo-900/30 dark:text-indigo-400',
+  [ProjectType.SiteProject]: 'dark:bg-purple-900/50 dark:text-purple-300',
+  [ProjectType.DesignProject]: 'dark:bg-cyan-900/50 dark:text-cyan-300',
 };
 
 /**
- * Project type badge classes (combined light + dark mode)
+ * Project type badge classes (following brand design system)
+ * Format: bg-[color]-100 text-[color]-700 dark:bg-[color]-900/50 dark:text-[color]-300 border-[color]-200 dark:border-[color]-800
  */
 export const PROJECT_TYPE_BADGE_CLASSES: Record<ProjectType, string> = {
-  [ProjectType.SiteProject]: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
-  [ProjectType.DesignProject]: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400',
+  [ProjectType.SiteProject]: 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 border-purple-200 dark:border-purple-800',
+  [ProjectType.DesignProject]: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800',
 };
 
 /**
- * Step finalization status badge classes
+ * Step finalization status badge classes (following brand design system)
  */
 export const STEP_STATUS_BADGE_CLASSES = {
-  finalized: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-  pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-  notStarted: 'bg-gray-100 text-gray-800 dark:bg-gray-800/50 dark:text-gray-400',
+  finalized: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+  pending: 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+  notStarted: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700',
 } as const;

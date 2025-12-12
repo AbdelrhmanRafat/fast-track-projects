@@ -15,6 +15,7 @@ import {
   Eye,
   ChevronLeft,
   ChevronRight,
+  FolderKanban,
 } from 'lucide-react';
 import type {
   Project,
@@ -162,10 +163,17 @@ export default function CurrentProjectsTableClient({
     <div className="space-y-6">
       <RouteBasedPageHeader />
 
-      <Card>
-        <CardContent className="p-6">
+      <Card className="overflow-hidden p-0 gap-0">
+        {/* Brand Header */}
+        <div className="bg-[#5C1A1B] px-5 py-4 flex items-center gap-3">
+          <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-white/15">
+            <FolderKanban className="h-4 w-4 text-white" />
+          </div>
+          <span className="font-semibold text-white">{t('projects.currentProjects')}</span>
+        </div>
+        <CardContent className="p-5 space-y-5">
           {/* Search and Filters using SearchComponent */}
-          <div className="pb-6">
+          <div className="pb-4">
             <SearchComponent
               config={searchConfig}
               onSearch={handleSearch}
@@ -175,32 +183,32 @@ export default function CurrentProjectsTableClient({
           </div>
 
           {/* Table */}
-          <div className="rounded-md border overflow-hidden">
+          <div className="rounded-lg border overflow-hidden">
             <table className="w-full">
               <thead className="bg-muted/50 border-b">
                 <tr>
-                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground">
+                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground text-sm">
                     {t('projects.table.columns.projectName')}
                   </th>
-                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground">
+                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground text-sm">
                     {t('projects.table.columns.companyName')}
                   </th>
-                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground">
+                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground text-sm">
                     {t('projects.table.columns.projectType')}
                   </th>
-                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground">
+                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground text-sm">
                     {t('projects.fields.durationFrom')} - {t('projects.fields.durationTo')}
                   </th>
-                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground">
+                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground text-sm">
                     {t('projects.table.columns.status')}
                   </th>
-                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground">
+                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground text-sm">
                     {t('projects.table.columns.creator')}
                   </th>
-                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground">
+                  <th className="h-12 px-4 text-start align-middle font-medium text-muted-foreground text-sm">
                     {t('projects.table.columns.progress')}
                   </th>
-                  <th className="h-12 px-4 text-center align-middle font-medium text-muted-foreground">
+                  <th className="h-12 px-4 text-center align-middle font-medium text-muted-foreground text-sm">
                     {t('projects.table.columns.actions')}
                   </th>
                 </tr>

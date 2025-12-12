@@ -4,19 +4,13 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/components/providers/LanguageProvider';
 import { RouteBasedPageHeader } from '@/components/SharedCustomComponents/RouteBasedPageHeader';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Plus, Trash2, GripVertical } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Plus, Trash2, GripVertical, FileText, ListOrdered } from 'lucide-react';
 import { z } from 'zod';
 import {
   createProjectSchema,
@@ -187,13 +181,17 @@ export default function CreateProjectClient() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Project Main Information Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-medium">
+        <Card className="overflow-hidden p-0 gap-0">
+          {/* Brand Header */}
+          <div className="bg-[#5C1A1B] px-5 py-4 flex items-center gap-3">
+            <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-white/15">
+              <FileText className="h-4 w-4 text-white" />
+            </div>
+            <span className="font-semibold text-white">
               {t('projects.form.projectInfo')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
+            </span>
+          </div>
+          <CardContent className="p-5 space-y-5">
             {/* Project Name */}
             <div className="space-y-2">
               <Label htmlFor="project_name">
@@ -230,25 +228,27 @@ export default function CreateProjectClient() {
 
             {/* Project Type */}
             <div className="space-y-2">
-              <Label htmlFor="project_type">
+              <Label>
                 {t('projects.fields.projectType')} <span className="text-destructive">*</span>
               </Label>
-              <Select
+              <RadioGroup
                 value={formData.project_type}
                 onValueChange={(value) => handleInputChange('project_type', value as ProjectType)}
+                className="flex flex-wrap gap-4"
               >
-                <SelectTrigger className={errors.project_type ? 'border-destructive' : ''}>
-                  <SelectValue placeholder={t('projects.fields.projectType')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={ProjectType.SiteProject}>
+                <div className="flex items-center gap-2">
+                  <RadioGroupItem value={ProjectType.SiteProject} id="project_type_site" />
+                  <Label htmlFor="project_type_site" className="font-normal cursor-pointer">
                     {t('projects.types.siteProject')}
-                  </SelectItem>
-                  <SelectItem value={ProjectType.DesignProject}>
+                  </Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <RadioGroupItem value={ProjectType.DesignProject} id="project_type_design" />
+                  <Label htmlFor="project_type_design" className="font-normal cursor-pointer">
                     {t('projects.types.designProject')}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+                  </Label>
+                </div>
+              </RadioGroup>
               {errors.project_type && (
                 <p className="text-sm text-destructive">{errors.project_type}</p>
               )}
@@ -309,44 +309,52 @@ export default function CreateProjectClient() {
         </Card>
 
         {/* Project Steps Card */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-medium">
+        <Card className="overflow-hidden p-0 gap-0">
+          {/* Brand Header with Add Button */}
+          <div className="bg-[#5C1A1B] px-5 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-white/15">
+                <ListOrdered className="h-4 w-4 text-white" />
+              </div>
+              <span className="font-semibold text-white">
                 {t('projects.form.stepsSection')}
-              </CardTitle>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={addStep}
-                className="gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                {t('projects.form.addStepButton')}
-              </Button>
+              </span>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={addStep}
+              className="bg-white/15 hover:bg-white/25 text-white border-0 gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              {t('projects.form.addStepButton')}
+            </Button>
+          </div>
+          <CardContent className="p-5 space-y-5">
             {errors.steps && (
               <p className="text-sm text-destructive">{errors.steps}</p>
             )}
             
             {formData.steps.map((step, index) => (
-              <Card key={index} className="bg-muted/30">
-                <CardContent className="pt-6">
-                  <div className="flex items-start gap-4">
+              <div key={index} className="relative bg-muted/40 dark:bg-muted/20 rounded-lg p-4 space-y-4">
+                <div className="flex items-start gap-4">
                     {/* Drag Handle (visual only for now) */}
                     <div className="pt-2 text-muted-foreground">
                       <GripVertical className="h-5 w-5" />
                     </div>
 
                     <div className="flex-1 space-y-4">
-                      {/* Step Header with Number and Delete */}
+                      {/* Step Header with Number Badge and Delete */}
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-muted-foreground">
-                          {t('projects.steps.stepNumber').replace('{number}', String(index + 1))}
-                        </span>
+                        <div className="inline-flex items-center gap-2">
+                          <span className="w-6 h-6 flex items-center justify-center rounded-md bg-[#5C1A1B] text-white text-xs font-bold">
+                            {index + 1}
+                          </span>
+                          <span className="text-sm font-medium text-muted-foreground">
+                            {t('projects.steps.stepNumber').replace('{number}', String(index + 1))}
+                          </span>
+                        </div>
                         {formData.steps.length > 1 && (
                           <Button
                             type="button"
@@ -430,8 +438,7 @@ export default function CreateProjectClient() {
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+              </div>
             ))}
 
             {/* Add Step Button (Secondary) */}
