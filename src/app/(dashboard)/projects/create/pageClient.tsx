@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { Reorder, useDragControls } from 'framer-motion';
 import { useTranslation } from '@/components/providers/LanguageProvider';
 import { RouteBasedPageHeader } from '@/components/SharedCustomComponents/RouteBasedPageHeader';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { DatePicker } from '@/components/ui/date-picker';
 import { 
   Plus, 
@@ -25,8 +25,8 @@ import {
   createProjectSchema,
   CreateProjectFormData,
   ProjectStepFormData,
-  defaultStep,
-  defaultFormData,
+  createDefaultStep,
+  getDefaultFormData,
   validationMessages,
 } from './schemes';
 import { createProject } from '@/lib/services/projects';
@@ -48,11 +48,141 @@ const validationTranslationKeys: Record<string, string> = {
   [validationMessages.stepDurationToAfterFrom]: 'projects.validation.stepDurationToAfterFrom',
 };
 
+/**
+ * StepItem component for drag and drop reordering
+ */
+interface StepItemProps {
+  step: ProjectStepFormData;
+  index: number;
+  errors: Record<string, string>;
+  stepsLength: number;
+  onStepChange: (index: number, field: keyof ProjectStepFormData, value: string) => void;
+  onRemoveStep: (index: number) => void;
+  t: (key: any) => string;
+}
+
+function StepItem({ step, index, errors, stepsLength, onStepChange, onRemoveStep, t }: StepItemProps) {
+  const dragControls = useDragControls();
+
+  return (
+    <Reorder.Item
+      value={step}
+      dragListener={false}
+      dragControls={dragControls}
+      className="relative bg-muted/40 dark:bg-muted/20 rounded-xl p-3 sm:p-4 space-y-3 sm:space-y-4 border border-border/50"
+      whileDrag={{ 
+        scale: 1.02, 
+        boxShadow: "0 8px 20px rgba(0,0,0,0.12)",
+        zIndex: 50,
+      }}
+      transition={{ duration: 0.2 }}
+    >
+      {/* Step Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Drag Handle */}
+          <div 
+            className="text-muted-foreground/50 cursor-grab active:cursor-grabbing touch-none select-none p-1 -m-1 hover:text-muted-foreground transition-colors"
+            onPointerDown={(e) => dragControls.start(e)}
+          >
+            <GripVertical className="h-5 w-5" />
+          </div>
+          {/* Step Number Badge */}
+          <span className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#5C1A1B] text-white text-xs font-bold shadow-sm">
+            {index + 1}
+          </span>
+          <span className="text-sm font-medium text-muted-foreground">
+            {t('projects.steps.stepNumber').replace('{number}', String(index + 1))}
+          </span>
+        </div>
+        {stepsLength > 1 && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => onRemoveStep(index)}
+            className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-full"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+
+      {/* Step Fields */}
+      <div className="space-y-3 sm:space-y-4">
+        {/* Step Name */}
+        <div className="space-y-1.5">
+          <Label htmlFor={`step_name_${index}`} className="text-sm font-medium">
+            {t('projects.steps.stepName')} <span className="text-destructive">*</span>
+          </Label>
+          <Input
+            id={`step_name_${index}`}
+            value={step.step_name}
+            onChange={(e) => onStepChange(index, 'step_name', e.target.value)}
+            placeholder={t('projects.steps.stepName')}
+            className={`h-11 ${errors[`steps.${index}.step_name`] ? 'border-destructive focus:ring-destructive/50' : ''}`}
+          />
+          {errors[`steps.${index}.step_name`] && (
+            <p className="text-xs text-destructive">{errors[`steps.${index}.step_name`]}</p>
+          )}
+        </div>
+
+        {/* Step Description */}
+        <div className="space-y-1.5">
+          <Label htmlFor={`step_description_${index}`} className="text-sm font-medium">
+            {t('projects.steps.stepDescription')}
+            <span className="text-muted-foreground text-xs ms-1">({t('form.optional')})</span>
+          </Label>
+          <Textarea
+            id={`step_description_${index}`}
+            value={step.step_description}
+            onChange={(e) => onStepChange(index, 'step_description', e.target.value)}
+            placeholder={t('projects.steps.stepDescription')}
+            rows={2}
+            className="resize-none"
+          />
+        </div>
+
+        {/* Step Duration */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="space-y-1.5">
+            <Label htmlFor={`step_duration_from_${index}`} className="text-xs text-muted-foreground">
+              {t('projects.fields.durationFrom')}
+              <span className="ms-1">({t('form.optional')})</span>
+            </Label>
+            <DatePicker
+              value={step.duration_from}
+              onChange={(date) => onStepChange(index, 'duration_from', date)}
+              placeholder={t('projects.fields.durationFrom')}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor={`step_duration_to_${index}`} className="text-xs text-muted-foreground">
+              {t('projects.fields.durationTo')}
+              <span className="ms-1">({t('form.optional')})</span>
+            </Label>
+            <DatePicker
+              value={step.duration_to}
+              onChange={(date) => onStepChange(index, 'duration_to', date)}
+              placeholder={t('projects.fields.durationTo')}
+              minDate={step.duration_from}
+              error={!!errors[`steps.${index}.duration_to`]}
+            />
+            {errors[`steps.${index}.duration_to`] && (
+              <p className="text-xs text-destructive">{errors[`steps.${index}.duration_to`]}</p>
+            )}
+          </div>
+        </div>
+      </div>
+    </Reorder.Item>
+  );
+}
+
 export default function CreateProjectClient() {
   const { t } = useTranslation();
   const router = useRouter();
   
-  const [formData, setFormData] = useState<CreateProjectFormData>(defaultFormData);
+  const [formData, setFormData] = useState<CreateProjectFormData>(getDefaultFormData);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -97,7 +227,7 @@ export default function CreateProjectClient() {
   const addStep = () => {
     setFormData(prev => ({
       ...prev,
-      steps: [...prev.steps, { ...defaultStep }],
+      steps: [...prev.steps, createDefaultStep()],
     }));
   };
 
@@ -121,6 +251,26 @@ export default function CreateProjectClient() {
       return newErrors;
     });
   };
+
+  /**
+   * Handle reordering of steps via drag and drop
+   */
+  const handleReorder = useCallback((newOrder: ProjectStepFormData[]) => {
+    setFormData(prev => ({
+      ...prev,
+      steps: newOrder,
+    }));
+    // Clear step-related errors as indices may have changed
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      Object.keys(newErrors).forEach(key => {
+        if (key.startsWith('steps.')) {
+          delete newErrors[key];
+        }
+      });
+      return newErrors;
+    });
+  }, []);
 
   /**
    * Handle form submission
@@ -243,25 +393,19 @@ export default function CreateProjectClient() {
               <Label className="text-sm font-medium">
                 {t('projects.fields.projectType')} <span className="text-destructive">*</span>
               </Label>
-              <RadioGroup
-                value={formData.project_type}
-                onValueChange={(value) => handleInputChange('project_type', value as ProjectType)}
-                className="grid grid-cols-2 gap-3"
-              >
+              <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label={t('projects.fields.projectType')}>
                 {/* Site Project Option */}
-                <label
-                  htmlFor="project_type_site"
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={formData.project_type === ProjectType.SiteProject}
+                  onClick={() => handleInputChange('project_type', ProjectType.SiteProject)}
                   className={`relative flex flex-col items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
                     formData.project_type === ProjectType.SiteProject
                       ? 'border-primary bg-primary/5 shadow-sm'
                       : 'border-border hover:border-primary/50 hover:bg-muted/50'
                   }`}
                 >
-                  <RadioGroupItem 
-                    value={ProjectType.SiteProject} 
-                    id="project_type_site" 
-                    className="sr-only"
-                  />
                   <div className={`p-2.5 rounded-full mb-2 transition-colors ${
                     formData.project_type === ProjectType.SiteProject
                       ? 'bg-primary text-primary-foreground'
@@ -279,22 +423,20 @@ export default function CreateProjectClient() {
                   {formData.project_type === ProjectType.SiteProject && (
                     <div className="absolute top-2 end-2 w-2 h-2 rounded-full bg-primary" />
                   )}
-                </label>
+                </button>
 
                 {/* Design Project Option */}
-                <label
-                  htmlFor="project_type_design"
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={formData.project_type === ProjectType.DesignProject}
+                  onClick={() => handleInputChange('project_type', ProjectType.DesignProject)}
                   className={`relative flex flex-col items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
                     formData.project_type === ProjectType.DesignProject
                       ? 'border-primary bg-primary/5 shadow-sm'
                       : 'border-border hover:border-primary/50 hover:bg-muted/50'
                   }`}
                 >
-                  <RadioGroupItem 
-                    value={ProjectType.DesignProject} 
-                    id="project_type_design" 
-                    className="sr-only"
-                  />
                   <div className={`p-2.5 rounded-full mb-2 transition-colors ${
                     formData.project_type === ProjectType.DesignProject
                       ? 'bg-primary text-primary-foreground'
@@ -312,8 +454,8 @@ export default function CreateProjectClient() {
                   {formData.project_type === ProjectType.DesignProject && (
                     <div className="absolute top-2 end-2 w-2 h-2 rounded-full bg-primary" />
                   )}
-                </label>
-              </RadioGroup>
+                </button>
+              </div>
               {errors.project_type && (
                 <p className="text-xs text-destructive mt-1">{errors.project_type}</p>
               )}
@@ -411,107 +553,25 @@ export default function CreateProjectClient() {
               <p className="text-xs text-destructive bg-destructive/10 p-2 rounded-md">{errors.steps}</p>
             )}
             
-            {formData.steps.map((step, index) => (
-              <div 
-                key={index} 
-                className="relative bg-muted/40 dark:bg-muted/20 rounded-xl p-3 sm:p-4 space-y-3 sm:space-y-4 border border-border/50"
-              >
-                {/* Step Header */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    {/* Drag Handle */}
-                    <div className="text-muted-foreground/50 cursor-grab active:cursor-grabbing">
-                      <GripVertical className="h-5 w-5" />
-                    </div>
-                    {/* Step Number Badge */}
-                    <span className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#5C1A1B] text-white text-xs font-bold shadow-sm">
-                      {index + 1}
-                    </span>
-                    <span className="text-sm font-medium text-muted-foreground">
-                      {t('projects.steps.stepNumber').replace('{number}', String(index + 1))}
-                    </span>
-                  </div>
-                  {formData.steps.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeStep(index)}
-                      className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-full"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-
-                {/* Step Fields */}
-                <div className="space-y-3 sm:space-y-4">
-                  {/* Step Name */}
-                  <div className="space-y-1.5">
-                    <Label htmlFor={`step_name_${index}`} className="text-sm font-medium">
-                      {t('projects.steps.stepName')} <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id={`step_name_${index}`}
-                      value={step.step_name}
-                      onChange={(e) => handleStepChange(index, 'step_name', e.target.value)}
-                      placeholder={t('projects.steps.stepName')}
-                      className={`h-11 ${errors[`steps.${index}.step_name`] ? 'border-destructive focus:ring-destructive/50' : ''}`}
-                    />
-                    {errors[`steps.${index}.step_name`] && (
-                      <p className="text-xs text-destructive">{errors[`steps.${index}.step_name`]}</p>
-                    )}
-                  </div>
-
-                  {/* Step Description */}
-                  <div className="space-y-1.5">
-                    <Label htmlFor={`step_description_${index}`} className="text-sm font-medium">
-                      {t('projects.steps.stepDescription')}
-                      <span className="text-muted-foreground text-xs ms-1">({t('form.optional')})</span>
-                    </Label>
-                    <Textarea
-                      id={`step_description_${index}`}
-                      value={step.step_description}
-                      onChange={(e) => handleStepChange(index, 'step_description', e.target.value)}
-                      placeholder={t('projects.steps.stepDescription')}
-                      rows={2}
-                      className="resize-none"
-                    />
-                  </div>
-
-                  {/* Step Duration */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                      <Label htmlFor={`step_duration_from_${index}`} className="text-xs text-muted-foreground">
-                        {t('projects.fields.durationFrom')}
-                        <span className="ms-1">({t('form.optional')})</span>
-                      </Label>
-                      <DatePicker
-                        value={step.duration_from}
-                        onChange={(date) => handleStepChange(index, 'duration_from', date)}
-                        placeholder={t('projects.fields.durationFrom')}
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label htmlFor={`step_duration_to_${index}`} className="text-xs text-muted-foreground">
-                        {t('projects.fields.durationTo')}
-                        <span className="ms-1">({t('form.optional')})</span>
-                      </Label>
-                      <DatePicker
-                        value={step.duration_to}
-                        onChange={(date) => handleStepChange(index, 'duration_to', date)}
-                        placeholder={t('projects.fields.durationTo')}
-                        minDate={step.duration_from}
-                        error={!!errors[`steps.${index}.duration_to`]}
-                      />
-                      {errors[`steps.${index}.duration_to`] && (
-                        <p className="text-xs text-destructive">{errors[`steps.${index}.duration_to`]}</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+            <Reorder.Group 
+              axis="y" 
+              values={formData.steps} 
+              onReorder={handleReorder}
+              className="space-y-3 sm:space-y-4"
+            >
+              {formData.steps.map((step, index) => (
+                <StepItem
+                  key={step._id}
+                  step={step}
+                  index={index}
+                  errors={errors}
+                  stepsLength={formData.steps.length}
+                  onStepChange={handleStepChange}
+                  onRemoveStep={removeStep}
+                  t={t}
+                />
+              ))}
+            </Reorder.Group>
 
             {/* Add Step Button */}
             {formData.steps.length > 0 && (

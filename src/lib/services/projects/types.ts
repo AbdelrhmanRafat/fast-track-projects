@@ -173,6 +173,33 @@ export interface UpdateProjectRequest {
 }
 
 /**
+ * Step update in edit project request
+ * - If `id` is present: update existing step
+ * - If `id` is absent: create new step
+ * - Existing steps not in array will be deleted (unless finalized)
+ */
+export interface EditStepRequest {
+  id?: string;
+  step_name: string;
+  step_description?: string;
+  duration_from?: string;
+  duration_to?: string;
+  step_order?: number;
+}
+
+/**
+ * Update project with steps request body
+ * Used for editing project and managing steps together
+ * PUT /projects?id={projectId}
+ */
+export interface UpdateProjectWithStepsRequest {
+  project_name?: string;
+  project_description?: string;
+  company_name?: string;
+  steps?: EditStepRequest[];
+}
+
+/**
  * Finalize project request body
  * Marks the project as completed
  */

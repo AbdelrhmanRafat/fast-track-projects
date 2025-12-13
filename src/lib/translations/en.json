@@ -175,7 +175,9 @@
     "submitting": "Submitting...",
     "updating": "Updating...",
     "deleting": "Deleting...",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "readOnly": "Read-only",
+    "validationError": "Please fix the form errors"
   },
   "auth": {
     "welcomeBack": "Welcome to Fast Track",

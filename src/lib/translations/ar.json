@@ -175,7 +175,9 @@
     "submitting": "جاري الإرسال...",
     "updating": "جاري التحديث...",
     "deleting": "جاري الحذف...",
-    "processing": "جاري المعالجة..."
+    "processing": "جاري المعالجة...",
+    "readOnly": "للقراءة فقط",
+    "validationError": "يرجى إصلاح أخطاء النموذج"
   },
   "auth": {
     "welcomeBack": "مرحباً بك في Fast Track",

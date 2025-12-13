@@ -17,6 +17,7 @@ import type {
   ProjectFilters,
   CreateProjectRequest,
   UpdateProjectRequest,
+  UpdateProjectWithStepsRequest,
   FinalizeProjectRequest,
   ContinueProjectRequest,
   AddStepRequest,
@@ -174,6 +175,38 @@ export async function updateProject(
   } catch (error: any) {
     console.error(`Error updating project ${projectId}:`, error);
     return null;
+  }
+}
+
+/**
+ * Update project with steps management
+ * - Update project fields (project_name, project_description, company_name)
+ * - Manage steps: create, update, delete, reorder
+ * 
+ * PUT /projects?id={projectId}
+ * 
+ * Step Logic:
+ * - Steps with `id`: update existing
+ * - Steps without `id`: create new
+ * - Existing steps not in array: delete (unless finalized)
+ * - Finalized steps cannot be edited or deleted
+ */
+export async function updateProjectWithSteps(
+  projectId: string,
+  data: UpdateProjectWithStepsRequest
+): Promise<ApiResponse<Project> | null> {
+  try {
+    const response = await networkClient.put(`/api/projects/${projectId}`, data);
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to update project');
+    }
+    
+    return result as ApiResponse<Project>;
+  } catch (error: any) {
+    console.error(`Error updating project with steps ${projectId}:`, error);
+    throw error; // Re-throw to handle in component
   }
 }
 

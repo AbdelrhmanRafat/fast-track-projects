@@ -22,8 +22,13 @@ export const validationMessages = {
  * - Step Title: required
  * - Step Description: optional
  * - Step Duration (From - To): optional
+ * - _id: internal unique identifier for drag and drop
  */
 export const projectStepSchema = z.object({
+  _id: z
+    .string()
+    .optional()
+    .default(() => crypto.randomUUID()),
   step_name: z
     .string()
     .min(1, validationMessages.stepNameRequired),
@@ -111,8 +116,21 @@ export type CreateProjectFormData = z.infer<typeof createProjectSchema>;
 
 /**
  * Default empty step for adding new steps
+ * Note: _id is generated at runtime for each new step
+ */
+export const createDefaultStep = (): ProjectStepFormData => ({
+  _id: crypto.randomUUID(),
+  step_name: '',
+  step_description: '',
+  duration_from: '',
+  duration_to: '',
+});
+
+/**
+ * @deprecated Use createDefaultStep() instead to ensure unique IDs
  */
 export const defaultStep: ProjectStepFormData = {
+  _id: '',
   step_name: '',
   step_description: '',
   duration_from: '',
@@ -121,6 +139,20 @@ export const defaultStep: ProjectStepFormData = {
 
 /**
  * Default form data for creating a new project
+ * Note: steps are initialized with createDefaultStep() for unique IDs
+ */
+export const getDefaultFormData = (): CreateProjectFormData => ({
+  project_name: '',
+  company_name: '',
+  project_type: ProjectType.SiteProject,
+  project_description: '',
+  duration_from: '',
+  duration_to: '',
+  steps: [createDefaultStep()],
+});
+
+/**
+ * @deprecated Use getDefaultFormData() instead to ensure unique step IDs
  */
 export const defaultFormData: CreateProjectFormData = {
   project_name: '',
@@ -129,5 +161,5 @@ export const defaultFormData: CreateProjectFormData = {
   project_description: '',
   duration_from: '',
   duration_to: '',
-  steps: [{ ...defaultStep }],
+  steps: [{ _id: '', step_name: '', step_description: '', duration_from: '', duration_to: '' }],
 };

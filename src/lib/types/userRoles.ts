@@ -38,6 +38,14 @@ export const PROJECT_NOTIFICATION_ROLES: UserRole[] = [
 ];
 
 /**
+ * Roles that can delete projects
+ */
+export const PROJECT_DELETE_ROLES: UserRole[] = [
+  UserRole.Admin,
+  UserRole.SubAdmin,
+];
+
+/**
  * Roles that can access Users management page
  */
 export const USERS_MANAGEMENT_ROLES: UserRole[] = [
@@ -89,4 +97,11 @@ export function receivesProjectNotifications(role: UserRole): boolean {
  */
 export function canAccessUsersManagement(role: UserRole): boolean {
   return USERS_MANAGEMENT_ROLES.includes(role);
+}
+
+/**
+ * Check if a role can delete projects
+ */
+export function canDeleteProject(role: UserRole): boolean {
+  return PROJECT_DELETE_ROLES.includes(role);
 }

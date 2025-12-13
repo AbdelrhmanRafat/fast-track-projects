@@ -11,11 +11,16 @@ import { SearchComponent, SearchComponentConfig } from '@/components/ui/SearchCo
 import { Table, TableColumn, TableAction } from '@/components/ui/Table';
 import {
   Eye,
+  Pencil,
   ChevronLeft,
   ChevronRight,
   FolderKanban,
-  Download,
+  Trash2,
 } from 'lucide-react';
+import { DeleteAlertDialog } from '@/components/ui/delete-alert-dialog';
+import { deleteProject } from '@/lib/services/projects';
+import { getUserData } from '@/lib/cookies';
+import { UserRole, canDeleteProject } from '@/lib/types/userRoles';
 import type {
   Project,
   ProjectsListData,
@@ -65,6 +70,25 @@ export default function ProjectsTableClient({
   // State for data and loading
   const [data, setData] = useState<ProjectsListData | null>(initialData);
   const [loading, setLoading] = useState(false);
+  
+  // State for delete dialog
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  
+  // State for user role (for delete permission)
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
+
+  // Fetch user role on mount
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      const userData = await getUserData();
+      if (userData?.role) {
+        setUserRole(userData.role as UserRole);
+      }
+    };
+    fetchUserRole();
+  }, []);
 
   // Update data when server component re-renders with new data
   useEffect(() => {
@@ -178,6 +202,41 @@ export default function ProjectsTableClient({
     router.push(`/projects/${projectId}`);
   };
 
+  /**
+   * Navigate to project edit page
+   */
+  const handleEditProject = (projectId: string) => {
+    router.push(`/projects/${projectId}/edit`);
+  };
+
+  /**
+   * Open delete confirmation dialog
+   */
+  const handleDeleteClick = (project: Project) => {
+    setProjectToDelete(project);
+    setDeleteDialogOpen(true);
+  };
+
+  /**
+   * Handle project deletion
+   */
+  const handleDeleteProject = async () => {
+    if (!projectToDelete) return;
+    
+    setIsDeleting(true);
+    try {
+      await deleteProject(projectToDelete.id);
+      // Refresh the page to get updated data
+      router.refresh();
+      setDeleteDialogOpen(false);
+      setProjectToDelete(null);
+    } catch (error) {
+      console.error('Failed to delete project:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   // Extract pagination info
   const pagination: PaginationInfo = data?.pagination || {
     page: 1,
@@ -278,16 +337,41 @@ export default function ProjectsTableClient({
     },
   ], [t, language]);
 
+  // Check if user can delete projects
+  const canDelete = userRole ? canDeleteProject(userRole) : false;
+
   // Table actions configuration
-  const actions: TableAction[] = useMemo(() => [
-    {
-      key: 'view',
-      label: t('common.viewDetails'),
-      icon: <Eye className="h-4 w-4" />,
-      onClick: (row: Project) => handleViewProject(row.id),
-      variant: 'default',
-    },
-  ], [t]);
+  const actions: TableAction[] = useMemo(() => {
+    const baseActions: TableAction[] = [
+      {
+        key: 'view',
+        label: t('common.viewDetails'),
+        icon: <Eye className="h-4 w-4" />,
+        onClick: (row: Project) => handleViewProject(row.id),
+        variant: 'default',
+      },
+      {
+        key: 'edit',
+        label: t('form.edit'),
+        icon: <Pencil className="h-4 w-4" />,
+        onClick: (row: Project) => handleEditProject(row.id),
+        variant: 'default',
+      },
+    ];
+
+    // Only add delete action if user has permission
+    if (canDelete) {
+      baseActions.push({
+        key: 'delete',
+        label: t('form.delete'),
+        icon: <Trash2 className="h-4 w-4" />,
+        onClick: (row: Project) => handleDeleteClick(row),
+        variant: 'destructive',
+      });
+    }
+
+    return baseActions;
+  }, [t, canDelete]);
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -402,6 +486,23 @@ export default function ProjectsTableClient({
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteAlertDialog
+        title={t('projects.messages.deleteConfirm')}
+        subtitle={t('projects.messages.deleteWarning')}
+        onDelete={handleDeleteProject}
+        open={deleteDialogOpen}
+        onOpenChange={(open) => {
+          if (!isDeleting) {
+            setDeleteDialogOpen(open);
+            if (!open) setProjectToDelete(null);
+          }
+        }}
+        loading={isDeleting}
+      >
+        <span className="hidden" />
+      </DeleteAlertDialog>
     </div>
   );
 }
