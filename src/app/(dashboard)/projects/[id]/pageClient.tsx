@@ -46,6 +46,7 @@ import {
   Loader2,
   CheckCheck,
   ArrowRight,
+  TrendingUp,
 } from 'lucide-react';
 import type { Project, ProjectType, ProjectStatus, ProjectStep, FinalizedNote, ProjectOpeningStatus, StepPhase, CreateStepRequest } from '@/lib/services/projects/types';
 import {
@@ -122,14 +123,31 @@ export default function ProjectViewClient({ project, canEdit }: ProjectViewClien
   const [newSteps, setNewSteps] = useState<CreateStepRequest[]>([
     { step_name: '', step_description: '', duration_from: '', duration_to: '' }
   ]);
+  
+  // In-Progress phase duration state
+  const [inprogressDurationFrom, setInprogressDurationFrom] = useState('');
+  const [inprogressDurationTo, setInprogressDurationTo] = useState('');
 
-  // Calculate progress
-  const totalSteps = project.project_steps?.length || 0;
-  const finalizedSteps = project.project_steps?.filter(step => step.is_finalized).length || 0;
-  const progressPercentage = totalSteps > 0 ? Math.round((finalizedSteps / totalSteps) * 100) : 0;
+  // Calculate overall progress using API data
+  const overallProgress = project.overall_progress || project.progress;
+  const totalSteps = overallProgress?.total || project.project_steps?.length || 0;
+  const finalizedSteps = overallProgress?.finalized || project.project_steps?.filter(step => step.is_finalized).length || 0;
+  const progressPercentage = overallProgress?.percentage || (totalSteps > 0 ? Math.round((finalizedSteps / totalSteps) * 100) : 0);
 
-  // Get days info
-  const daysCalc = calculateDaysInfo(project.duration_to);
+  // Phase-specific progress from API
+  const tenderProgress = project.tinder_progress;
+  const inProgressProgress = project.inprogress_progress;
+  const isInProgressPhase = project.project_opening_status === 'inProgress';
+
+  // Calculate phase-specific steps
+  const tenderingSteps = (project.project_steps || []).filter(step => step.step_phase === 'tinder');
+  const inProgressSteps = (project.project_steps || []).filter(step => step.step_phase === 'inProgress');
+
+  // Get days info based on current phase
+  const currentPhaseDurationTo = isInProgressPhase 
+    ? (project.inprogress_duration_to || project.duration_to)
+    : project.duration_to;
+  const daysCalc = calculateDaysInfo(currentPhaseDurationTo);
   const daysInfo = daysCalc ? {
     text: daysCalc.diffDays < 0 
       ? (t('projects.view.daysOverdue' as any) as string).replace('{days}', String(Math.abs(daysCalc.diffDays)))
@@ -322,6 +340,12 @@ export default function ProjectViewClient({ project, canEdit }: ProjectViewClien
       return;
     }
 
+    // Validate in-progress phase duration
+    if (!inprogressDurationFrom || !inprogressDurationTo) {
+      toast.error(t('projects.actions.executionDurationRequired' as any));
+      return;
+    }
+
     setIsProcessing(true);
     try {
       // Add step_order to each step
@@ -330,11 +354,18 @@ export default function ProjectViewClient({ project, canEdit }: ProjectViewClien
         step_order: (project.project_steps?.length || 0) + index + 1
       }));
 
-      const result = await continueProject(project.id, stepsWithOrder);
+      const result = await continueProject(
+        project.id,
+        inprogressDurationFrom,
+        inprogressDurationTo,
+        stepsWithOrder
+      );
       if (result) {
         toast.success(t('projects.messages.projectContinuedSuccess' as any));
         setContinueDialogOpen(false);
         setNewSteps([{ step_name: '', step_description: '', duration_from: '', duration_to: '' }]);
+        setInprogressDurationFrom('');
+        setInprogressDurationTo('');
         router.refresh();
       } else {
         toast.error(t('projects.messages.continueError' as any));
@@ -413,6 +444,67 @@ export default function ProjectViewClient({ project, canEdit }: ProjectViewClien
           </div>
         </div>
 
+        {/* Phase-Specific Progress - Show when phase data is available */}
+        {(tenderProgress || (isInProgressPhase && inProgressProgress)) && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Tendering Phase Progress - Always show if available */}
+            {tenderProgress && (
+              <div className="bg-amber-50/50 dark:bg-amber-950/20 rounded-xl border border-amber-200/50 dark:border-amber-800/50 p-3 sm:p-4 space-y-2">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                  <span className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                    {t('projects.phases.tendering' as any)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Progress 
+                    value={tenderProgress.percentage || 0} 
+                    className="h-2 flex-1" 
+                  />
+                  <span className="text-xs font-semibold text-amber-700 dark:text-amber-300 w-8 text-end">
+                    {tenderProgress.percentage || 0}%
+                  </span>
+                </div>
+                <p className="text-xs text-amber-600/80 dark:text-amber-400/80">
+                  {tenderProgress.finalized || 0}/{tenderProgress.total || 0} {t('projects.view.stepsCompleted')}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {formatDate(project.duration_from, language)} → {formatDate(project.duration_to, language)}
+                </p>
+              </div>
+            )}
+
+            {/* In-Progress Phase Progress - Only show when project is in inProgress phase */}
+            {isInProgressPhase && inProgressProgress && inProgressProgress.total > 0 && (
+              <div className="bg-blue-50/50 dark:bg-blue-950/20 rounded-xl border border-blue-200/50 dark:border-blue-800/50 p-3 sm:p-4 space-y-2">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                    {t('projects.phases.inProgress' as any)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Progress 
+                    value={inProgressProgress.percentage || 0} 
+                    className="h-2 flex-1" 
+                  />
+                  <span className="text-xs font-semibold text-blue-700 dark:text-blue-300 w-8 text-end">
+                    {inProgressProgress.percentage || 0}%
+                  </span>
+                </div>
+                <p className="text-xs text-blue-600/80 dark:text-blue-400/80">
+                  {inProgressProgress.finalized || 0}/{inProgressProgress.total || 0} {t('projects.view.stepsCompleted')}
+                </p>
+                {project.inprogress_duration_from && (
+                  <p className="text-xs text-muted-foreground">
+                    {formatDate(project.inprogress_duration_from, language)} → {formatDate(project.inprogress_duration_to, language)}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Project Action Buttons - Show when eligible and has permission */}
         {canEdit && isEligibleForActions && (
           <div className="flex flex-col sm:flex-row gap-3 p-4 rounded-xl bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-950/30 dark:to-blue-950/30 border border-emerald-200/50 dark:border-emerald-800/50">
@@ -466,17 +558,27 @@ export default function ProjectViewClient({ project, canEdit }: ProjectViewClien
           <p className="font-medium text-sm truncate">{project.creator?.name || '-'}</p>
         </div>
 
-        {/* Duration */}
+        {/* Duration - Phase-specific */}
         <div className="bg-card rounded-xl border p-3 space-y-1">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="h-4 w-4" />
-            <span className="text-xs">{t('projects.view.duration')}</span>
+            <span className="text-xs">
+              {isInProgressPhase 
+                ? t('projects.phases.inProgressDuration' as any) 
+                : t('projects.phases.tenderingDuration' as any)}
+            </span>
           </div>
           <p className="font-medium text-xs sm:text-sm">
-            {formatDate(project.duration_from, language)}
+            {formatDate(
+              isInProgressPhase ? project.inprogress_duration_from : project.duration_from, 
+              language
+            )}
           </p>
           <p className="text-xs text-muted-foreground">
-            → {formatDate(project.duration_to, language)}
+            → {formatDate(
+              isInProgressPhase ? project.inprogress_duration_to : project.duration_to, 
+              language
+            )}
           </p>
         </div>
 
@@ -774,6 +876,36 @@ export default function ProjectViewClient({ project, canEdit }: ProjectViewClien
 
           {/* New Steps Form */}
           <div className="space-y-4 py-4">
+            {/* Execution Phase Duration */}
+            <div className="bg-blue-50/50 dark:bg-blue-950/20 rounded-xl border border-blue-200/50 dark:border-blue-800/50 p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                <Label className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                  {t('projects.actions.executionPhaseDuration' as any)}
+                </Label>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs">{t('projects.actions.executionDurationFrom' as any)}</Label>
+                  <Input
+                    type="date"
+                    value={inprogressDurationFrom}
+                    onChange={(e) => setInprogressDurationFrom(e.target.value)}
+                    className="bg-white dark:bg-background"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">{t('projects.actions.executionDurationTo' as any)}</Label>
+                  <Input
+                    type="date"
+                    value={inprogressDurationTo}
+                    onChange={(e) => setInprogressDurationTo(e.target.value)}
+                    className="bg-white dark:bg-background"
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium">{t('projects.actions.addNewStep' as any)}</Label>
               <Button
@@ -858,6 +990,8 @@ export default function ProjectViewClient({ project, canEdit }: ProjectViewClien
               onClick={() => {
                 setContinueDialogOpen(false);
                 setNewSteps([{ step_name: '', step_description: '', duration_from: '', duration_to: '' }]);
+                setInprogressDurationFrom('');
+                setInprogressDurationTo('');
               }}
               disabled={isProcessing}
               className="w-full sm:w-auto"
@@ -866,7 +1000,7 @@ export default function ProjectViewClient({ project, canEdit }: ProjectViewClien
             </Button>
             <Button
               onClick={handleContinueProject}
-              disabled={isProcessing || !newSteps.some(s => s.step_name.trim())}
+              disabled={isProcessing || !newSteps.some(s => s.step_name.trim()) || !inprogressDurationFrom || !inprogressDurationTo}
               className="w-full sm:w-auto gap-2 bg-blue-600 hover:bg-blue-700"
             >
               {isProcessing ? (
@@ -983,6 +1117,18 @@ function StepCard({ step, stepNumber, language, t, onOpenActions }: StepCardProp
           <div className="flex items-center gap-1.5">
             <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
             <span>{formatDateTime(step.finalized_at, language)}</span>
+          </div>
+        )}
+        {isFinalized && step.finalizer && (
+          <div className="flex items-center gap-1.5">
+            <User className="h-3.5 w-3.5 text-emerald-500" />
+            <span>{t('projects.steps.finalizedBy')}: {step.finalizer.name}</span>
+          </div>
+        )}
+        {!isFinalized && step.last_updated_by && (
+          <div className="flex items-center gap-1.5">
+            <User className="h-3.5 w-3.5" />
+            <span>{t('projects.steps.lastUpdatedBy')}: {step.last_updated_by.name}</span>
           </div>
         )}
       </div>

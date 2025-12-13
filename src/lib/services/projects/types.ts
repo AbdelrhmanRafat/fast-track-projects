@@ -71,10 +71,12 @@ export interface ProjectStep {
   duration_from: string | null;
   duration_to: string | null;
   is_finalized: boolean;
+  finalizer: StepUser | null;
   finalized_at: string | null;
   finalized_notes: FinalizedNote[];
   step_order: number;
   step_phase: StepPhase;
+  last_updated_by: StepUser | null;
   created_at: string;
   updated_at: string;
 }
@@ -103,6 +105,14 @@ export interface ProjectCreator {
 }
 
 /**
+ * User info for step updates (finalized_by, last_updated_by)
+ */
+export interface StepUser {
+  id: string;
+  name: string;
+}
+
+/**
  * Project progress information
  */
 export interface ProjectProgress {
@@ -113,6 +123,7 @@ export interface ProjectProgress {
 
 /**
  * Project stored in database
+ * Updated to support phase-separated data from API
  */
 export interface Project {
   id: string;
@@ -120,16 +131,26 @@ export interface Project {
   project_type: ProjectType;
   project_description: string | null;
   company_name: string | null;
+  // Tendering duration (always present)
   duration_from: string;
   duration_to: string | null;
+  // In-Progress duration (null when project_opening_status is 'tinder')
+  inprogress_duration_from: string | null;
+  inprogress_duration_to: string | null;
   status: ProjectStatus;
   project_opening_status: ProjectOpeningStatus;
   created_by: string;
   created_at: string;
   updated_at: string;
+  last_updater: StepUser | null;
   creator?: ProjectCreator;
   project_steps?: ProjectStep[];
+  // Legacy progress (kept for backward compatibility)
   progress?: ProjectProgress;
+  // Phase-specific progress
+  tinder_progress?: ProjectProgress;
+  inprogress_progress?: ProjectProgress;
+  overall_progress?: ProjectProgress;
 }
 
 // ==========================================
@@ -219,10 +240,12 @@ export interface NewStepRequest {
 
 /**
  * Continue project to inProgress request body
- * Changes project_opening_status to inProgress and adds new steps
+ * Changes project_opening_status to inProgress with phase duration and new steps
  */
 export interface ContinueProjectRequest {
   project_opening_status: 'inProgress';
+  inprogress_duration_from: string;
+  inprogress_duration_to: string;
   new_steps: NewStepRequest[];
 }
 

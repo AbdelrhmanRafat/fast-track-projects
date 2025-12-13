@@ -72,7 +72,7 @@ export async function PUT(
 ): Promise<NextResponse<ApiResponse<Project> | ApiResponse<null>>> {
   try {
     const { id } = await params;
-    const body: UpdateProjectRequest = await request.json();
+    const body = await request.json();
     
     const networkLayer = await NetworkLayer.createWithAutoConfig();
     const response = await networkLayer.put<ApiResponse<Project>>(`/projects?id=${id}`, body);

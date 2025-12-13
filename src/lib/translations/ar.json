@@ -554,6 +554,8 @@
       "pending": "التنفيذ",
       "notStarted": "لم تبدأ",
       "finalizedAt": "تاريخ الإكمال",
+      "finalizedBy": "تم الإكمال بواسطة",
+      "lastUpdatedBy": "آخر تحديث بواسطة",
       "noSteps": "لا توجد خطوات",
       "addFirstStep": "أضف أول خطوة للمشروع",
       "stepNumber": "الخطوة {number}",
@@ -636,6 +638,10 @@
       "confirmFinalizeWarning": "لا يمكن التراجع عن هذا الإجراء.",
       "continueProjectTitle": "متابعة المشروع للتنفيذ",
       "continueProjectDesc": "إضافة خطوات جديدة لمرحلة التنفيذ",
+      "executionPhaseDuration": "مدة مرحلة التنفيذ",
+      "executionDurationFrom": "تاريخ بداية التنفيذ",
+      "executionDurationTo": "تاريخ نهاية التنفيذ",
+      "executionDurationRequired": "يرجى تحديد مدة مرحلة التنفيذ",
       "addNewStep": "إضافة خطوة",
       "newStepName": "اسم الخطوة",
       "newStepDescription": "وصف الخطوة",
@@ -697,6 +703,18 @@
       "finalized": "مكتملة",
       "finalizedNotes": "ملاحظات الإكمال"
     },
+    "phases": {
+      "tendering": "مرحلة الطرح",
+      "inProgress": "مرحلة التنفيذ",
+      "tenderingDuration": "مدة الطرح",
+      "inProgressDuration": "مدة التنفيذ",
+      "tenderingProgress": "تقدم الطرح",
+      "inProgressProgress": "تقدم التنفيذ",
+      "tenderingSteps": "خطوات الطرح",
+      "inProgressSteps": "خطوات التنفيذ",
+      "phaseDuration": "مدة المرحلة",
+      "phaseProgress": "تقدم المرحلة"
+    },
     "edit": {
       "enterEditMode": "وضع التحرير",
       "exitEditMode": "إنهاء التحرير",
@@ -706,6 +724,24 @@
       "finalizedLocked": "مقفلة",
       "addNote": "إضافة ملاحظة",
       "notePlaceholder": "أدخل ملاحظة لهذه الخطوة..."
+    },
+    "editors": {
+      "title": "محررو المشروع",
+      "assign": "تعيين محررين",
+      "assignEditor": "تعيين محرر",
+      "removeEditor": "إزالة محرر",
+      "currentEditors": "المحررون الحاليون",
+      "availableUsers": "المستخدمون المتاحون",
+      "noEditors": "لا يوجد محررون معينون لهذا المشروع",
+      "noUsersAvailable": "لا يوجد مستخدمون متاحون للتعيين",
+      "selectUser": "اختر مستخدم للتعيين",
+      "assignedBy": "تم التعيين بواسطة",
+      "assignSuccess": "تم تعيين المحرر بنجاح",
+      "removeSuccess": "تم إزالة المحرر بنجاح",
+      "assignError": "فشل تعيين المحرر",
+      "removeError": "فشل إزالة المحرر",
+      "confirmRemove": "هل أنت متأكد من إزالة هذا المحرر؟",
+      "confirmRemoveWarning": "لن يتمكن من تعديل هذا المشروع بعد الآن"
     }
   },
   "orders": {

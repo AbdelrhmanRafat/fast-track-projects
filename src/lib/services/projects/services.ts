@@ -256,17 +256,21 @@ export async function finalizeProject(
 }
 
 /**
- * Continue project to inProgress with new steps
+ * Continue project to inProgress with new steps and phase duration
  * PUT /projects?id={projectId}
- * Body: { project_opening_status: "inProgress", new_steps: [...] }
+ * Body: { project_opening_status: "inProgress", inprogress_duration_from, inprogress_duration_to, new_steps: [...] }
  */
 export async function continueProject(
   projectId: string,
+  inprogressDurationFrom: string,
+  inprogressDurationTo: string,
   newSteps: ContinueProjectRequest['new_steps']
 ): Promise<ApiResponse<Project> | null> {
   try {
     const data: ContinueProjectRequest = {
       project_opening_status: 'inProgress',
+      inprogress_duration_from: inprogressDurationFrom,
+      inprogress_duration_to: inprogressDurationTo,
       new_steps: newSteps,
     };
     const response = await networkClient.put(`/api/projects/${projectId}`, data);

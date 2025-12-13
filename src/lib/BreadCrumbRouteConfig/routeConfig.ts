@@ -62,6 +62,11 @@ export const routeConfig: RouteConfig = {
     parent: '/projects/[id]',
     showInBreadcrumb: true,
   },
+  '/projects/[id]/assign-project': {
+    titleKey: 'projects.editors.title',
+    parent: '/projects/[id]',
+    showInBreadcrumb: true,
+  },
 
   // Create Order
   '/create-order': {
@@ -121,6 +126,12 @@ export function getRouteConfig(pathname: string): RouteConfigItem | null {
   const editProjectMatch = pathname.match(/^\/projects\/([^/]+)\/edit$/);
   if (editProjectMatch && !['all', 'current', 'create'].includes(editProjectMatch[1])) {
     return routeConfig['/projects/[id]/edit'] || null;
+  }
+
+  // Check for assign project pattern: /projects/[id]/assign-project
+  const assignProjectMatch = pathname.match(/^\/projects\/([^/]+)\/assign-project$/);
+  if (assignProjectMatch && !['all', 'current', 'create'].includes(assignProjectMatch[1])) {
+    return routeConfig['/projects/[id]/assign-project'] || null;
   }
 
   // Check for view project pattern: /projects/[id]

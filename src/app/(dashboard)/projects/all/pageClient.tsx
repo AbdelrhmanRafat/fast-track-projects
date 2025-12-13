@@ -16,6 +16,7 @@ import {
   ChevronRight,
   FolderKanban,
   Trash2,
+  UserPlus,
 } from 'lucide-react';
 import { DeleteAlertDialog } from '@/components/ui/delete-alert-dialog';
 import { deleteProject } from '@/lib/services/projects';
@@ -210,6 +211,13 @@ export default function ProjectsTableClient({
   };
 
   /**
+   * Navigate to assign project editors page
+   */
+  const handleAssignEditors = (projectId: string) => {
+    router.push(`/projects/${projectId}/assign-project`);
+  };
+
+  /**
    * Open delete confirmation dialog
    */
   const handleDeleteClick = (project: Project) => {
@@ -279,14 +287,27 @@ export default function ProjectsTableClient({
     {
       key: 'duration_from',
       label: t('projects.view.duration'),
-      render: (value, row) => (
-        <div className="text-xs space-y-0.5">
-          <span className="block">{formatDate(row.duration_from, language)}</span>
-          <span className="text-muted-foreground block">
-            → {formatDate(row.duration_to, language)}
-          </span>
-        </div>
-      ),
+      render: (value, row) => {
+        // Show phase-specific duration based on current status
+        const isInProgress = row.project_opening_status === 'inProgress';
+        
+        // Use inprogress duration if in progress phase, otherwise tendering duration
+        const durationFrom = isInProgress && row.inprogress_duration_from
+          ? row.inprogress_duration_from
+          : row.duration_from;
+        const durationTo = isInProgress && row.inprogress_duration_to
+          ? row.inprogress_duration_to
+          : row.duration_to;
+        
+        return (
+          <div className="text-xs space-y-0.5">
+            <span className="block">{formatDate(durationFrom, language)}</span>
+            <span className="text-muted-foreground block">
+              → {formatDate(durationTo, language)}
+            </span>
+          </div>
+        );
+      },
     },
     {
       key: 'status',
@@ -323,22 +344,37 @@ export default function ProjectsTableClient({
       key: 'progress',
       label: t('projects.table.columns.progress'),
       width: 'w-[100px]',
-      render: (value) => (
-        <div className="flex items-center gap-2">
-          <Progress
-            value={value?.percentage || 0}
-            className="h-1.5 flex-1 min-w-[50px]"
-          />
-          <span className="text-xs text-muted-foreground w-8 text-end">
-            {value?.percentage || 0}%
-          </span>
-        </div>
-      ),
+      render: (value, row) => {
+        // Show phase-specific progress based on current status
+        const isInProgress = row.project_opening_status === 'inProgress';
+        
+        // Use inprogress_progress if in progress phase, otherwise tinder_progress or fallback to overall
+        const phaseProgress = isInProgress && row.inprogress_progress
+          ? row.inprogress_progress
+          : row.tinder_progress || row.progress;
+        
+        const percentage = phaseProgress?.percentage || 0;
+        
+        return (
+          <div className="flex items-center gap-2">
+            <Progress
+              value={percentage}
+              className="h-1.5 flex-1 min-w-[50px]"
+            />
+            <span className="text-xs text-muted-foreground w-8 text-end">
+              {percentage}%
+            </span>
+          </div>
+        );
+      },
     },
   ], [t, language]);
 
   // Check if user can delete projects
   const canDelete = userRole ? canDeleteProject(userRole) : false;
+
+  // Check if user can assign project editors (Admin/Sub-admin only)
+  const canAssignEditors = userRole ? canDeleteProject(userRole) : false;
 
   // Table actions configuration
   const actions: TableAction[] = useMemo(() => {
@@ -359,6 +395,17 @@ export default function ProjectsTableClient({
       },
     ];
 
+    // Only add assign editors action if user has permission (Admin/Sub-admin)
+    if (canAssignEditors) {
+      baseActions.push({
+        key: 'assignEditors',
+        label: t('projects.editors.assign'),
+        icon: <UserPlus className="h-4 w-4" />,
+        onClick: (row: Project) => handleAssignEditors(row.id),
+        variant: 'default',
+      });
+    }
+
     // Only add delete action if user has permission
     if (canDelete) {
       baseActions.push({
@@ -371,7 +418,7 @@ export default function ProjectsTableClient({
     }
 
     return baseActions;
-  }, [t, canDelete]);
+  }, [t, canDelete, canAssignEditors]);
 
   return (
     <div className="space-y-4 sm:space-y-6">

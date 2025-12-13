@@ -554,6 +554,8 @@
       "pending": "Progress",
       "notStarted": "Not Started",
       "finalizedAt": "Finalized At",
+      "finalizedBy": "Finalized By",
+      "lastUpdatedBy": "Last Updated By",
       "noSteps": "No Steps",
       "addFirstStep": "Add the first step to this project",
       "stepNumber": "Step {number}",
@@ -636,6 +638,10 @@
       "confirmFinalizeWarning": "This action cannot be undone.",
       "continueProjectTitle": "Continue Project to Execution",
       "continueProjectDesc": "Add new steps for the execution phase",
+      "executionPhaseDuration": "Execution Phase Duration",
+      "executionDurationFrom": "Execution Start Date",
+      "executionDurationTo": "Execution End Date",
+      "executionDurationRequired": "Please set the execution phase duration",
       "addNewStep": "Add Step",
       "newStepName": "Step Name",
       "newStepDescription": "Step Description",
@@ -697,6 +703,18 @@
       "finalized": "finalized",
       "finalizedNotes": "Finalized Notes"
     },
+    "phases": {
+      "tendering": "Tendering Phase",
+      "inProgress": "Execution Phase",
+      "tenderingDuration": "Tendering Duration",
+      "inProgressDuration": "Execution Duration",
+      "tenderingProgress": "Tendering Progress",
+      "inProgressProgress": "Execution Progress",
+      "tenderingSteps": "Tendering Steps",
+      "inProgressSteps": "Execution Steps",
+      "phaseDuration": "Phase Duration",
+      "phaseProgress": "Phase Progress"
+    },
     "edit": {
       "enterEditMode": "Edit Mode",
       "exitEditMode": "Exit Edit Mode",
@@ -706,6 +724,24 @@
       "finalizedLocked": "Locked",
       "addNote": "Add Note",
       "notePlaceholder": "Enter a note for this step..."
+    },
+    "editors": {
+      "title": "Project Editors",
+      "assign": "Assign Editors",
+      "assignEditor": "Assign Editor",
+      "removeEditor": "Remove Editor",
+      "currentEditors": "Current Editors",
+      "availableUsers": "Available Users",
+      "noEditors": "No editors assigned to this project",
+      "noUsersAvailable": "No users available to assign",
+      "selectUser": "Select a user to assign",
+      "assignedBy": "Assigned by",
+      "assignSuccess": "Editor assigned successfully",
+      "removeSuccess": "Editor removed successfully",
+      "assignError": "Failed to assign editor",
+      "removeError": "Failed to remove editor",
+      "confirmRemove": "Are you sure you want to remove this editor?",
+      "confirmRemoveWarning": "They will no longer be able to edit this project"
     }
   },
   "orders": {
